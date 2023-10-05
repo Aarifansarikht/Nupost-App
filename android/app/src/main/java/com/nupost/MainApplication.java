@@ -1,4 +1,4 @@
-package com.nupost;
+package com.nupost.app;
 
 import android.app.Application;
 import com.facebook.react.PackageList;

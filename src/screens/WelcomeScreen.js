@@ -19,13 +19,7 @@ function WelcomeScreen({ navigation }) {
                     <TouchableOpacity onPress={() => navigation.navigate('SignUp')} style={styles.btns}>
                         <Text style={styles.btns_text}>SignUp</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={() => navigation.navigate('Home')}>
-                        <View style={styles.skip_btn}>
-                            <Text style={styles.skip_btn_text}>Skip and Continue</Text>
-                            <FontAwesome5 style={{ marginLeft: 10, height: 17, color: 'white' }} name='arrow-right' size={18} />
-                        </View>
 
-                    </TouchableOpacity>
                 </View>
             </View>
         </SafeAreaView>
@@ -66,17 +60,7 @@ const styles = StyleSheet.create({
         fontWeight: '700',
         fontSize: 18
     },
-    skip_btn: {
-        justifyContent: 'center',
-        alignItems: 'center',
-        flexDirection: 'row'
-    },
-    skip_btn_text: {
-        textAlign: 'center',
-        fontSize: 15,
-        fontWeight: '700',
-        color: 'white'
-    }
+
 })
 
 export default WelcomeScreen;

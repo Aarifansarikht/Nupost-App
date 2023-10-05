@@ -1,16 +1,19 @@
 import React, { useState } from 'react';
-import { Text, View, StyleSheet, Image, TouchableOpacity, ScrollView, TextInput, KeyboardAvoidingView, ActivityIndicator, Alert } from 'react-native';
+import { Text, View, StyleSheet, Image, TouchableOpacity, ScrollView, TextInput, Linking, KeyboardAvoidingView, Pressable, ActivityIndicator, Modal, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import { firestore } from "../firebase/firebase";
 import { addDoc, collection } from '@firebase/firestore';
+import CheckBox from '@react-native-community/checkbox';
+
 
 function SignupScreen({ navigation }) {
+
     const dbRef = collection(firestore, 'users');
     const [clicked, setClicked] = useState(false);
-
+    const [modalVisible, setModalVisible] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
     const handlePasswordShow = () => setShowPassword(!showPassword);
@@ -25,16 +28,21 @@ function SignupScreen({ navigation }) {
     const [confirmpasswordError, setconfirmPasswordError] = useState(false);
     const passRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/
     const passEmailRegex = /^(?=.*[@])$/
+    const [isTermsChecked, setIsTermsChecked] = useState(false);
+    const toggleTermsCheck = () => {
+        setIsTermsChecked(!isTermsChecked);
+    };
+
 
     const storeUser = async () => {
         setClicked(true)
-        if (name === '' || email === '' || password === '' || confirmPassword === '' || !passRegex.test(password) || email.indexOf('@') === -1){
+        if (name === '' || email === '' || password === '' || confirmPassword === '' || !passRegex.test(password) || email.indexOf('@') === -1) {
             if (name === "") {
                 setNameError(true)
             } else {
                 setNameError(false)
             }
-            if (email === "" ||email.indexOf('@') === -1) {
+            if (email === "" || email.indexOf('@') === -1) {
                 setEmailError(true)
             } else {
                 setEmailError(false)
@@ -52,7 +60,7 @@ function SignupScreen({ navigation }) {
             setClicked(false)
             return;
         }
-  
+
         setIsLoading(true);
         try {
             const docRef = await addDoc(dbRef, {
@@ -65,8 +73,9 @@ function SignupScreen({ navigation }) {
             setPassword('');
             setConfirmPassword('');
             setIsLoading(false);
-            alert('Successfully Created!!');
-            navigation.navigate('LogIn');
+            setModalVisible(true);
+
+            navigation.navigate('LogIn', { modalVisible });
             setClicked(false)
         } catch (error) {
             console.error('Error found: ', error);
@@ -109,15 +118,18 @@ function SignupScreen({ navigation }) {
             setIsPasswordMatch(true)
         }
     }
+    const openTermsAndConditionsLink = () => {
+        const url = 'https://nupost-app.web.app/terms-and-condition.html';
+        Linking.openURL(url);
+    };
 
     return (
         <SafeAreaView style={styles.main_container}>
-
-
             <View style={styles.top_container}>
                 <Image style={styles.top_image} source={require('../assets/img/welcomeimg.png')}></Image>
             </View>
             <View style={styles.bottom_container}>
+
                 <ScrollView>
                     <KeyboardAvoidingView behavior='padding'>
 
@@ -127,7 +139,7 @@ function SignupScreen({ navigation }) {
                             </View>
                             <View style={styles.inputfields}>
                                 <FontAwesome name='user' size={25} style={styles.inputfields_icons} />
-                                <TextInput  style={styles.textfields} placeholder='Name' placeholderTextColor={'black'} value={name} onChangeText={handleNameChange}></TextInput>
+                                <TextInput style={styles.textfields} placeholder='Name' placeholderTextColor={'black'} value={name} onChangeText={handleNameChange}></TextInput>
                             </View>
                             {nameError && <Text style={styles.error_text} >Name must be filled out.</Text>}
 
@@ -144,7 +156,7 @@ function SignupScreen({ navigation }) {
                                     <Ionicons name={showPassword ? "eye" : "eye-off"} style={{ color: 'black' }} size={20} />
                                 </TouchableOpacity>
                             </View>
-                            {passwordError ? <Text style={styles.error_text} >Password must be filled out.</Text>: password !== "" && !passRegex.test(password) ? <Text style={{color:'red',marginBottom:20}}>Minimum 8 characters,  at least 1 uppercase and lowercase letter , 1 number and 1 special character</Text> : ""}
+                            {passwordError ? <Text style={styles.error_text} >Password must be filled out.</Text> : password !== "" && !passRegex.test(password) ? <Text style={{ color: 'red', marginBottom: 20 }}>Minimum 8 characters,  at least 1 uppercase and lowercase letter , 1 number and 1 special character</Text> : ""}
 
                             <View style={styles.inputfields}>
                                 <MaterialIcons name='lock' size={20} style={styles.inputfields_icons} />
@@ -154,12 +166,37 @@ function SignupScreen({ navigation }) {
                                 </TouchableOpacity>
                             </View>
                             {confirmpasswordError && <Text style={styles.error_text} >ConfirmPassword must be filled out</Text>}
+
                             {isPasswordMatch && <Text style={styles.error_text} >Password not Match</Text>}
+                            <View style={styles.terms_container}>
+                                <CheckBox
+                                    value={isTermsChecked}
+                                    onValueChange={toggleTermsCheck}
+                                    style={styles.checkbox}
+                                />
+                                <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>
+
+                                    <Text style={styles.terms_label}>I agree to the <Text onPress={openTermsAndConditionsLink} style={{ textDecorationLine: 'underline', marginLeft: 20 }}>Terms and Conditions</Text></Text>
+
+                                </View>
+                            </View>
 
 
                             {
                                 clicked ? <ActivityIndicator size={'large'} color={'white'} marginTop={20} /> :
-                                    <TouchableOpacity style={styles.submit_btn} activeOpacity={0.7} onPress={() => storeUser()}>
+                                    <TouchableOpacity
+                                        style={[
+                                            styles.submit_btn,
+                                            isTermsChecked ? null : styles.disabled_submit_btn 
+                                        ]}
+                                        activeOpacity={0.7}
+                                        onPress={() => {
+                                            if (isTermsChecked) {
+                                                storeUser();
+                                            }
+                                        }}
+                                        disabled={!isTermsChecked} 
+                                    >
                                         <View>
                                             <Text style={styles.submit_btn_text}>Sign Up</Text>
                                         </View>
@@ -242,7 +279,27 @@ const styles = StyleSheet.create({
     error_text: {
         color: 'red',
         marginBottom: 10
-    }
+    },
+    terms_container: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginVertical: 10,
+    },
+    checkbox: {
+        marginRight: 10,
+    },
+    terms_label: {
+        fontSize: 14,
+        color: 'white',
+        textAlign: 'center',
+
+        alignItems: 'center',
+
+    },
+    disabled_submit_btn: {
+        backgroundColor: 'gray', // Style for the disabled button
+    },
+
 })
 
 export default SignupScreen;

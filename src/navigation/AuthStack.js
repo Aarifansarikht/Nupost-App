@@ -19,12 +19,19 @@ const Stack = createStackNavigator();
 function AuthStack() {
 
   return (
-    <Stack.Navigator screenOptions={{ headerShown: false, presentation: "modal" }}>
+    <Stack.Navigator screenOptions={{ headerShown: false, presentation: "modal" ,cardStyleInterpolator: ({ current, next, layouts }) => {
+      return {
+        cardStyle: {
+          opacity: current.progress.interpolate({
+            inputRange: [0, 1],
+            outputRange: [0, 1],
+          }),
+        },
+      };
+    },}}>
       <Stack.Screen name="Welcome" component={WelcomeScreen} />
       <Stack.Screen name="LogIn" component={LoginScreen} />
-  
       <Stack.Screen name="SignUp" component={SignupScreen} />
-
       <Stack.Screen name='Home' component={DrawerNavigation} />
       <Stack.Screen name="Search" component={SearchBar} />
       <Stack.Screen name="Profile" component={ProfileScreen}/>

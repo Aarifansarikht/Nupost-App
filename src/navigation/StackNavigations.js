@@ -8,22 +8,39 @@ import PreviewScreen from '../screens/PreviewScreen';
 import DrawerNavigation from './DrawerNavigation';
 import ProfileScreen from '../screens/ProfileScreen';
 import SearchBar from '../components/SearchBar';
+import WelcomeScreen from '../screens/WelcomeScreen';
+import SignupScreen from '../screens/SignupScreen';
 
 const Stack = createStackNavigator();
 function StackNavigations() {
 
 
-    return (
-        <Stack.Navigator screenOptions={{ headerShown: false }} >
-            <Stack.Screen name="LogIn" component={LoginScreen} />
-            <Stack.Screen name='Home' component={DrawerNavigation} />
-            <Stack.Screen name="Profile" component={ProfileScreen} />
-            <Stack.Screen name="Search" component={SearchBar} />
-            <Stack.Screen name="Preview" component={PreviewScreen} options={{
-                headerShown: true
-            }} />
-        </Stack.Navigator>
-    );
+  return (
+    <Stack.Navigator screenOptions={{
+      headerShown: false, cardStyleInterpolator: ({ current, next, layouts }) => {
+        return {
+          cardStyle: {
+            opacity: current.progress.interpolate({
+              inputRange: [0, 1],
+              outputRange: [0, 1],
+            }),
+          },
+        };
+      },
+    }} >
+      <Stack.Screen name='Home' component={DrawerNavigation} />
+      <Stack.Screen name="Profile" component={ProfileScreen} />
+      <Stack.Screen name="Search" component={SearchBar} />
+      <Stack.Screen name="Preview" component={PreviewScreen} options={{
+        headerShown: true
+      }} />
+      <Stack.Screen name="LogIn" component={LoginScreen} />
+      <Stack.Screen name="SignUp" component={SignupScreen} />
+
+      <Stack.Screen name="Welcome" component={WelcomeScreen} />
+
+    </Stack.Navigator>
+  );
 }
 
 export default StackNavigations;

@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { SafeAreaView, StyleSheet, Text, View, ScrollView, Image, ActivityIndicator } from 'react-native';
-import { TouchableOpacity } from 'react-native-gesture-handler';
+import {StyleSheet, View, Image, ActivityIndicator } from 'react-native';
 
 import VideoPlayer from "react-native-video-player";
 function GalleryCard(props) {
@@ -11,13 +10,13 @@ function GalleryCard(props) {
     setIndicator(true);
   };
   return (
-    <TouchableOpacity>
+
       <View style={styles.card}>
         {isVideo ? (
           <View style={styles.videoContainer}>
             <VideoPlayer
               style={{ height: 180, width: 165, borderRadius: 10 }}
-              video={{ uri: url }}
+              video={{ uri: filteredItem.data.url }}
               autoPlay={true}
               controlsTimeout={1000}
               defaultMuted={true}
@@ -31,12 +30,12 @@ function GalleryCard(props) {
         ) : (
           <Image
             style={{ height: 180, width: 165, borderRadius: 10 }}
-            source={{ uri: url }}
+            source={{ uri: filteredItem.data.url }}
             resizeMode="cover"
           />
         )}
       </View>
-    </TouchableOpacity>
+
   );
 }
 

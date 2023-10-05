@@ -73,13 +73,13 @@ android {
 
     compileSdkVersion rootProject.ext.compileSdkVersion
 
-    namespace "com.nupost"
+    namespace "com.nupost.app"
     defaultConfig {
-        applicationId "com.nupost"
+        applicationId "com.nupost.app"
         minSdkVersion rootProject.ext.minSdkVersion
-        targetSdkVersion 30
-        versionCode 1
-        versionName "1.0"
+        targetSdkVersion 33
+        versionCode 3
+        versionName "1.2"
     }
     signingConfigs {
            release {
@@ -127,6 +127,7 @@ dependencies {
         implementation jscFlavor
     }
 }
+
 
 apply from: file("../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesAppBuildGradle(project)
 apply from: file("../../node_modules/react-native-vector-icons/fonts.gradle")

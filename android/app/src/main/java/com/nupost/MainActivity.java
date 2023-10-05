@@ -1,4 +1,4 @@
-package com.nupost;
+package com.nupost.app;
 
 import com.facebook.react.ReactActivity;
 import com.facebook.react.ReactActivityDelegate;

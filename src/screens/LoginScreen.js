@@ -1,8 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState ,useEffect} from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Text, View, StyleSheet, Image, TouchableOpacity, KeyboardAvoidingView, ActivityIndicator } from 'react-native';
+import { Text, View, StyleSheet, Image, TouchableOpacity, KeyboardAvoidingView, Modal,Pressable,ActivityIndicator } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
 import { ScrollView, TextInput } from 'react-native-gesture-handler';
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import Ionicons from "react-native-vector-icons/Ionicons";
@@ -11,19 +10,20 @@ import { firestore } from "../firebase/firebase";
 import { useNavigation } from '@react-navigation/native';
 
 function LoginScreen() {
+
+
     const navigation = useNavigation();
     const [showPassword, setShowPassword] = useState(false);
     const handlePasswordShow = () => setShowPassword(!showPassword)
     const [email, setEmail] = useState('');
     const [emailError, setEmailError] = useState(false);
-
+  
     const [password, setPassword] = useState('');
     const [passwordError, setPasswordError] = useState(false);
 
     const [loginError, setLoginError] = useState(null);
     const [clicked, setClicked] = useState(true);
-
-
+    
     const handleLogin = async () => {
         try {
             if (email === '' || password === '') {
@@ -93,6 +93,7 @@ function LoginScreen() {
             </View>
 
             <View style={styles.bottom_container}>
+           
                 <ScrollView>
                     <KeyboardAvoidingView behavior='padding'>
                         <View style={styles.form_wrapper}>

@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { ScrollView, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
+import { ScrollView, StyleSheet, TextInput, TouchableOpacity, View,Text } from 'react-native';
 
 import { useSelector } from 'react-redux';
 import GalleryCard from './GalleryCard';
@@ -26,12 +26,13 @@ function SearchBar({navigation}) {
 
 
     return (
+        
         <View style={{ flex: 1, backgroundColor: 'white' }}>
-            <View style={{ flex: 1, padding: 6, borderRadius: 50 }}>
-                <TextInput autoFocus placeholder="Search for images..." onChangeText={handleSearch} style={{ color: 'white', padding: 16, fontSize: 16, borderRadius: 5, backgroundColor: 'black' }} />
+            <View style={{ flex: 1, padding: 6}}>
+                <TextInput autoFocus placeholder="Search for images..." placeholderTextColor={'black'} onChangeText={handleSearch} style={{color:'black',padding: 16, fontSize: 16, borderRadius: 5, backgroundColor: 'white',borderWidth:1,borderColor:'black' }} />
 
             </View>
-            <View style={{ flex: 6, padding: 8 }}>
+            <View style={{ flex: 7, padding: 8 }}>
                 <ScrollView showsVerticalScrollIndicator={false} >
 
                     <View style={styles.gallery}>
@@ -61,7 +62,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         flexWrap: 'wrap',
         justifyContent: 'space-between',
-        marginTop: 20
+        marginTop: 16
     },
 })
 
