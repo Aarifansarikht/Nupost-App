@@ -1,7 +1,7 @@
 import { initializeApp } from "firebase/app";
 
 import {getFirestore}  from "firebase/firestore";
-
+import { getStorage,ref, uploadBytes, getDownloadURL } from "firebase/storage";
 const firebaseConfig = {
     apiKey: "AIzaSyD903liLVSY6P4jGmLwfvMFo5bJ-s43_Xk",
     authDomain: "nupost-app.firebaseapp.com",
@@ -15,5 +15,5 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 
 const firestore = getFirestore(app);
-
-export {firestore} ;
+const storage = getStorage(app);
+export {firestore,storage,ref,uploadBytes,getDownloadURL} ;

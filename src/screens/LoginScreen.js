@@ -17,7 +17,7 @@ function LoginScreen() {
     const handlePasswordShow = () => setShowPassword(!showPassword)
     const [email, setEmail] = useState('');
     const [emailError, setEmailError] = useState(false);
-  
+    const [name,setName] = useState('')
     const [password, setPassword] = useState('');
     const [passwordError, setPasswordError] = useState(false);
 
@@ -52,6 +52,9 @@ function LoginScreen() {
             const usersRef = collection(firestore, 'users');
             const q = query(usersRef, where('email', '==', email));
             const querySnapshot = await getDocs(q);
+            const userDoc = querySnapshot.docs[0];
+            const userData = userDoc.data();
+            
 
             if (querySnapshot.empty) {
                 setClicked(true);
@@ -59,16 +62,14 @@ function LoginScreen() {
                 return;
             }
 
-            const userDoc = querySnapshot.docs[0];
-            const userData = userDoc.data();
-
             if (!userData || userData.password !== password) {
                 setClicked(true);
                 setLoginError('Incorrect email or password');
                 return;
             }
-
-            const user = { email, password };
+            setName(userData.name)
+      
+            const user = {userData };
             AsyncStorage.setItem('userData', JSON.stringify(user));
             AsyncStorage.setItem('keepLoggedIn', JSON.stringify(true));
             navigation.navigate('Home');

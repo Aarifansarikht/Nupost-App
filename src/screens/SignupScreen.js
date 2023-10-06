@@ -1,14 +1,19 @@
-import React, { useState } from 'react';
-import { Text, View, StyleSheet, Image, TouchableOpacity, ScrollView, TextInput, Linking, KeyboardAvoidingView, Pressable, ActivityIndicator, Modal, Alert } from 'react-native';
+import React, { useState, useRef } from 'react';
+import { Text, View, StyleSheet, Image, TouchableOpacity, ScrollView, TextInput, Linking, KeyboardAvoidingView, Pressable, PermissionsAndroid, ActivityIndicator, Modal, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import { firestore } from "../firebase/firebase";
+import { storage, ref, uploadBytes, getDownloadURL } from '../firebase/firebase';
 import { addDoc, collection } from '@firebase/firestore';
 import CheckBox from '@react-native-community/checkbox';
+import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
+import 'firebase/storage';
+import RNFetchBlob from 'rn-fetch-blob';
 
-
+import ImagePicker from 'react-native-image-crop-picker';
+import { BottomSheetScrollView, BottomSheetModal, BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 function SignupScreen({ navigation }) {
 
     const dbRef = collection(firestore, 'users');
@@ -29,8 +34,81 @@ function SignupScreen({ navigation }) {
     const passRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/
     const passEmailRegex = /^(?=.*[@])$/
     const [isTermsChecked, setIsTermsChecked] = useState(false);
+    const [image, setImage] = useState(null);
     const toggleTermsCheck = () => {
         setIsTermsChecked(!isTermsChecked);
+    };
+    // const handleImagePick = () => {
+    //     const options = {
+    //       title: 'Select Image',
+    //       storageOptions: {
+    //         skipBackup: true,
+    //         path: null,
+    //       },
+    //     };
+
+    //     launchImageLibrary(options, (response) => {
+    //       if (response.didCancel) {
+    //         console.warn('Image selection was canceled.');
+    //       } else if (response.error) {
+    //         console.error('ImagePicker Error: ', response.error);
+    //       } else if (response.assets && response.assets.length > 0) {
+    //         const selectedAsset = response.assets[0];
+    //         console.log("Selected image URI: ", selectedAsset.uri);
+    //         setImageUri(selectedAsset.uri);
+    //       } else {
+    //         console.warn('No image assets returned in the response.');
+    //       }
+    //     });
+    //   };
+
+    const bottomSheetModalRef = useRef(null);
+
+    const handleImagePick = () => {
+        bottomSheetModalRef.current?.present();
+    };
+
+
+    const openCamera = async () => {
+        try {
+            const granted = await PermissionsAndroid.request(
+                PermissionsAndroid.PERMISSIONS.CAMERA,
+            );
+
+
+            if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+                // Permission granted, you can now open the camera
+                ImagePicker.openCamera({
+                    compressImageMaxWidth: 300,
+                    compressImageMaxHeight: 300,
+                    cropping: true,
+                    compressImageQuality: 0.7,
+                }).then((image) => {
+                    console.log(image);
+                    setImage(image.path);
+                });
+            } else {
+                console.warn('Camera permission denied');
+            }
+        } catch (error) {
+            console.error('Error requesting camera permission:', error);
+        }
+    };
+
+
+    const openLibrary = () => {
+        ImagePicker.openPicker({
+            width: 300,
+            height: 300,
+            cropping: true,
+            compressImageQuality: 0.7
+        }).then(image => {
+            console.log(image);
+            setImage(image.path);
+        });
+    }
+    const cancelUpload = () => {
+        bottomSheetModalRef.current?.close();
     };
 
 
@@ -63,10 +141,13 @@ function SignupScreen({ navigation }) {
 
         setIsLoading(true);
         try {
+            const imageUrl = await uploadImage();
+            console.log('Image Url: ', imageUrl);
             const docRef = await addDoc(dbRef, {
                 name,
                 email,
                 password,
+                image
             });
             setName('');
             setEmail('');
@@ -86,7 +167,45 @@ function SignupScreen({ navigation }) {
     };
 
 
+    const uploadImage = async () => {
+        if (image == null) {
+            return null;
+        }
+        const uploadUri = image;
+        let filename = uploadUri.substring(uploadUri.lastIndexOf('/') + 1);
 
+        // Add timestamp to File Name
+        const extension = filename.split('.').pop();
+        const name = filename.split('.').slice(0, -1).join('.');
+        filename = name + Date.now() + '.' + extension;
+
+
+
+        const storageRef = ref(storage, `user_profile/${filename}`);
+        const task = uploadBytes(storageRef, uploadUri);
+
+
+
+        try {
+
+            console.warn('hello');
+            const url = await storageRef.getDownloadURL();
+
+
+            setImage(null);
+
+            Alert.alert(
+                'Image uploaded!',
+                'Your image has been uploaded to the Firebase Cloud Storage Successfully!',
+            );
+            return url;
+
+        } catch (e) {
+            console.log(e);
+            return null;
+        }
+
+    };
 
 
     const handleNameChange = (text) => {
@@ -124,90 +243,133 @@ function SignupScreen({ navigation }) {
     };
 
     return (
-        <SafeAreaView style={styles.main_container}>
-            <View style={styles.top_container}>
-                <Image style={styles.top_image} source={require('../assets/img/welcomeimg.png')}></Image>
-            </View>
-            <View style={styles.bottom_container}>
+        <BottomSheetModalProvider>
+            <SafeAreaView style={styles.main_container}>
+                <View style={styles.top_container}>
+                    <Image style={styles.top_image} source={require('../assets/img/welcomeimg.png')}></Image>
+                </View>
+                <View style={styles.bottom_container}>
 
-                <ScrollView>
-                    <KeyboardAvoidingView behavior='padding'>
+                    <ScrollView>
+                        <KeyboardAvoidingView behavior='padding'>
 
-                        <View style={styles.form_wrapper}>
-                            <View style={styles.signup_text_container}>
-                                <Text style={styles.signup_text}>Sign Up</Text>
-                            </View>
-                            <View style={styles.inputfields}>
-                                <FontAwesome name='user' size={25} style={styles.inputfields_icons} />
-                                <TextInput style={styles.textfields} placeholder='Name' placeholderTextColor={'black'} value={name} onChangeText={handleNameChange}></TextInput>
-                            </View>
-                            {nameError && <Text style={styles.error_text} >Name must be filled out.</Text>}
+                            <View style={styles.form_wrapper}>
 
-                            <View style={styles.inputfields}>
-                                <MaterialIcons name='email' size={20} style={styles.inputfields_icons} />
-                                <TextInput style={styles.textfields} placeholder='Email' placeholderTextColor={'black'} value={email} onChangeText={handleEmailChange}></TextInput>
-                            </View>
-                            {emailError && <Text style={styles.error_text} > eg: xyz@gmail.com</Text>}
+                                <View>
+                                    <View style={styles.profile_img_container}>
 
-                            <View style={styles.inputfields}>
-                                <MaterialIcons name='lock' size={20} style={styles.inputfields_icons} />
-                                <TextInput style={styles.textfields} placeholder='Password' secureTextEntry={showPassword ? false : true} placeholderTextColor={'black'} value={password} onChangeText={handlePasswordChange}></TextInput>
-                                <TouchableOpacity style={styles.inputfields_icons} onPress={handlePasswordShow} activeOpacity={0.8}>
-                                    <Ionicons name={showPassword ? "eye" : "eye-off"} style={{ color: 'black' }} size={20} />
-                                </TouchableOpacity>
-                            </View>
-                            {passwordError ? <Text style={styles.error_text} >Password must be filled out.</Text> : password !== "" && !passRegex.test(password) ? <Text style={{ color: 'red', marginBottom: 20 }}>Minimum 8 characters,  at least 1 uppercase and lowercase letter , 1 number and 1 special character</Text> : ""}
+                                        <TouchableOpacity onPress={handleImagePick}>
+                                            {image ? (
+                                                <Image style={styles.profile_img} source={{ uri: image }} />
+                                            ) : (
+                                                <Image
+                                                    style={styles.profile_img}
+                                                    source={require('../assets/img/profileImg.png')}
+                                                />
+                                            )}
+                                        </TouchableOpacity>
+                                    </View>
 
-                            <View style={styles.inputfields}>
-                                <MaterialIcons name='lock' size={20} style={styles.inputfields_icons} />
-                                <TextInput style={styles.textfields} placeholder='Confirm Password' secureTextEntry={showPassword ? false : true} placeholderTextColor={'black'} value={confirmPassword} onChangeText={handleConfirmPassword}></TextInput>
-                                <TouchableOpacity style={styles.inputfields_icons} onPress={handlePasswordShow} activeOpacity={0.8}>
-                                    <Ionicons name={showPassword ? "eye" : "eye-off"} style={{ color: 'black' }} size={20} />
-                                </TouchableOpacity>
-                            </View>
-                            {confirmpasswordError && <Text style={styles.error_text} >ConfirmPassword must be filled out</Text>}
-
-                            {isPasswordMatch && <Text style={styles.error_text} >Password not Match</Text>}
-                            <View style={styles.terms_container}>
-                                <CheckBox
-                                    value={isTermsChecked}
-                                    onValueChange={toggleTermsCheck}
-                                    style={styles.checkbox}
-                                />
-                                <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>
-
-                                    <Text style={styles.terms_label}>I agree to the <Text onPress={openTermsAndConditionsLink} style={{ textDecorationLine: 'underline', marginLeft: 20 }}>Terms and Conditions</Text></Text>
-
-                                </View>
-                            </View>
-
-
-                            {
-                                clicked ? <ActivityIndicator size={'large'} color={'white'} marginTop={20} /> :
-                                    <TouchableOpacity
-                                        style={[
-                                            styles.submit_btn,
-                                            isTermsChecked ? null : styles.disabled_submit_btn 
-                                        ]}
-                                        activeOpacity={0.7}
-                                        onPress={() => {
-                                            if (isTermsChecked) {
-                                                storeUser();
-                                            }
-                                        }}
-                                        disabled={!isTermsChecked} 
+                                    <BottomSheetModal
+                                        ref={bottomSheetModalRef}
+                                        index={0}
+                                        snapPoints={['30%', '50%']}
+                                        backdropComponent={null}
                                     >
-                                        <View>
-                                            <Text style={styles.submit_btn_text}>Sign Up</Text>
-                                        </View>
-                                    </TouchableOpacity>
-                            }
-                        </View>
-                    </KeyboardAvoidingView>
+                                        <BottomSheetScrollView >
+                                            <View styles={styles.button_wrapper}>
 
-                </ScrollView>
-            </View>
-        </SafeAreaView>
+                                                <TouchableOpacity onPress={openCamera}>
+                                                    <View style={styles.button}>
+                                                        <Text style={styles.buttonText}>Open Camera</Text>
+                                                    </View>
+                                                </TouchableOpacity>
+                                                <TouchableOpacity onPress={openLibrary}>
+                                                    <View style={styles.button}>
+                                                        <Text style={styles.buttonText}>Open Library</Text>
+                                                    </View>
+                                                </TouchableOpacity>
+                                                <TouchableOpacity onPress={cancelUpload}>
+                                                    <View style={styles.button}>
+                                                        <Text style={styles.buttonText}>Cancel</Text>
+                                                    </View>
+                                                </TouchableOpacity>
+                                            </View>
+                                        </BottomSheetScrollView>
+                                    </BottomSheetModal>
+                                </View>
+                                <View style={styles.inputfields}>
+                                    <FontAwesome name='user' size={25} style={styles.inputfields_icons} />
+                                    <TextInput style={styles.textfields} placeholder='Name' placeholderTextColor={'black'} value={name} onChangeText={handleNameChange}></TextInput>
+                                </View>
+                                {nameError && <Text style={styles.error_text} >Name must be filled out.</Text>}
+
+                                <View style={styles.inputfields}>
+                                    <MaterialIcons name='email' size={20} style={styles.inputfields_icons} />
+                                    <TextInput style={styles.textfields} placeholder='Email' placeholderTextColor={'black'} value={email} onChangeText={handleEmailChange}></TextInput>
+                                </View>
+                                {emailError && <Text style={styles.error_text} > eg: xyz@gmail.com</Text>}
+
+                                <View style={styles.inputfields}>
+                                    <MaterialIcons name='lock' size={20} style={styles.inputfields_icons} />
+                                    <TextInput style={styles.textfields} placeholder='Password' secureTextEntry={showPassword ? false : true} placeholderTextColor={'black'} value={password} onChangeText={handlePasswordChange}></TextInput>
+                                    <TouchableOpacity style={styles.inputfields_icons} onPress={handlePasswordShow} activeOpacity={0.8}>
+                                        <Ionicons name={showPassword ? "eye" : "eye-off"} style={{ color: 'black' }} size={20} />
+                                    </TouchableOpacity>
+                                </View>
+                                {passwordError ? <Text style={styles.error_text} >Password must be filled out.</Text> : password !== "" && !passRegex.test(password) ? <Text style={{ color: 'red', marginBottom: 20 }}>Minimum 8 characters,  at least 1 uppercase and lowercase letter , 1 number and 1 special character</Text> : ""}
+
+                                <View style={styles.inputfields}>
+                                    <MaterialIcons name='lock' size={20} style={styles.inputfields_icons} />
+                                    <TextInput style={styles.textfields} placeholder='Confirm Password' secureTextEntry={showPassword ? false : true} placeholderTextColor={'black'} value={confirmPassword} onChangeText={handleConfirmPassword}></TextInput>
+                                    <TouchableOpacity style={styles.inputfields_icons} onPress={handlePasswordShow} activeOpacity={0.8}>
+                                        <Ionicons name={showPassword ? "eye" : "eye-off"} style={{ color: 'black' }} size={20} />
+                                    </TouchableOpacity>
+                                </View>
+                                {confirmpasswordError && <Text style={styles.error_text} >ConfirmPassword must be filled out</Text>}
+
+                                {isPasswordMatch && <Text style={styles.error_text} >Password not Match</Text>}
+                                <View style={styles.terms_container}>
+                                    <CheckBox
+                                        value={isTermsChecked}
+                                        onValueChange={toggleTermsCheck}
+                                        style={styles.checkbox}
+                                    />
+                                    <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>
+
+                                        <Text style={styles.terms_label}>I agree to the <Text onPress={openTermsAndConditionsLink} style={{ textDecorationLine: 'underline', marginLeft: 20 }}>Terms and Conditions</Text></Text>
+
+                                    </View>
+                                </View>
+
+
+                                {
+                                    clicked ? <ActivityIndicator size={'large'} color={'white'} marginTop={20} /> :
+                                        <TouchableOpacity
+                                            style={[
+                                                styles.submit_btn,
+                                                isTermsChecked ? null : styles.disabled_submit_btn
+                                            ]}
+                                            activeOpacity={0.7}
+                                            onPress={() => {
+                                                if (isTermsChecked) {
+                                                    storeUser();
+                                                }
+                                            }}
+                                            disabled={!isTermsChecked}
+                                        >
+                                            <View>
+                                                <Text style={styles.submit_btn_text}>Sign Up</Text>
+                                            </View>
+                                        </TouchableOpacity>
+                                }
+                            </View>
+                        </KeyboardAvoidingView>
+
+                    </ScrollView>
+                </View>
+            </SafeAreaView>
+        </BottomSheetModalProvider>
     );
 }
 
@@ -227,7 +389,7 @@ const styles = StyleSheet.create({
         width: 330
     },
     bottom_container: {
-        flex: 2,
+        flex: 3,
         backgroundColor: 'black',
         borderTopLeftRadius: 20,
         borderTopRightRadius: 20
@@ -299,6 +461,47 @@ const styles = StyleSheet.create({
     disabled_submit_btn: {
         backgroundColor: 'gray', // Style for the disabled button
     },
+    profile_img_container: {
+
+        flex: 1,
+        alignItems: 'center',
+        height: 110
+
+    }
+    ,
+    profile_img_wrapper: {
+        backgroundColor: '#ffffff',
+        borderWidth: 2,
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: 90,
+        width: 90,
+        borderRadius: 50,
+        position: 'absolute',
+        bottom: 20,
+
+    },
+    profile_img: {
+        height: 80,
+        width: 80,
+        borderRadius: 50
+    },
+
+
+    button: {
+        borderWidth: 2,
+        borderColor: 'black',
+        margin: 10,
+        padding: 8,
+        borderRadius: 10,
+        textAlign: 'center'
+
+    },
+    buttonText: {
+        color: 'black',
+        fontSize: 16,
+        textAlign: 'center'
+    }
 
 })
 

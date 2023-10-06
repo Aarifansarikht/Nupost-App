@@ -14,7 +14,7 @@ function ProfileScreen({ navigation }) {
     };
 
     const [userData, setUserData] = useState(null);
-
+    console.warn(userData);
     useEffect(() => {
         const getUserData = async () => {
             const data = await AsyncStorage.getItem('userData');
@@ -25,7 +25,6 @@ function ProfileScreen({ navigation }) {
         };
         getUserData();
     }, []);
-
     return (
 
 
@@ -42,19 +41,22 @@ function ProfileScreen({ navigation }) {
             </View>
             <View style={styles.bottom_container}>
                 <View style={styles.profile_img_wrapper}>
-                    <Image style={styles.profile_img} source={require('../assets/img/profileImg.png')} />
+                    <Image style={styles.profile_img} source={{uri:userData?.userData.imageUri}} />
                 </View>
                 <View style={styles.fields_wrapper}>
-                    {userData && userData.email ? (
+                    {userData?.userData && userData?.userData.email ? (
                         <>
                             <View >
-                                <TextInput style={styles.textfields} value={userData.email} />
-                                <TextInput style={styles.textfields} value={userData.password} />
-
+                                <TextInput style={styles.textfields} value={userData.userData.email} />
+                                <TextInput style={styles.textfields} value={userData.userData.password} />
+                                <TextInput style={styles.textfields} value={userData.userData.name} />
                                 <TouchableOpacity style={styles.logout_btn} onPress={handleLogout}>
                                     <Text style={styles.logout_btn_text}>Log Out</Text>
                                 </TouchableOpacity>
-                            </View>
+                            </View>{
+                                console.warn(userData)
+                            }
+
 
                         </>
                     ) : (

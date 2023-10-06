@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import SplashScreen from 'react-native-splash-screen';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-
+import { decode, encode } from 'base-64';
 import DrawerNavigation from './src/navigation/DrawerNavigation';
 import StackNavigations from './src/navigation/StackNavigations';
 import AuthStack from './src/navigation/AuthStack';
@@ -28,6 +28,14 @@ function App() {
   useEffect(()=>{
     SplashScreen.hide();
     retrieveData();
+    if (!global.btoa) {
+      global.btoa = encode;
+    }
+    
+    // Check if global.atob is undefined and set it to the decode function
+    if (!global.atob) {
+      global.atob = decode;
+    }
   },[])
 
   
