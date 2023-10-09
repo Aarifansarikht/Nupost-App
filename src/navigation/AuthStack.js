@@ -34,7 +34,9 @@ function AuthStack() {
       <Stack.Screen name="SignUp" component={SignupScreen} />
       <Stack.Screen name='Home' component={DrawerNavigation} />
       <Stack.Screen name="Search" component={SearchBar} />
-      <Stack.Screen name="Profile" component={ProfileScreen}/>
+      <Stack.Screen name="Profile" component={ProfileScreen} options={{
+        headerShown: true
+      }}/>
       <Stack.Screen name="Preview" component={PreviewScreen} options={{
         headerShown: true
       }} />
