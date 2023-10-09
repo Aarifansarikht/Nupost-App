@@ -1,6 +1,7 @@
-import { GET_IMAGE_DATA } from "../constants/constants";
+import { GET_IMAGE_DATA, GET_USER_DATA } from "../constants/constants";
 
 const initialState = [];
+
 
 
 export const reducer = (state=initialState,action)=>{

@@ -8,7 +8,6 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5'
 function ProfileScreen({ navigation }) {
     const handleLogout = async () => {
-
         await AsyncStorage.removeItem('keepLoggedIn');
         navigation.navigate('Welcome')
     };
@@ -27,37 +26,25 @@ function ProfileScreen({ navigation }) {
     }, []);
     return (
 
-
-
-        // <SafeAreaView>
-
-
-
-        // </SafeAreaView>
-
         <SafeAreaView style={styles.main_container}>
             <View style={styles.top_container}>
                 <Image style={styles.top_img} source={require('../assets/img/welcomeimg.png')}></Image>
             </View>
             <View style={styles.bottom_container}>
                 <View style={styles.profile_img_wrapper}>
-                    <Image style={styles.profile_img} source={{uri:userData?.userData.imageUri}} />
+                    <Image style={styles.profile_img} source={{ uri: userData?.userData.imageUrl }} />
                 </View>
                 <View style={styles.fields_wrapper}>
                     {userData?.userData && userData?.userData.email ? (
                         <>
                             <View >
+                                <TextInput style={styles.textfields} value={userData.userData.name} />
                                 <TextInput style={styles.textfields} value={userData.userData.email} />
                                 <TextInput style={styles.textfields} value={userData.userData.password} />
-                                <TextInput style={styles.textfields} value={userData.userData.name} />
                                 <TouchableOpacity style={styles.logout_btn} onPress={handleLogout}>
                                     <Text style={styles.logout_btn_text}>Log Out</Text>
                                 </TouchableOpacity>
-                            </View>{
-                                console.warn(userData)
-                            }
-
-
+                            </View>
                         </>
                     ) : (
                         <Text>User data not available</Text>
@@ -92,11 +79,12 @@ const styles = StyleSheet.create({
         borderRadius: 50,
         marginLeft: 10,
         position: 'absolute',
-        top: -25
+        top: -25,
     },
     profile_img: {
-        height: 80,
-        width: 80
+        height: 90,
+        width: 90,
+        borderRadius: 50
     },
     bottom_container: {
         flex: 2,
@@ -108,7 +96,7 @@ const styles = StyleSheet.create({
     fields_wrapper: {
         flex: 1,
         width: '100%',
-        marginTop:80
+        marginTop: 80
     },
     textfields: {
         backgroundColor: 'white',

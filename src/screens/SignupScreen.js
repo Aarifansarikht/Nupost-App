@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Text, View, StyleSheet, Image, TouchableOpacity, ScrollView, TextInput,Linking, KeyboardAvoidingView, Pressable, PermissionsAndroid, ActivityIndicator, Modal, Alert } from 'react-native';
+import { Text, View, StyleSheet, Image, TouchableOpacity, ScrollView, TextInput, Linking, KeyboardAvoidingView, Pressable, PermissionsAndroid, ActivityIndicator, Modal, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import Ionicons from "react-native-vector-icons/Ionicons";
@@ -35,7 +35,14 @@ function SignupScreen({ navigation }) {
     const passEmailRegex = /^(?=.*[@])$/
     const [isTermsChecked, setIsTermsChecked] = useState(false);
     const [image, setImage] = useState(null);
-    const [imageUrl,setImageUrl] = useState(null);
+    const [politicalImgUrl, setPoliticalImgUrl] = useState(null);
+    const [mobileNumber, setMobileNumber] = useState(null);
+    const [designation, setDesignation] = useState(null);
+    const [politicalParty, setPoliticalParty] = useState(null);
+
+
+
+
     const toggleTermsCheck = () => {
         setIsTermsChecked(!isTermsChecked);
     };
@@ -52,8 +59,6 @@ function SignupScreen({ navigation }) {
             const granted = await PermissionsAndroid.request(
                 PermissionsAndroid.PERMISSIONS.CAMERA,
             );
-
-
             if (granted === PermissionsAndroid.RESULTS.GRANTED) {
                 // Permission granted, you can now open the camera
                 ImagePicker.openCamera({
@@ -89,7 +94,7 @@ function SignupScreen({ navigation }) {
         bottomSheetModalRef.current?.close();
     };
 
-    
+
     const storeUser = async () => {
         setClicked(true)
         if (name === '' || email === '' || password === '' || confirmPassword === '' || !passRegex.test(password) || email.indexOf('@') === -1) {
@@ -120,17 +125,25 @@ function SignupScreen({ navigation }) {
         setIsLoading(true);
         try {
             const imageUrl = await uploadImage();
-            console.log('Image Url: ', imageUrl);
             const docRef = await addDoc(dbRef, {
                 name,
                 email,
                 password,
-                image
+                imageUrl,
+                politicalImgUrl,
+                mobileNumber,
+                designation,
+                politicalParty
             });
             setName('');
             setEmail('');
             setPassword('');
             setConfirmPassword('');
+            setImage(null);
+            setPoliticalImgUrl(null);
+            setDesignation('');
+            setMobileNumber('');
+            setPoliticalParty('');
             setIsLoading(false);
             setModalVisible(true);
 
@@ -145,50 +158,50 @@ function SignupScreen({ navigation }) {
     };
 
 
-   
-const uploadImage = async () => {
-    if (image == null) {
-      return null;
-    }
-  
-    const uploadUri = image;
-    let filename = uploadUri.substring(uploadUri.lastIndexOf('/') + 1);
-  
-    // Add timestamp to File Name
-    const extension = filename.split('.').pop();
-    const name = filename.split('.').slice(0, -1).join('.');
-    filename = name + Date.now() + '.' + extension;
-  
-    const storageRef = ref(storage, `user_profile/${filename}`);
-  
-    try {
-      // Fetch the image data from the local file path
-      const response = await fetch(uploadUri);
-      const blob = await response.blob();
-  
-      // Upload the image to Firebase Cloud Storage
-      const uploadTaskSnapshot = await uploadBytes(storageRef, blob, {
-        contentType: 'image/jpeg', // Specify the content type here
-      });
-  
-      // Get the download URL of the uploaded image
-      const imageUrl = await getDownloadURL(storageRef);
-  
-      // Set the image URL state or use it as needed
-      setImage(imageUrl);
-      
-      // Display a success message or perform any other necessary actions
-      Alert.alert(
-        'Image uploaded!',
-        'Your image has been uploaded to Firebase Cloud Storage successfully!'
-      );
-  
-      return imageUrl;
-    } catch (e) {
-      console.error('Error uploading image:', e);
-      return null;
-    }
-  };
+
+    const uploadImage = async () => {
+        if (image == null) {
+            return null;
+        }
+
+        const uploadUri = image;
+        let filename = uploadUri.substring(uploadUri.lastIndexOf('/') + 1);
+
+        // Add timestamp to File Name
+        const extension = filename.split('.').pop();
+        const name = filename.split('.').slice(0, -1).join('.');
+        filename = name + Date.now() + '.' + extension;
+
+        const storageRef = ref(storage, `user_profile/${filename}`);
+
+        try {
+            // Fetch the image data from the local file path
+            const response = await fetch(uploadUri);
+            const blob = await response.blob();
+
+            // Upload the image to Firebase Cloud Storage
+            const uploadTaskSnapshot = await uploadBytes(storageRef, blob, {
+                contentType: 'image/jpeg', // Specify the content type here
+            });
+
+            // Get the download URL of the uploaded image
+            const imageUrl = await getDownloadURL(storageRef);
+
+            // Set the image URL state or use it as needed
+            setImage(imageUrl);
+
+            // Display a success message or perform any other necessary actions
+            Alert.alert(
+                'Image uploaded!',
+                'Your image has been uploaded to Firebase Cloud Storage successfully!'
+            );
+
+            return imageUrl;
+        } catch (e) {
+            console.error('Error uploading image:', e);
+            return null;
+        }
+    };
 
 
     const handleNameChange = (text) => {
