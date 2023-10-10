@@ -7,8 +7,8 @@ import { decode, encode } from 'base-64';
 import DrawerNavigation from './src/navigation/DrawerNavigation';
 import StackNavigations from './src/navigation/StackNavigations';
 import AuthStack from './src/navigation/AuthStack';
-function App() {  
-  
+function App() {
+
   const [isLogged, setIsLogged] = useState(false);
 
   const retrieveData = async () => {
@@ -24,27 +24,27 @@ function App() {
       console.error('Error retrieving data:', error);
     }
   }
-  
-  useEffect(()=>{
+
+  useEffect(() => {
     SplashScreen.hide();
     retrieveData();
     if (!global.btoa) {
       global.btoa = encode;
     }
-    
+
     // Check if global.atob is undefined and set it to the decode function
     if (!global.atob) {
       global.atob = decode;
     }
-  },[])
+  }, [])
 
-  
+
   return (
     <NavigationContainer>
       {
-        isLogged?<StackNavigations/>:<AuthStack/>
+        isLogged ? <StackNavigations /> : <AuthStack />
       }
-    
+
     </NavigationContainer>
   );
 }

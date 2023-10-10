@@ -45,24 +45,24 @@ function MyDownloadScreen(props) {
   return (
     <View>
       <Text style={{ color: 'black', padding: 20, textAlign: 'center', fontSize: 18, fontWeight: 500 }}>My Downloads</Text>
-      <View style={{paddingBottom:130}}>
+      <View style={{ paddingBottom: 130 }}>
 
-      <FlatList
-        ItemSeparatorComponent={() => <View style={{ height: 10 }} />}
-        numColumns={2}
-        data={downloadedImages}
-        keyExtractor={(item) => item}
-        renderItem={({ item }) => (
-          <TouchableOpacity onPress={() => openImageInViewer(item)}>
+        <FlatList
+          ItemSeparatorComponent={() => <View style={{ height: 10 }} />}
+          numColumns={2}
+          data={downloadedImages}
+          keyExtractor={(item) => item}
+          renderItem={({ item }) => (
+            <TouchableOpacity onPress={() => openImageInViewer(item)}>
 
-            <Image
-              source={{ uri: 'file://' + RNFetchBlob.fs.dirs.PictureDir + '/Nupost_Images/' + item }}
-              style={{ width: 165, height: 180, borderRadius: 10, marginLeft: 10 }}
-            />
-          </TouchableOpacity>
+              <Image
+                source={{ uri: 'file://' + RNFetchBlob.fs.dirs.PictureDir + '/Nupost_Images/' + item }}
+                style={{ width: 165, height: 180, borderRadius: 10, marginLeft: 10 }}
+              />
+            </TouchableOpacity>
 
-        )}
-      />
+          )}
+        />
       </View>
     </View>
   );

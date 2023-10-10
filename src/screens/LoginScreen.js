@@ -1,6 +1,6 @@
-import React, { useState ,useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Text, View, StyleSheet, Image, TouchableOpacity, KeyboardAvoidingView, Modal,Pressable,ActivityIndicator } from 'react-native';
+import { Text, View, StyleSheet, Image, TouchableOpacity, KeyboardAvoidingView, Modal, Pressable, ActivityIndicator } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ScrollView, TextInput } from 'react-native-gesture-handler';
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
@@ -17,13 +17,13 @@ function LoginScreen() {
     const handlePasswordShow = () => setShowPassword(!showPassword)
     const [email, setEmail] = useState('');
     const [emailError, setEmailError] = useState(false);
-    const [name,setName] = useState('')
+    const [name, setName] = useState('')
     const [password, setPassword] = useState('');
     const [passwordError, setPasswordError] = useState(false);
 
     const [loginError, setLoginError] = useState(null);
     const [clicked, setClicked] = useState(true);
-    
+
     const handleLogin = async () => {
         try {
             if (email === '' || password === '') {
@@ -40,7 +40,7 @@ function LoginScreen() {
                 setClicked(true);
                 return;
             }
-            
+
             setClicked(false);
 
             if (!email) {
@@ -54,7 +54,7 @@ function LoginScreen() {
             const querySnapshot = await getDocs(q);
             const userDoc = querySnapshot.docs[0];
             const userData = userDoc.data();
-            
+
 
             if (querySnapshot.empty) {
                 setClicked(true);
@@ -68,8 +68,8 @@ function LoginScreen() {
                 return;
             }
             setName(userData.name)
-      
-            const user = {userData };
+
+            const user = { userData };
             AsyncStorage.setItem('userData', JSON.stringify(user));
             AsyncStorage.setItem('keepLoggedIn', JSON.stringify(true));
             navigation.navigate('Home');
@@ -94,7 +94,7 @@ function LoginScreen() {
             </View>
 
             <View style={styles.bottom_container}>
-           
+
                 <ScrollView>
                     <KeyboardAvoidingView behavior='padding'>
                         <View style={styles.form_wrapper}>
@@ -118,7 +118,7 @@ function LoginScreen() {
                             {passwordError && <Text style={styles.error_text}>Password must be filled out.</Text>}
 
                             <View >
-                                <TouchableOpacity onPress={()=>navigation.navigate('forgotpassword')}>
+                                <TouchableOpacity onPress={() => navigation.navigate('forgotpassword')}>
                                     <Text style={styles.forgot_pass_text}>
                                         Forgot Password?
                                     </Text>
@@ -220,9 +220,9 @@ const styles = StyleSheet.create({
         padding: 10,
         fontSize: 15
     },
-    error_text:{
-        color:'red',
-        marginBottom:10
+    error_text: {
+        color: 'red',
+        marginBottom: 10
     }
 
 

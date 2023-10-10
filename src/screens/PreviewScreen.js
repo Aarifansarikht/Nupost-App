@@ -275,7 +275,7 @@ function PreviewScreen({ navigation, route }) {
             </TouchableOpacity>
           </View>
         </View>
-      
+
       </ScrollView>
     </SafeAreaView>
   );
@@ -292,7 +292,7 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
 
   },
- 
+
   gallery: {
     flexDirection: 'row',
     flexWrap: 'wrap',
@@ -303,7 +303,7 @@ const styles = StyleSheet.create({
     height: 380,
     width: 320,
     borderRadius: 10,
-    marginBottom:170
+    marginBottom: 170
   },
   btns_wrapper: {
     flexDirection: 'row',
@@ -381,7 +381,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-   
+
   },
 });
 

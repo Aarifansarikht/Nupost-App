@@ -17,11 +17,11 @@ function DrawerNavigation(props) {
     return (
         <Drawer.Navigator screenOptions={{
             headerShown: false, drawerPosition: 'right', headerLeft: () => <Header />, headerRight: () => <View style={{ alignItems: 'center', flexDirection: 'row' }}>
-                                   
-                
-                <TouchableOpacity onPress={()=>navigation.navigate('Search')}><Feather name='search' style={{ color: 'black', padding: 5 }} size={20}  /></TouchableOpacity>
+
+
+                <TouchableOpacity onPress={() => navigation.navigate('Search')}><Feather name='search' style={{ color: 'black', padding: 5 }} size={20} /></TouchableOpacity>
                 <DrawerToggleButton />
-                </View>, headerTitle: "",
+            </View>, headerTitle: "",
 
         }}>
 

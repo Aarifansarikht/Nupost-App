@@ -3,7 +3,7 @@ import { ActivityIndicator, FlatList, Image, ScrollView, StyleSheet, Text, Touch
 import VideoPlayer from "react-native-video-player";
 
 import { useSelector } from 'react-redux';
-function CategoriesList({ ctgData,filteredData,navigation }) {
+function CategoriesList({ ctgData, filteredData, navigation }) {
     const imgdata = useSelector((state) => state.reducer)
     const [indicator, setIndicator] = useState(false);
     const handleLoadStart = () => {
@@ -18,7 +18,7 @@ function CategoriesList({ ctgData,filteredData,navigation }) {
     };
 
     return (
-        <ScrollView style={{backgroundColor:'#0031'}}>
+        <ScrollView style={{ backgroundColor: '#0031' }}>
             {ctgData?.map((ctgitem) =>
                 <View key={ctgitem.id} >
                     <View style={styles.category_name}>
@@ -29,7 +29,7 @@ function CategoriesList({ ctgData,filteredData,navigation }) {
 
                             {imgdata
                                 .filter((imageitem) => imageitem.data?.ctgIds.includes(ctgitem.id))
-                                .map((filteredItem,index) =>
+                                .map((filteredItem, index) =>
                                     <View style={{ height: 160, width: 145, borderRadius: 10 }}
                                     >
                                         {filteredItem.data.url && /\.(mp4|mov|avi|mkv)$/i.test(filteredItem.data.url) ? (
@@ -48,7 +48,7 @@ function CategoriesList({ ctgData,filteredData,navigation }) {
                                                 {indicator ? <ActivityIndicator size='small' color='white' style={styles.activityIndicator} /> : null}
                                             </View>
                                         ) : (
-                                            <TouchableOpacity key={index} onPress={() => handleImagePress(filteredItem)}> 
+                                            <TouchableOpacity key={index} onPress={() => handleImagePress(filteredItem)}>
 
                                                 <Image
                                                     style={{ height: 160, width: 145, borderRadius: 10 }}

@@ -1,10 +1,10 @@
 
 import React, { useState } from 'react';
-import { ScrollView, StyleSheet, TextInput, TouchableOpacity, View,Text } from 'react-native';
+import { ScrollView, StyleSheet, TextInput, TouchableOpacity, View, Text } from 'react-native';
 
 import { useSelector } from 'react-redux';
 import GalleryCard from './GalleryCard';
-function SearchBar({navigation}) {
+function SearchBar({ navigation }) {
     const imgdata = useSelector((state) => state.reducer)
     const [searchText, setSearchText] = useState('');
     const [filteredImages, setFilteredImages] = useState(imgdata);
@@ -26,10 +26,10 @@ function SearchBar({navigation}) {
 
 
     return (
-        
+
         <View style={{ flex: 1, backgroundColor: 'white' }}>
-            <View style={{ flex: 1, padding: 6}}>
-                <TextInput autoFocus placeholder="Search for images..." placeholderTextColor={'black'} onChangeText={handleSearch} style={{color:'black',padding: 16, fontSize: 16, borderRadius: 5, backgroundColor: 'white',borderWidth:1,borderColor:'black' }} />
+            <View style={{ flex: 1, padding: 6 }}>
+                <TextInput autoFocus placeholder="Search for images..." placeholderTextColor={'black'} onChangeText={handleSearch} style={{ color: 'black', padding: 16, fontSize: 16, borderRadius: 5, backgroundColor: 'white', borderWidth: 1, borderColor: 'black' }} />
 
             </View>
             <View style={{ flex: 7, padding: 8 }}>
@@ -42,7 +42,7 @@ function SearchBar({navigation}) {
                                 filteredImages?.map((item, index) =>
                                     <TouchableOpacity
                                         key={index}
-                                        onPress={() => handleImagePress(item) }
+                                        onPress={() => handleImagePress(item)}
                                     >
                                         <GalleryCard item={item} />
                                     </TouchableOpacity>
