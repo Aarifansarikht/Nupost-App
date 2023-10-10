@@ -8,7 +8,7 @@ import CategoriesList from '../components/CategoriesList';
 function HomeScreen({ navigation }) {
     const dispatch = useDispatch();
     const imgdata = useSelector((state) => state.reducer)
-    const [imagesData, setImagesData] = useState(null)
+    const [imagesData, setImagesData] = useState([])
     const [filteredData, setFilteredData] = useState(null);
     const [ctgData, setCtgData] = useState(null)
     const [selectedImage, setSelectedImage] = useState(null);
@@ -26,7 +26,7 @@ function HomeScreen({ navigation }) {
                 id: doc.id,
                 data: doc.data(),
             }));
-
+            console.warn(categories);
             setCtgData(categories)
         } catch (error) {
             console.error('Error fetching categories:', error);
@@ -44,6 +44,7 @@ function HomeScreen({ navigation }) {
                 id: doc.id,
                 data: doc.data(),
             }));
+      
             dispatch(getImageData(imagesDataf))
             setImagesData(imagesDataf)
             setFilteredData(imagesDataf)
@@ -53,7 +54,6 @@ function HomeScreen({ navigation }) {
         }
 
     }
-
 
 
 

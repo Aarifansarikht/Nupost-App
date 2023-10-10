@@ -11,7 +11,7 @@ function CategoriesList({ ctgData, filteredData, navigation }) {
     };
     const [selectedImage, setSelectedImage] = useState(null);
 
-
+    console.warn(imgdata);
     const handleImagePress = (image) => {
         setSelectedImage(image);
         navigation.navigate('Preview', { selectedImage: image, filteredData: filteredData });
@@ -28,11 +28,10 @@ function CategoriesList({ ctgData, filteredData, navigation }) {
                         <View style={styles.imageitems}>
 
                             {imgdata
-                                .filter((imageitem) => imageitem.data?.ctgIds.includes(ctgitem.id))
+                                .filter((imageitem) => imageitem.data && imageitem.data.ctgIds && imageitem.data.ctgIds.includes(ctgitem.id))
                                 .map((filteredItem, index) =>
-                                    <View style={{ height: 160, width: 145, borderRadius: 10 }}
-                                    >
-                                        {filteredItem.data.url && /\.(mp4|mov|avi|mkv)$/i.test(filteredItem.data.url) ? (
+                                    <View style={{ height: 160, width: 145, borderRadius: 10 }}>
+                                        {filteredItem.data && filteredItem.data.url && /\.(mp4|mov|avi|mkv)$/i.test(filteredItem.data.url) ? (
                                             <View style={styles.videoContainer}>
                                                 <VideoPlayer
                                                     style={{ height: 160, width: 145, borderRadius: 10 }}
@@ -49,7 +48,6 @@ function CategoriesList({ ctgData, filteredData, navigation }) {
                                             </View>
                                         ) : (
                                             <TouchableOpacity key={index} onPress={() => handleImagePress(filteredItem)}>
-
                                                 <Image
                                                     style={{ height: 160, width: 145, borderRadius: 10 }}
                                                     source={{ uri: filteredItem.data.url }}
@@ -57,9 +55,7 @@ function CategoriesList({ ctgData, filteredData, navigation }) {
                                                 />
                                             </TouchableOpacity>
                                         )}
-
                                     </View>
-
                                 )}
                         </View>
                     </ScrollView>
