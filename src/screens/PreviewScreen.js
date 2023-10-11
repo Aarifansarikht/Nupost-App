@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import Feather from "react-native-vector-icons/Feather";
-import { ScrollView, View, StyleSheet, SafeAreaView, Text, Image, Modal, Button, Pressable, TouchableOpacity, PermissionsAndroid, Platform, ActivityIndicator } from "react-native";
+import { ScrollView, View, StyleSheet, SafeAreaView, Text, Image, Modal, Button, Pressable, TouchableOpacity, PermissionsAndroid, Platform, ActivityIndicator,Alert } from "react-native";
 import GalleryCard from '../components/GalleryCard';
 import VideoPlayer from "react-native-video-player";
 import RNFetchBlob from 'rn-fetch-blob';
@@ -16,6 +16,51 @@ function PreviewScreen({ navigation, route }) {
   const scrollViewRef = useRef(null);
   const REMOTE_IMAGE_PATH = selectedImage?.data.url
   const LOCAL_IMAGE_PATH = `${RNFS.DocumentDirectoryPath}/photo.jpg`;
+
+
+
+  // const overlayUserDataOnTemplate = () => {
+  //   // Load the image template
+  //   const templateImage = require('../assets/img/nature.png');
+    
+  //   // Retrieve user data
+  //   const userData = {
+  //     name: 'John Doe',
+  //     logo: require('../assets/img/animal.png'),
+  //     socialMedia: 'social_media_handle',
+  //     phoneNumber: '123-456-7890',
+  //   };
+  
+  //   // Overlay user data on the template
+  //   ImageMarker.markImage({
+  //     src: templateImage,
+  //     markerImage: userData.logo,
+  //     position: 'topLeft',
+  //     X: 20, // Adjust X and Y coordinates for proper placement
+  //     Y: 20,
+  //     scale: 0.5, // Adjust the scale as needed
+  //     markerWidth: 50,
+  //     markerHeight: 50,
+  //     quality: 100, // Adjust image quality
+  //     markerStyle: {
+  //       borderRadius: 25,
+  //     },
+  //     // Other options for overlaying text for name, social media, and phone number
+  //     texts: [
+  //       { text: userData.name, position: 'topCenter' },
+  //       { text: userData.socialMedia, position: 'centerCenter' },
+  //       { text: userData.phoneNumber, position: 'bottomCenter' },
+  //     ],
+  //   }).then((res) => {
+  //     console.log("response...................",res,"check the response")
+  //     // PhotoEditor.Edit({
+  //     //   path: res
+  //     // });
+  //     // 'res' contains the URI of the edited image with user data overlay
+  //     // You can now display or save this image as needed.
+  //   });
+  // };
+  
 
   const handleImagePress = (image) => {
     setSelectedImage_p(image);
@@ -105,21 +150,19 @@ function PreviewScreen({ navigation, route }) {
 
 
 
+  
 
   const openPhotoEditor = (img) => {
     try {
-      PhotoEditor.Edit({
-        path: img,
-
-
+        PhotoEditor.Edit({
+        path: img
       });
+     
     } catch (error) {
       console.error('Error opening the photo editor:', error);
       Alert.alert('Error', 'Failed to open the photo editor.');
     }
   };
-
-
 
 
 

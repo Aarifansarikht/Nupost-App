@@ -76,7 +76,9 @@ android {
     namespace "com.nupost.app"
     defaultConfig {
         applicationId "com.nupost.app"
-        minSdkVersion rootProject.ext.minSdkVersion
+        // minSdkVersion rootProject.ext.minSdkVersion
+        minSdkVersion 21
+        multiDexEnabled true
         targetSdkVersion 33
         versionCode 3
         versionName "1.2"

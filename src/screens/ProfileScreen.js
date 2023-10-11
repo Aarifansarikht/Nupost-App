@@ -1,6 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useEffect, useState, useRef } from 'react';
-import { Image, View, Button, Text, StyleSheet } from 'react-native';
+import { Image, View, Button, Text, StyleSheet ,Linking} from 'react-native';
 import { collection, getDocs, query, where, doc, updateDoc } from '@firebase/firestore';
 import { firestore } from "../firebase/firebase";
 import { storage, ref, uploadBytes, getDownloadURL } from '../firebase/firebase';
@@ -13,16 +13,24 @@ import ImagePicker from 'react-native-image-crop-picker';
 
 import { BottomSheetScrollView, BottomSheetModal, BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { deleteObject } from 'firebase/storage';
+import DropdownComponent from '../components/Dropdown';
 
 function ProfileScreen({ navigation }) {
     const [userData, setUserData] = useState(null);
     const [profileimg, setProfileImg] = useState(null);
     const [politicalImgUrl, setPoliticalImgUrl] = useState(null);
     const [mobileNumber, setMobileNumber] = useState(null);
-    const [designation, setDesignation] = useState(null);
+    const [WhatsappNumber, setWhatsappNumber] = useState(null);
+    const [designation, setDesignation] = useState('');
     const [politicalParty, setPoliticalParty] = useState(null);
-
+    const [showInsta,SetshowInsta]  = useState(false);
+    const [showFacebook,setshowFacebook]  = useState(false);
+    const [showTwitter,SetshowTwitter]  = useState(false);
+    const [InstaUrl,setInstaUrl] = useState('')
+    const [FacebookUrl,setFacebookUrl] = useState('')
+    const [TwitterUrl,setTwitterUrl] = useState('')
     console.warn(profileimg);
+
 
 
     const handleLogout = async () => {
@@ -61,11 +69,18 @@ function ProfileScreen({ navigation }) {
         const imageUrl = await uploadImage();
         const docRef = doc(firestore, "users", userId);
         await updateDoc(docRef, {
-            designation: designation,
             mobileNumber: mobileNumber,
             politicalParty: politicalParty,
-            imageUrl: imageUrl
-        });
+            designation:designation,
+            imageUrl: imageUrl,
+            InstaUrl:InstaUrl,
+            FacebookUrl : FacebookUrl ,
+            TwitterUrl : TwitterUrl,
+            designation: designation,
+            WhatsappNumber: WhatsappNumber
+        }).then(()=>(
+            alert("Profile Updated Successfully!")
+        ));
     }
     const bottomSheetModalRef = useRef(null);
     const handleImagePick = () => {
@@ -228,15 +243,39 @@ function ProfileScreen({ navigation }) {
                                     <View >
                                         <TextInput style={styles.textInput} value={userData.userData.name} placeholderTextColor="#888" />
                                         <TextInput style={styles.textInput} value={userData.userData.email} placeholderTextColor="#888" />
-                                        <TextInput style={styles.textInput} value={mobileNumber} placeholder='Mobile Number' placeholderTextColor="#888" onChangeText={(text) => setMobileNumber(text)} />
-                                        <TextInput style={styles.textInput} value={designation} placeholder='Designation' placeholderTextColor="#888" onChangeText={(text) => setDesignation(text)} />
-                                        <TextInput style={styles.textInput} value={politicalParty} placeholder='Political Party' placeholderTextColor="#888" onChangeText={(text) => setPoliticalParty(text)} />
+                                        <TextInput style={styles.textInput} value={userData.userData.mobileNumber} placeholder='Mobile Number' placeholderTextColor="#888" onChangeText={(text) => setMobileNumber(text)} />
+                                        <TextInput style={styles.textInput} value={userData.userData.WhatsappNumber} placeholder='WhatsApp Number' placeholderTextColor="#888" onChangeText={(text) => setWhatsappNumber(text)} />
+                                        {/* <TextInput style={styles.textInput} value={userData.userData.designation} placeholder='Designation' placeholderTextColor="#888" onChangeText={(text) => setDesignation(text)} /> */}
+                                        <DropdownComponent />
+                                        <TextInput style={styles.textInput} value={userData.userData.politicalParty} placeholder='Political Party' placeholderTextColor="#888" onChangeText={(text) => setPoliticalParty(text)} />
+                                        {showInsta && <View>
+                                          <TextInput style={styles.textInput} value={userData.userData.InstaUrl} placeholder='Paste Instagram Url' placeholderTextColor="#888" onChangeText={(text) => setInstaUrl(text)} />
+                                             </View> }
+                                             {showFacebook && <View>
+                                          <TextInput style={styles.textInput} value={userData.userData.FacebookUrl} placeholder='Paste Facebook Url' placeholderTextColor="#888" onChangeText={(text) => setFacebookUrl(text)} />
+                                             </View> }
+                                             {showTwitter && <View>
+                                          <TextInput style={styles.textInput} value={userData.userData.TwitterUrl} placeholder='Paste Twitter Url' placeholderTextColor="#888" onChangeText={(text) => setTwitterUrl(text)} />
+                                             </View> }
                                         <TouchableOpacity style={styles.profile_edit_btn} onPress={updateProfile}>
                                             <Text style={styles.logout_btn_text}>Update Profile</Text>
                                         </TouchableOpacity>
                                         <TouchableOpacity style={styles.logout_btn} onPress={handleLogout}>
                                             <Text style={styles.logout_btn_text}>Log Out</Text>
                                         </TouchableOpacity>
+
+                                        <View style={styles.icons_view}>
+                                            <TouchableOpacity onPress={()=>SetshowInsta(true)} >
+                                   <Image source={{uri:"https://static.vecteezy.com/system/resources/previews/023/986/555/original/instagram-logo-instagram-logo-transparent-instagram-icon-transparent-free-free-png.png"}}  style={styles.icons}/>
+                                            </TouchableOpacity>
+                                            <TouchableOpacity onPress={()=>setshowFacebook(true)}>
+                                   <Image source={{uri:"https://www.edigitalagency.com.au/wp-content/uploads/Facebook-logo-blue-circle-large-transparent-png.png"}}  style={styles.icons}/>
+                                            </TouchableOpacity>
+                                                <TouchableOpacity onPress={()=>SetshowTwitter(true)}>
+                                   <Image source={{uri:"https://png.pngtree.com/png-vector/20221018/ourmid/pngtree-twitter-social-media-round-icon-png-image_6315985.png"}}  style={styles.icons}/>
+                                                </TouchableOpacity>
+                                        </View>
+                         
                                     </View>
                                 </>
                             ) : (
@@ -300,32 +339,30 @@ const styles = StyleSheet.create({
         borderRadius: 5,
 
     },
-    logout_btn_text: {
-        color: 'black',
-        textAlign: 'center',
-        fontSize: 16
-    },
     profile_edit_btn: {
         borderWidth: 2,
         padding: 10,
         borderRadius: 5,
         marginBottom: 10,
-    }
-    ,
-    button: {
-        borderWidth: 2,
-        borderColor: 'black',
-        margin: 10,
-        padding: 10,
-        borderRadius: 10,
-        textAlign: 'center'
-
     },
-    buttonText: {
+    logout_btn_text: {
         color: 'black',
-        fontSize: 16,
-        textAlign: 'center'
+        fontSize: 18,
+        fontWeight: '700'
+    },
+    icons_view:{
+        flex:1,
+        flexDirection:"row",
+        justifyContent:'center',
+        marginVertical:10,
+        
+    },
+    icons:{
+        height:30,
+        width:30,
+        marginRight:5
     }
+
 })
 
 export default ProfileScreen;

@@ -3,9 +3,14 @@ import { StyleSheet, View, Image, ActivityIndicator } from 'react-native';
 
 import VideoPlayer from "react-native-video-player";
 function GalleryCard(props) {
+
   const { url } = props.item?.data;
+
+console.log(props,"check url")
+
   const isVideo = url && /\.(mp4|mov|avi|mkv)$/i.test(url);
   const [indicator, setIndicator] = useState(false);
+
   const handleLoadStart = () => {
     setIndicator(true);
   };

@@ -97,7 +97,7 @@ function SignupScreen({ navigation }) {
 
     const storeUser = async () => {
         setClicked(true)
-        if (name === '' || email === '' || password === '' || confirmPassword === '' || !passRegex.test(password) || email.indexOf('@') === -1) {
+        if (name === '' || email === '' || password === '' || confirmPassword === '' || password === "" || email.indexOf('@') === -1) {
             if (name === "") {
                 setNameError(true)
             } else {
@@ -313,7 +313,7 @@ function SignupScreen({ navigation }) {
                                         <Ionicons name={showPassword ? "eye" : "eye-off"} style={{ color: 'black' }} size={20} />
                                     </TouchableOpacity>
                                 </View>
-                                {passwordError ? <Text style={styles.error_text} >Password must be filled out.</Text> : password !== "" && !passRegex.test(password) ? <Text style={{ color: 'red', marginBottom: 20 }}>Minimum 8 characters,  at least 1 uppercase and lowercase letter , 1 number and 1 special character</Text> : ""}
+                                {passwordError ? <Text style={styles.error_text} >Password must be filled out.</Text> : password !== "" && password.length < 8 ? <Text style={{ color: 'red', marginBottom: 20 }}>Password must be contain 8 characters?</Text> : ""}
 
                                 <View style={styles.inputfields}>
                                     <MaterialIcons name='lock' size={20} style={styles.inputfields_icons} />
