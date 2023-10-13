@@ -39,8 +39,10 @@ function SignupScreen({ navigation }) {
     const [mobileNumber, setMobileNumber] = useState(null);
     const [designation, setDesignation] = useState(null);
     const [politicalParty, setPoliticalParty] = useState(null);
-
-
+    const [InstaUrl,setInstaUrl] = useState('')
+    const [FacebookUrl,setFacebookUrl] = useState('')
+    const [TwitterUrl,setTwitterUrl] = useState('')
+    const [WhatsappNumber, setWhatsappNumber] = useState('');
 
 
     const toggleTermsCheck = () => {
@@ -133,7 +135,11 @@ function SignupScreen({ navigation }) {
                 politicalImgUrl,
                 mobileNumber,
                 designation,
-                politicalParty
+                WhatsappNumber,
+                politicalParty,
+                InstaUrl,
+                FacebookUrl,
+                TwitterUrl
             });
             setName('');
             setEmail('');
@@ -143,6 +149,10 @@ function SignupScreen({ navigation }) {
             setPoliticalImgUrl(null);
             setDesignation('');
             setMobileNumber('');
+            setWhatsappNumber('')
+            setInstaUrl('')
+            setFacebookUrl('')
+            setTwitterUrl('')
             setPoliticalParty('');
             setIsLoading(false);
             setModalVisible(true);

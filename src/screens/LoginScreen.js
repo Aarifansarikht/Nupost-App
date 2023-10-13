@@ -70,6 +70,7 @@ function LoginScreen() {
             setName(userData.name)
 
             const user = { userData };
+            console.log("UserData__________loginScreen",userData)
             AsyncStorage.setItem('userData', JSON.stringify(user));
             AsyncStorage.setItem('keepLoggedIn', JSON.stringify(true));
             navigation.navigate('Home');

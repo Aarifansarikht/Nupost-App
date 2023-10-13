@@ -11,7 +11,7 @@ function CategoriesList({ ctgData, filteredData, navigation }) {
     };
     const [selectedImage, setSelectedImage] = useState(null);
 
-    console.warn(imgdata);
+    console.warn("img_______data",imgdata);
     const handleImagePress = (image) => {
         setSelectedImage(image);
         navigation.navigate('Preview', { selectedImage: image, filteredData: filteredData });
@@ -19,8 +19,8 @@ function CategoriesList({ ctgData, filteredData, navigation }) {
 
     return (
         <ScrollView style={{ backgroundColor: '#0031' }}>
-            {ctgData?.map((ctgitem) =>
-                <View key={ctgitem.id} >
+            {ctgData?.map((ctgitem,index) =>
+                <View key={index} >
                     <View style={styles.category_name}>
                         <Text style={styles.category_text}>{ctgitem.data?.ctgName}</Text>
                     </View>

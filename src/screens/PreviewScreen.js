@@ -1,12 +1,13 @@
 import React, { useEffect, useRef, useState } from 'react';
 import Feather from "react-native-vector-icons/Feather";
-import { ScrollView, View, StyleSheet, SafeAreaView, Text, Image, Modal, Button, Pressable, TouchableOpacity, PermissionsAndroid, Platform, ActivityIndicator,Alert } from "react-native";
+import { ScrollView, View, StyleSheet, SafeAreaView, Text, Image, Modal, Button, Pressable, TouchableOpacity, PermissionsAndroid, Platform, ActivityIndicator,Alert,Linking, ImageBackground } from "react-native";
 import GalleryCard from '../components/GalleryCard';
 import VideoPlayer from "react-native-video-player";
 import RNFetchBlob from 'rn-fetch-blob';
 import PhotoEditor from "react-native-photo-editor";
 import RNFS from 'react-native-fs'
 
+// import {openPhotoEditor} from "../components/OverlayComponent";
 import resolveAssetSource from 'react-native/Libraries/Image/resolveAssetSource'
 import CategoriesList from '../components/CategoriesList';
 function PreviewScreen({ navigation, route }) {
@@ -19,47 +20,7 @@ function PreviewScreen({ navigation, route }) {
 
 
 
-  // const overlayUserDataOnTemplate = () => {
-  //   // Load the image template
-  //   const templateImage = require('../assets/img/nature.png');
-    
-  //   // Retrieve user data
-  //   const userData = {
-  //     name: 'John Doe',
-  //     logo: require('../assets/img/animal.png'),
-  //     socialMedia: 'social_media_handle',
-  //     phoneNumber: '123-456-7890',
-  //   };
-  
-  //   // Overlay user data on the template
-  //   ImageMarker.markImage({
-  //     src: templateImage,
-  //     markerImage: userData.logo,
-  //     position: 'topLeft',
-  //     X: 20, // Adjust X and Y coordinates for proper placement
-  //     Y: 20,
-  //     scale: 0.5, // Adjust the scale as needed
-  //     markerWidth: 50,
-  //     markerHeight: 50,
-  //     quality: 100, // Adjust image quality
-  //     markerStyle: {
-  //       borderRadius: 25,
-  //     },
-  //     // Other options for overlaying text for name, social media, and phone number
-  //     texts: [
-  //       { text: userData.name, position: 'topCenter' },
-  //       { text: userData.socialMedia, position: 'centerCenter' },
-  //       { text: userData.phoneNumber, position: 'bottomCenter' },
-  //     ],
-  //   }).then((res) => {
-  //     console.log("response...................",res,"check the response")
-  //     // PhotoEditor.Edit({
-  //     //   path: res
-  //     // });
-  //     // 'res' contains the URI of the edited image with user data overlay
-  //     // You can now display or save this image as needed.
-  //   });
-  // };
+
   
 
   const handleImagePress = (image) => {
@@ -149,9 +110,6 @@ function PreviewScreen({ navigation, route }) {
   };
 
 
-
-  
-
   const openPhotoEditor = (img) => {
     try {
         PhotoEditor.Edit({
@@ -163,6 +121,8 @@ function PreviewScreen({ navigation, route }) {
       Alert.alert('Error', 'Failed to open the photo editor.');
     }
   };
+  
+
 
 
 
@@ -304,11 +264,30 @@ function PreviewScreen({ navigation, route }) {
             </View>
 
           ) : (
+       
+
+                  //   <ImageBackground  source={{uri:"https://res.cloudinary.com/dmhyncob4/image/upload/v1696171333/images/nvtrzysiax9zxkjmdmth.png"}} style={styles.preview_image}>
+
+                  //       <View style={{flex: 1,justifyContent: 'flex-end',alignItems: 'flex-start'}}> 
+                  //           <Image
+                  //             source={ {uri:url}}
+                  //             style={{width: "100%" , height: "90%",marginBottom:"16%"}} />
+                  //       </View>
+
+                  //  </ImageBackground>
+
+ 
+
+
+
+      
+
             <Image
               style={styles.preview_image}
               source={{ uri: url }}
               resizeMode="contain"
-            />
+              />
+         
           )}
 
           <View style={styles.btns_wrapper}>
@@ -344,8 +323,7 @@ const styles = StyleSheet.create({
   },
   preview_image: {
     height: 380,
-    width: 320,
-    borderRadius: 10,
+    width: "100%",
     marginBottom: 170
   },
   btns_wrapper: {
