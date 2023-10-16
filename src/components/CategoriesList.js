@@ -11,7 +11,7 @@ function CategoriesList({ ctgData, filteredData, navigation }) {
     };
     const [selectedImage, setSelectedImage] = useState(null);
 
-    console.warn("img_______data",imgdata);
+    // console.warn("img_______data",imgdata);
     const handleImagePress = (image) => {
         setSelectedImage(image);
         navigation.navigate('Preview', { selectedImage: image, filteredData: filteredData });

@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import Feather from "react-native-vector-icons/Feather";
 import { ScrollView, View, StyleSheet, SafeAreaView, Text, Image, Modal, Button, Pressable, TouchableOpacity, PermissionsAndroid, Platform, ActivityIndicator,Alert,Linking, ImageBackground } from "react-native";
 import GalleryCard from '../components/GalleryCard';
@@ -6,20 +7,75 @@ import VideoPlayer from "react-native-video-player";
 import RNFetchBlob from 'rn-fetch-blob';
 import PhotoEditor from "react-native-photo-editor";
 import RNFS from 'react-native-fs'
-
+import { editAndSaveImage } from '../components/OverlayComponent';
+import { uploadImage } from '../components/OverlayComponent';
+import Frame_list from '../components/Frames';
 // import {openPhotoEditor} from "../components/OverlayComponent";
 import resolveAssetSource from 'react-native/Libraries/Image/resolveAssetSource'
 import CategoriesList from '../components/CategoriesList';
+import ViewShot from 'react-native-view-shot';
+
 function PreviewScreen({ navigation, route }) {
+  const [userData, setUserData] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedImage_p, setSelectedImage_p] = useState(null);
+  const [selectedFrame, setSelectedFrame] = useState(null);
   const { selectedImage, filteredData } = route.params;
   const scrollViewRef = useRef(null);
   const REMOTE_IMAGE_PATH = selectedImage?.data.url
   const LOCAL_IMAGE_PATH = `${RNFS.DocumentDirectoryPath}/photo.jpg`;
+  const viewShotRef = useRef(null);
+
+  // async function processImage() {
+  //   console.log("RemoteUrl",REMOTE_IMAGE_PATH)
+  //   try {
+  //     const url = await editAndSaveImage(REMOTE_IMAGE_PATH);
+  //     if (url) {
+  //       //    const preview_url =   await uploadImage(url)
+  //       console.log('Resulting image URL:', REMOTE_IMAGE_PATH);
+  //       // downloadImage(preview_url)
+  //       // PhotoEditor.Edit({
+  //       //   path: preview_url
+  //       // });
+
+  //     }
+  //   } catch (error) {
+  //     console.log('Error in processImage:', error);
+  //   }
+  // }
+  
+  // processImage();
 
 
+  const getUserData = async () => {
+    const data = await AsyncStorage.getItem('userData');
 
+    if (data) {
+        const parsedData = JSON.parse(data);
+      
+        console.log("Parsed_____________user_data",parsedData)
+        setUserData(parsedData);
+    }
+};
+
+useEffect(() => {
+    getUserData();
+}, []);
+
+
+  const captureImage = async () => {
+    if (viewShotRef.current) {
+      try {
+        const uri = await viewShotRef.current.capture();
+        console.log('Captured image URI:', uri);
+        const EditdedUri = await uploadImage(uri)
+          await downloadImage(EditdedUri)
+        // You can now use this URI as needed, e.g., save it or share it.
+      } catch (error) {
+        console.error('Error capturing image:', error);
+      }
+    }
+  };
 
   
 
@@ -38,6 +94,7 @@ function PreviewScreen({ navigation, route }) {
 
   const checkPermission = async () => {
     if (Platform.OS === 'ios') {
+
       downloadImage(REMOTE_IMAGE_PATH);
     } else {
       try {
@@ -56,7 +113,7 @@ function PreviewScreen({ navigation, route }) {
             // Once user grant the permission start downloading
             console.log('Storage Permission Granted.');
             setModalVisible(!modalVisible)
-            downloadImage(REMOTE_IMAGE_PATH);
+            captureImage();
           } else {
             // If permission denied then show alert
             alert('Storage Permission Not Granted');
@@ -95,7 +152,7 @@ function PreviewScreen({ navigation, route }) {
             // Once all permissions are granted, start downloading
             console.log('All Permissions Granted.');
             setModalVisible(!modalVisible);
-            downloadImage(REMOTE_IMAGE_PATH);
+            captureImage();
           } else {
             // If any permission is denied, show an alert
             alert('Permissions Not Granted');
@@ -122,11 +179,17 @@ function PreviewScreen({ navigation, route }) {
     }
   };
   
+  const handleSelectImage = (uri) => {
+    console.log("selected______frame_____uri",uri)
+    setSelectedFrame(uri);
+  };
+
 
 
 
 
   const downloadImage = editedImage => {
+    console.log(editedImage,"check______")
     let date = new Date();
     let ext = getExtention(editedImage);
     ext = '.' + ext;
@@ -265,7 +328,51 @@ function PreviewScreen({ navigation, route }) {
 
           ) : (
        
+         
+      <View >
+            <ViewShot ref={viewShotRef} options={{ format: 'jpg', quality: 0.9 }} style={styles.preview_image}>
+              {/* Background Image */}
+              <Image
+                source={{ uri: selectedFrame ? selectedFrame : 'https://res.cloudinary.com/dmhyncob4/image/upload/v1696171333/images/nvtrzysiax9zxkjmdmth.png' }}
+                style={styles.backgroundImage}
+              />
+      
+              {/* Overlay Image and Text */}
+              <View style={styles.overlayContainer}>
+             
+              <View style={{position:"relative"}}>
+              <Image
+                  source={{ uri: REMOTE_IMAGE_PATH }}
+                  style={styles.overlayImage}
+                />
+            <Image
+              source={{ uri: userData?.userData.politicalImgUrl }}
+              style={styles.logo}
+            />
+          </View>
+                
+                <View style={styles.textContainer}>
+                  <Text style={styles.nameText}>
+                  {userData?.userData.email}
+                  </Text>
+                  <Text style={styles.phoneText}>
+                  {`+91-${userData?.userData.mobileNumber}`}
+                  </Text>
+                  <Text style={styles.phoneText1}>
+                  {`+91-${userData?.userData.mobileNumber}`}
+                  </Text>
+                </View>
+              </View>
+            </ViewShot>
+      
+            {/* Button to capture the edited image */}
+            {/* <Button title="Capture Image" onPress={captureImage} /> */}
+          </View>
+          
+         
+          
 
+    
                   //   <ImageBackground  source={{uri:"https://res.cloudinary.com/dmhyncob4/image/upload/v1696171333/images/nvtrzysiax9zxkjmdmth.png"}} style={styles.preview_image}>
 
                   //       <View style={{flex: 1,justifyContent: 'flex-end',alignItems: 'flex-start'}}> 
@@ -277,19 +384,19 @@ function PreviewScreen({ navigation, route }) {
                   //  </ImageBackground>
 
  
-
-
+              
 
       
 
-            <Image
-              style={styles.preview_image}
-              source={{ uri: url }}
-              resizeMode="contain"
-              />
+            // <Image
+            //   style={styles.preview_image}
+            //   source={{ uri: url }}
+            //   resizeMode="contain"
+            //   />
          
           )}
 
+    <Frame_list selectedImage={selectedImage} onSelectImage={handleSelectImage}/>
           <View style={styles.btns_wrapper}>
             <TouchableOpacity onPress={checkPermission} style={styles.btns}>
               <Text style={styles.btns_text}>Download</Text>
@@ -302,7 +409,6 @@ function PreviewScreen({ navigation, route }) {
     </SafeAreaView>
   );
 }
-
 
 
 
@@ -321,11 +427,14 @@ const styles = StyleSheet.create({
 
     justifyContent: 'space-between',
   },
-  preview_image: {
-    height: 380,
-    width: "100%",
-    marginBottom: 170
-  },
+  // preview_image: {
+  //   height: 380,
+  //   width: "100%",
+  //   marginBottom: 170,
+  //   position:"relative",
+
+
+  // },
   btns_wrapper: {
     flexDirection: 'row',
     padding: 20,
@@ -404,6 +513,74 @@ const styles = StyleSheet.create({
     alignItems: 'center',
 
   },
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  preview_image: {
+    width: 330,
+    height: 350,
+    position: 'relative',
+   
+  },
+  backgroundImage: {
+    flex: 1,
+    resizeMode: 'cover',
+    position: 'absolute',
+    width: '100%',
+    height: '100%',
+  
+  },
+  overlayContainer: {
+    position: 'relative',
+    top: 0,
+    left: 0,
+    width: '100%',
+    height: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+
+  },
+  overlayImage: {
+    height: "100%",
+    width: 330,
+    resizeMode:"cover",
+   
+  },
+  textContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom:58
+  },
+  nameText: {
+    fontSize: 13,
+    fontWeight: 'bold',
+    color: 'black',
+    paddingLeft:150,
+  },
+  phoneText: {
+    fontSize: 12,
+    color: 'black',
+    // paddingBottom:30,
+    paddingRight:210
+  },
+  phoneText1: {
+    fontSize: 12,
+    color: 'black',
+    // paddingBottom:30,
+    paddingRight:210,
+
+  },
+  logo: {
+    position: 'absolute',
+    top: 60,
+    left: 10,
+    width: 60, // Adjust the size as needed
+    height: 60,
+    borderRadius:50
+  },
+
 });
 
 

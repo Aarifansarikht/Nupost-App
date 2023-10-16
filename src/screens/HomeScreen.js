@@ -26,7 +26,7 @@ function HomeScreen({ navigation }) {
                 id: doc.id,
                 data: doc.data(),
             }));
-            console.warn("categories__________data",categories);
+            console.log("categories__________data",categories);
             setCtgData(categories)
         } catch (error) {
             console.error('Error fetching categories:', error);

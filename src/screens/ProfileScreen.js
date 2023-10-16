@@ -14,6 +14,7 @@ import ImagePicker from 'react-native-image-crop-picker';
 import { BottomSheetScrollView, BottomSheetModal, BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { deleteObject, updateMetadata } from 'firebase/storage';
 import DropdownComponent from '../components/Dropdown';
+import Logo_list from '../components/logo';
 
 function ProfileScreen({ navigation }) {
     const [userData, setUserData] = useState(null);
@@ -357,6 +358,7 @@ function ProfileScreen({ navigation }) {
                                         </View>
                                     </TouchableOpacity>
                                 </View> 
+                               <Logo_list/>
                             </BottomSheetScrollView>
                         </BottomSheetModal>
                         <View style={styles.fields_wrapper}>

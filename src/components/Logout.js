@@ -6,7 +6,7 @@ function Logout({ navigation }) {
 
     await AsyncStorage.removeItem('keepLoggedIn');
     navigation.navigate('LogIn')
-    console.warn('h');
+    // console.warn('h');
 
   };
   return (
