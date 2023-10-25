@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Feather from "react-native-vector-icons/Feather";
-import { ScrollView, View, StyleSheet, SafeAreaView, Text, Image, Modal, Button, Pressable, TouchableOpacity, PermissionsAndroid, Platform, ActivityIndicator,Alert,Linking, ImageBackground } from "react-native";
+import { ScrollView, View, StyleSheet, SafeAreaView, Text, Image, Modal, Button, Pressable, TouchableOpacity, PermissionsAndroid, Platform, ActivityIndicator, Alert, Linking, ImageBackground, LogBox } from "react-native";
 import GalleryCard from '../components/GalleryCard';
 import VideoPlayer from "react-native-video-player";
 import RNFetchBlob from 'rn-fetch-blob';
@@ -14,13 +14,19 @@ import Frame_list from '../components/Frames';
 import resolveAssetSource from 'react-native/Libraries/Image/resolveAssetSource'
 import CategoriesList from '../components/CategoriesList';
 import ViewShot from 'react-native-view-shot';
+import { SCREEN_WIDTH } from '@gorhom/bottom-sheet';
+
+const POSTER_WIDTH = SCREEN_WIDTH - 60;
+const POSTER_RATIO = 1 / 1;
+const POSTER_HEIGHT = POSTER_WIDTH / POSTER_RATIO
+
 
 function PreviewScreen({ navigation, route }) {
   const [userData, setUserData] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedImage_p, setSelectedImage_p] = useState(null);
   const [selectedFrame, setSelectedFrame] = useState(null);
- 
+
   const { selectedImage, filteredData } = route.params;
   const scrollViewRef = useRef(null);
   const REMOTE_IMAGE_PATH = selectedImage?.data.url
@@ -44,7 +50,7 @@ function PreviewScreen({ navigation, route }) {
   //     console.log('Error in processImage:', error);
   //   }
   // }
-  
+
   // processImage();
 
 
@@ -52,16 +58,16 @@ function PreviewScreen({ navigation, route }) {
     const data = await AsyncStorage.getItem('userData');
 
     if (data) {
-        const parsedData = JSON.parse(data);
-      
-        console.log("Parsed_____________user_data",parsedData)
-        setUserData(parsedData);
-    }
-};
+      const parsedData = JSON.parse(data);
 
-useEffect(() => {
+      console.log("Parsed_____________user_data", parsedData)
+      setUserData(parsedData);
+    }
+  };
+
+  useEffect(() => {
     getUserData();
-}, []);
+  }, []);
 
 
   const captureImage = async () => {
@@ -70,7 +76,7 @@ useEffect(() => {
         const uri = await viewShotRef.current.capture();
         console.log('Captured image URI:', uri);
         const EditdedUri = await uploadImage(uri)
-          await downloadImage(EditdedUri)
+        await downloadImage(EditdedUri)
         // You can now use this URI as needed, e.g., save it or share it.
       } catch (error) {
         console.error('Error capturing image:', error);
@@ -78,7 +84,7 @@ useEffect(() => {
     }
   };
 
-  
+
 
   const handleImagePress = (image) => {
     setSelectedImage_p(image);
@@ -170,25 +176,25 @@ useEffect(() => {
 
   const openPhotoEditor = (img) => {
     try {
-        PhotoEditor.Edit({
+      PhotoEditor.Edit({
         path: img
       });
-     
+
     } catch (error) {
       console.error('Error opening the photo editor:', error);
       Alert.alert('Error', 'Failed to open the photo editor.');
     }
   };
-  
+
   const handleSelectImage = (uri) => {
-    console.log("selected______frame_____uri",uri)
+    console.log("selected______frame_____uri", uri)
     setSelectedFrame(uri);
   };
 
 
 
   const downloadImage = editedImage => {
-    console.log(editedImage,"check______")
+    console.log(editedImage, "check______")
     let date = new Date();
     let ext = getExtention(editedImage);
     ext = '.' + ext;
@@ -266,9 +272,11 @@ useEffect(() => {
   const url = selectedImage?.data.url;
   const isVideo = url && /\.(mp4|mov|avi|mkv)$/i.test(url);
   const [indicator, setIndicator] = useState(false);
+
   const handleLoadStart = () => {
     setIndicator(true);
   };
+
   const handleBuffering = (isBuffering) => {
     if (isBuffering) {
 
@@ -278,7 +286,7 @@ useEffect(() => {
       console.log('Buffering is complete.');
     }
   };
-
+  LogBox.ignoreAllLogs()
 
 
   return (
@@ -326,55 +334,59 @@ useEffect(() => {
             </View>
 
           ) : (
-       
-         
-      <View style={{flex:1}}>
-            <ViewShot ref={viewShotRef} options={{ format: 'jpg', quality: 0.9 }} style={styles.preview_image}>
-              {/* Background Image */}
-              <Image
-                source={{ uri: selectedFrame ? selectedFrame : 'https://res.cloudinary.com/dmhyncob4/image/upload/v1696171333/images/nvtrzysiax9zxkjmdmth.png' }}
-                style={styles.backgroundImage}
-              />
-      
-              {/* Overlay Image and Text */}
-              <View style={styles.overlayContainer}>
-             
-              <View style={{position:"relative"}}>
-              <Image
-                  source={{ uri: REMOTE_IMAGE_PATH }}
-                  style={styles.overlayImage}
-                />
-            <Image
-              source={{ uri: userData?.userData.politicalImgUrl }}
-              style={styles.logo}
-            />
-          <Image
-              source={{ uri: userData?.userData?.imageUrl }}
-              style={styles.profile_picture}
-            />
-            <Text style={styles.userName}>{userData?.userData?.name}</Text>
-          </View>
-                <View style={{flex:1,marginTop:5}}>
-                <Text style={styles.nameText}>
-                  {userData?.userData.email}
-                  </Text>
-                </View>
 
-                <View style={styles.textContainer}>
-                  <Text style={styles.phoneText}>
-                  {`+91-${userData?.userData.mobileNumber}`}
-                  </Text>
-                  <Text style={styles.phoneText1}>
-                  {`+91-${userData?.userData.WhatsappNumber}`}
-                  </Text>
+
+            <View style={{ flex: 1 }}>
+              <ViewShot ref={viewShotRef} options={{ format: 'jpg', quality: 0.9 }} style={styles.preview_image}>
+                {/* Background Image */}
+                <Image
+                  resizeMode='contain'
+                  source={{
+                    uri: selectedFrame ?
+                      selectedFrame : 'https://res.cloudinary.com/dmhyncob4/image/upload/v1696171333/images/nvtrzysiax9zxkjmdmth.png'
+                  }} style={styles.backgroundImage} />
+
+                {/* Overlay Image and Text */}
+                <View style={styles.overlayContainer}>
+                  <View style={{ position: "absolute", top: 0, zIndex: -1 }}>
+                    <Image
+                      source={{ uri: REMOTE_IMAGE_PATH }}
+                      style={styles.overlayImage}
+                    />
+                    <Image
+                      source={{ uri: userData?.userData?.politicalImgUrl }}
+                      style={styles.logo}
+                    />
+                    <Image
+                      source={{ uri: userData?.userData?.imageUrl }}
+                      style={styles.profile_picture}
+                    />
+                    <Text style={styles.userName}>{userData?.userData?.name}</Text>
+                  </View>
                 </View>
-              </View>
-            </ViewShot>
-          </View>
-         
+                  <View style={{
+                    position: 'absolute', bottom: 0, zIndex: 9, right: 0, left: 0,
+                    flexDirection: 'row', alignItems: 'flex-start',
+                    justifyContent: 'space-around'
+                  }}>          
+                  <View style={styles.textContainer}>
+                    <Text style={styles.phoneText}>
+                      {`+91-${userData?.userData.mobileNumber}`}
+                    </Text>
+                    <Text style={styles.phoneText1}>
+                      {`+91-${userData?.userData.WhatsappNumber}`}
+                    </Text>
+                    </View>
+                    <View style={{ paddingRight: 5,  }}>
+                      <Text style={styles.nameText}>{userData?.userData.email}</Text>
+                    </View>
+                </View>
+              </ViewShot>
+            </View>
+
           )}
 
-    <Frame_list selectedImage={selectedImage} onSelectImage={handleSelectImage}/>
+          <Frame_list selectedImage={selectedImage} onSelectImage={handleSelectImage} />
           <View style={styles.btns_wrapper}>
             <TouchableOpacity onPress={checkPermission} style={styles.btns}>
               <Text style={styles.btns_text}>Download</Text>
@@ -399,12 +411,6 @@ const styles = StyleSheet.create({
 
   },
 
-  gallery: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-
-    justifyContent: 'space-between',
-  },
   // preview_image: {
   //   height: 380,
   //   width: "100%",
@@ -430,11 +436,6 @@ const styles = StyleSheet.create({
   btns_text: {
     fontSize: 16,
     color: 'white'
-  },
-  containers_heading: {
-    color: 'black',
-    fontSize: 18,
-    fontWeight: '700'
   },
   video: {
     height: 380,
@@ -469,9 +470,6 @@ const styles = StyleSheet.create({
     padding: 10,
     elevation: 2,
   },
-  buttonOpen: {
-    backgroundColor: 'black',
-  },
   buttonClose: {
     backgroundColor: 'black',
   },
@@ -491,65 +489,52 @@ const styles = StyleSheet.create({
     alignItems: 'center',
 
   },
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
   preview_image: {
-    width:  330,
-    height:    350,
+    width: POSTER_WIDTH,
+    height: POSTER_HEIGHT,
     position: 'relative',
-   
-  },
-  backgroundImage: {
-    flex: 1,
-    resizeMode: 'cover',
-    position: 'absolute',
-    width: '100%',
-    height: '100%',
-  
-  },
-  overlayContainer: {
-    position: 'relative',
-    top: 0,
-    left: 0,
-    width: '100%',
-    height: '100%',
-    alignItems: 'center',
-    justifyContent: 'center',
 
   },
-  overlayImage: {
-    height: 300,
-    width: 330,
-    resizeMode:"cover",
-   
+  backgroundImage: {
+
+    position: 'absolute',
+    width: POSTER_WIDTH,
+    height: POSTER_HEIGHT,
+    zIndex: 9,
+    top: 0,
+
   },
-  textContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom:2
+  overlayContainer: {
+    position: 'absolute',
+    top: 0,
+    width: POSTER_WIDTH,
+    height: POSTER_HEIGHT,
+    justifyContent: 'flex-end',
+  },
+  overlayImage: {
+    width: POSTER_WIDTH,
+    height: POSTER_HEIGHT,
+    resizeMode: "cover",
+
+  },
+  textContainer: {    
+    padding: 10, 
+    paddingLeft:0
   },
   nameText: {
     fontSize: 10,
     fontWeight: 'bold',
-    color: 'black',
-    paddingLeft:150,
-   
+    color: 'black',    
+
   },
   phoneText: {
     fontSize: 10,
     color: 'black',
-    paddingRight:"65%"
-   
+
   },
   phoneText1: {
     fontSize: 10,
     color: 'black',
-    paddingRight:"65%",
-    marginBottom:"2%"
-
   },
   logo: {
     position: 'absolute',
@@ -557,22 +542,22 @@ const styles = StyleSheet.create({
     left: 15,
     width: 60, // Adjust the size as needed
     height: 60,
-    borderRadius:50
+    borderRadius: 50
   },
-  profile_picture:{
+  profile_picture: {
     position: 'absolute',
-    bottom: 10, 
-    right: 20, 
-    width: 60, 
+    bottom: 78,
+    right: 20,
+    width: 60,
     height: 60,
     borderRadius: 30,
   },
-  userName:{
+  userName: {
     position: 'absolute',
-    bottom: 10, 
-    left: 15, 
-    fontSize:16,
-    color:"#fff"
+    bottom: 46,
+    left: 15,
+    fontSize: 16,
+    color: "#fff"
   }
 
 });
