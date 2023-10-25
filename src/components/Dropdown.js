@@ -18,9 +18,8 @@ import React, { useState , useEffect } from 'react';
               id: doc.id,
               label: doc.data().party_name,
           }));
-          // console.warn("partyname__________data",data);
+          console.log("partyname__________data",data);
           SetDropDownData(data)
-      
       } catch (error) {
           console.error('Error fetching categories:', error);
       }
@@ -30,10 +29,9 @@ import React, { useState , useEffect } from 'react';
       fetch_party_name()
     },[])
     
-    // console.log(data,"dropdown_______-data")
+    console.log(politicalParty,value,"dropdown_______data")
     return (
       <View style={styles.container}>
-    
         <Dropdown
           style={[styles.dropdown, isFocus && { borderColor: 'gray' }]}
           placeholderStyle={styles.placeholderStyle}
@@ -46,15 +44,16 @@ import React, { useState , useEffect } from 'react';
           textStyle={{ color: 'black' }}
           labelField="label"
           valueField="value"
-          placeholder={politicalParty ? `Selected Party ${politicalParty}` : 'Select Political Party'}
+          placeholder={'Select Political Party & Logo'}
           searchPlaceholder="Search..."
-          value={value}
+          value={politicalParty ? politicalParty : value}
           onFocus={() => setIsFocus(true)}
           onBlur={() => setIsFocus(false)}
           onChange={item => {
+            console.log("Dropdown_Item",item)
             setValue(item.value);
             setIsFocus(false);
-            onPartySelect(item.label);
+            onPartySelect(item.label,item.id);
           }}
           renderItem={(item, index, isSelected) => (
             <View
@@ -67,12 +66,6 @@ import React, { useState , useEffect } from 'react';
               <Text style={{ color: 'black' }}>{item.label}</Text>
             </View>
           )}
-        //   renderLeftIcon={() => (
-        //     <Image 
-        //       style={styles.icon}
-        //       source={CustomIconImage} 
-        //     />
-        //   )}
         />
       </View>
     );

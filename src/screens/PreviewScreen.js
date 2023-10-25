@@ -20,6 +20,7 @@ function PreviewScreen({ navigation, route }) {
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedImage_p, setSelectedImage_p] = useState(null);
   const [selectedFrame, setSelectedFrame] = useState(null);
+ 
   const { selectedImage, filteredData } = route.params;
   const scrollViewRef = useRef(null);
   const REMOTE_IMAGE_PATH = selectedImage?.data.url
@@ -186,8 +187,6 @@ useEffect(() => {
 
 
 
-
-
   const downloadImage = editedImage => {
     console.log(editedImage,"check______")
     let date = new Date();
@@ -229,7 +228,7 @@ useEffect(() => {
             });
         })
         .catch(err => {
-          console.error('Error creating directory:', err);
+          console.log('Error creating directory:', err);
         });
     } else {
       // The 'Nupost_Images' directory already exists, proceed with downloading the image
@@ -254,7 +253,7 @@ useEffect(() => {
           openPhotoEditor(options.addAndroidDownloads.path);
         })
         .catch(err => {
-          console.error('Error downloading image:', err);
+          console.log('Error downloading image:', err);
         });
     }
   };
@@ -273,10 +272,10 @@ useEffect(() => {
   const handleBuffering = (isBuffering) => {
     if (isBuffering) {
 
-      console.warn('Video is buffering...');
+      console.log('Video is buffering...');
     } else {
 
-      console.warn('Buffering is complete.');
+      console.log('Buffering is complete.');
     }
   };
 
@@ -329,7 +328,7 @@ useEffect(() => {
           ) : (
        
          
-      <View >
+      <View style={{flex:1}}>
             <ViewShot ref={viewShotRef} options={{ format: 'jpg', quality: 0.9 }} style={styles.preview_image}>
               {/* Background Image */}
               <Image
@@ -349,50 +348,29 @@ useEffect(() => {
               source={{ uri: userData?.userData.politicalImgUrl }}
               style={styles.logo}
             />
+          <Image
+              source={{ uri: userData?.userData?.imageUrl }}
+              style={styles.profile_picture}
+            />
+            <Text style={styles.userName}>{userData?.userData?.name}</Text>
           </View>
-                
-                <View style={styles.textContainer}>
-                  <Text style={styles.nameText}>
+                <View style={{flex:1,marginTop:5}}>
+                <Text style={styles.nameText}>
                   {userData?.userData.email}
                   </Text>
+                </View>
+
+                <View style={styles.textContainer}>
                   <Text style={styles.phoneText}>
                   {`+91-${userData?.userData.mobileNumber}`}
                   </Text>
                   <Text style={styles.phoneText1}>
-                  {`+91-${userData?.userData.mobileNumber}`}
+                  {`+91-${userData?.userData.WhatsappNumber}`}
                   </Text>
                 </View>
               </View>
             </ViewShot>
-      
-            {/* Button to capture the edited image */}
-            {/* <Button title="Capture Image" onPress={captureImage} /> */}
           </View>
-          
-         
-          
-
-    
-                  //   <ImageBackground  source={{uri:"https://res.cloudinary.com/dmhyncob4/image/upload/v1696171333/images/nvtrzysiax9zxkjmdmth.png"}} style={styles.preview_image}>
-
-                  //       <View style={{flex: 1,justifyContent: 'flex-end',alignItems: 'flex-start'}}> 
-                  //           <Image
-                  //             source={ {uri:url}}
-                  //             style={{width: "100%" , height: "90%",marginBottom:"16%"}} />
-                  //       </View>
-
-                  //  </ImageBackground>
-
- 
-              
-
-      
-
-            // <Image
-            //   style={styles.preview_image}
-            //   source={{ uri: url }}
-            //   resizeMode="contain"
-            //   />
          
           )}
 
@@ -519,8 +497,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   preview_image: {
-    width: 330,
-    height: 350,
+    width:  330,
+    height:    350,
     position: 'relative',
    
   },
@@ -543,7 +521,7 @@ const styles = StyleSheet.create({
 
   },
   overlayImage: {
-    height: "100%",
+    height: 300,
     width: 330,
     resizeMode:"cover",
    
@@ -551,35 +529,51 @@ const styles = StyleSheet.create({
   textContainer: {
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom:58
+    marginBottom:2
   },
   nameText: {
-    fontSize: 13,
+    fontSize: 10,
     fontWeight: 'bold',
     color: 'black',
     paddingLeft:150,
+   
   },
   phoneText: {
-    fontSize: 12,
+    fontSize: 10,
     color: 'black',
-    // paddingBottom:30,
-    paddingRight:210
+    paddingRight:"65%"
+   
   },
   phoneText1: {
-    fontSize: 12,
+    fontSize: 10,
     color: 'black',
-    // paddingBottom:30,
-    paddingRight:210,
+    paddingRight:"65%",
+    marginBottom:"2%"
 
   },
   logo: {
     position: 'absolute',
-    top: 60,
-    left: 10,
+    top: 10,
+    left: 15,
     width: 60, // Adjust the size as needed
     height: 60,
     borderRadius:50
   },
+  profile_picture:{
+    position: 'absolute',
+    bottom: 10, 
+    right: 20, 
+    width: 60, 
+    height: 60,
+    borderRadius: 30,
+  },
+  userName:{
+    position: 'absolute',
+    bottom: 10, 
+    left: 15, 
+    fontSize:16,
+    color:"#fff"
+  }
 
 });
 

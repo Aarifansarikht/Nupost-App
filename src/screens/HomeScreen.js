@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { SafeAreaView, StyleSheet } from 'react-native';
+import { SafeAreaView, StyleSheet ,Text} from 'react-native';
 import { firestore } from "../firebase/firebase";
 import { collection, getDocs } from "firebase/firestore";
 import { useDispatch, useSelector } from 'react-redux';
 import { getImageData } from '../redux/action/imageData';
 import CategoriesList from '../components/CategoriesList';
+
 function HomeScreen({ navigation }) {
     const dispatch = useDispatch();
     const imgdata = useSelector((state) => state.reducer)
@@ -55,7 +56,7 @@ function HomeScreen({ navigation }) {
 
     }
 
-
+console.log(ctgData,"filter_data",filteredData)
 
     return (
         <SafeAreaView style={{ flex: 1 }}>
@@ -65,7 +66,11 @@ function HomeScreen({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-
+text:{
+    color:"#000",
+    fontSize:24,
+    textAlign:"center"
+}
 
 
 })

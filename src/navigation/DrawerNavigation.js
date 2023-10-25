@@ -1,18 +1,33 @@
-import React from 'react';
+import React,{useState,useEffect} from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { DrawerToggleButton, createDrawerNavigator } from '@react-navigation/drawer';
 import HomeScreen from '../screens/HomeScreen';
 import Header from '../components/Header';
 import { TouchableOpacity, View } from "react-native";
-
 import Feather from 'react-native-vector-icons/Feather'
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import FontAwesome from 'react-native-vector-icons/FontAwesome'
-
 import MyDownloadScreen from '../screens/MyDownloadScreen';
 import { useNavigation } from '@react-navigation/native';
 
 const Drawer = createDrawerNavigator();
 function DrawerNavigation(props) {
+    const [userData, setUserData] = useState(null);
+
+    const getUserData = async () => {
+        const data = await AsyncStorage.getItem('userData');
+   
+        if (data) {
+            const parsedData = JSON.parse(data);
+            setUserData(parsedData);
+        }
+    };
+
+
+    useEffect(() => {
+        getUserData();
+    }, []);
+
     const navigation = useNavigation();
     return (
         <Drawer.Navigator screenOptions={{
@@ -20,7 +35,7 @@ function DrawerNavigation(props) {
 
 
                 <TouchableOpacity onPress={() => navigation.navigate('Search')}><Feather name='search' style={{ color: 'black', padding: 5 }} size={20} /></TouchableOpacity>
-                <DrawerToggleButton />
+                <DrawerToggleButton url={userData?.userData?.politicalImgUrl}/>
             </View>, headerTitle: "",
 
         }}>

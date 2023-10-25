@@ -19,6 +19,7 @@ function CategoriesList({ ctgData, filteredData, navigation }) {
 
     return (
         <ScrollView style={{ backgroundColor: '#0031' }}>
+            {ctgData?.length == 0 && <Text style={{color:"#000",textAlign:"center",fontSize:16,margin:30}}>Data Not Found</Text>}
             {ctgData?.map((ctgitem,index) =>
                 <View key={index} >
                     <View style={styles.category_name}>
@@ -31,7 +32,7 @@ function CategoriesList({ ctgData, filteredData, navigation }) {
                                 .filter((imageitem) => imageitem.data && imageitem.data.ctgIds && imageitem.data.ctgIds.includes(ctgitem.id))
                                 .map((filteredItem, index) =>
                                     <View style={{ height: 160, width: 145, borderRadius: 10 }}>
-                                        {filteredItem.data && filteredItem.data.url && /\.(mp4|mov|avi|mkv)$/i.test(filteredItem.data.url) ? (
+                                        {filteredItem?.data && filteredItem.data.url && /\.(mp4|mov|avi|mkv)$/i.test(filteredItem?.data?.url) ? (
                                             <View style={styles.videoContainer}>
                                                 <VideoPlayer
                                                     style={{ height: 160, width: 145, borderRadius: 10 }}

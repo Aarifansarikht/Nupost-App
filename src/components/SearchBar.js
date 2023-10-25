@@ -14,10 +14,9 @@ function SearchBar({ navigation }) {
         setSelectedImage(image);
         navigation.navigate('Preview', { selectedImage: image, filteredImages: filteredImages });
     };
+    
     const handleSearch = (text) => {
         setSearchText(text);
-
-        // Filter the images based on the search text
         const filtered = imgdata.filter((imageUrl) =>
             imageUrl?.data.url.toLowerCase().includes(text.toLowerCase())
         );

@@ -5,8 +5,7 @@ import VideoPlayer from "react-native-video-player";
 function GalleryCard(props) {
 
   const { url } = props.item?.data;
-
-console.log(props,"check url")
+      
 
   const isVideo = url && /\.(mp4|mov|avi|mkv)$/i.test(url);
   const [indicator, setIndicator] = useState(false);
@@ -21,7 +20,7 @@ console.log(props,"check url")
         <View style={styles.videoContainer}>
           <VideoPlayer
             style={{ height: 180, width: 165, borderRadius: 10 }}
-            video={{ uri: filteredItem.data.url }}
+            video={{ uri: url }}
             autoPlay={true}
             controlsTimeout={1000}
             defaultMuted={true}
@@ -34,8 +33,8 @@ console.log(props,"check url")
         </View>
       ) : (
         <Image
-          style={{ height: 180, width: 165, borderRadius: 10 }}
-          source={{ uri: filteredItem.data.url }}
+          style={{ height: 180, width: "100%", borderRadius: 10 }}
+          source={{ uri: url }}
           resizeMode="cover"
         />
       )}
@@ -46,11 +45,14 @@ console.log(props,"check url")
 
 const styles = StyleSheet.create({
   card: {
+    flex:1,
+    flexDirection:"row",
     backgroundColor: 'black',
     height: 180,
-    width: 165,
+    width: 145,
     borderRadius: 10,
     marginBottom: 10,
+
   }, videoContainer: {
     flex: 1,
     alignItems: 'center',

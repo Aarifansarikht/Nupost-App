@@ -3,37 +3,48 @@ import { ActivityIndicator, FlatList, Image, ScrollView, StyleSheet, Text, Touch
 import { firestore } from "../firebase/firebase";
 import { collection, getDocs } from "firebase/firestore";
 
-function Logo_list() {
+function Logo_list({ onSelectImage,partyId}) {
+  console.log("Getting Party id for logo List",partyId)
     const [LogoData,SetLogoData]= useState([]);
-      
-    const fetch_party_name = async () => {
+    const [selectedLogo ,SetSelectedLogo] = useState();
+
+    const fetch_party_logo = async () => {
       try {
           const logo_name_Collection = collection(firestore, 'partylogo');
           const politicalPartylogo = await getDocs(logo_name_Collection);
           const data = politicalPartylogo.docs?.map((doc) => (doc.data()));
           console.log("partylogo__________data",data);
-          SetLogoData(data)
-      
+
+          const matchedUrls = data.filter(item => item.party_id === partyId).map(item =>({ url: item.url }));
+          console.log(matchedUrls,"fiteredData")
+          SetLogoData(matchedUrls)
       } catch (error) {
           console.error('Error fetching categories:', error);
       }
     };
     
     useEffect(()=>{
-      fetch_party_name()
-    },[])
+      fetch_party_logo()
+    },[partyId])
+
+    const handleCardPress = (uri) => {
+      console.log(uri,"here is uri______")
+      SetSelectedLogo(uri)
+      onSelectImage(uri);
+    };
+
 
     return (
         <View style={styles.container}>
+          <Text style={{fontSize:16,color:"#000",textAlign:"center"}}>Choose Political logo</Text>
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={styles.scrollContainer}
         >
           {LogoData.map((item,index) => (
-            //onPress={() => handleCardPress(uri)}
-            <TouchableOpacity key={index} >  
-              <View style={styles.card}>
+            <TouchableOpacity key={index} onPress={() => handleCardPress(item?.url)}>  
+              <View style={[styles.card, selectedLogo === item.url && styles.selectedCard]}>
                 <Image source={{ uri: item?.url }} style={styles.image} />
                 {/* <Text style={styles.cardText}>Card {index + 1}</Text> */}
               </View>
@@ -91,15 +102,13 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
       },
       card: {
-        marginRight: 20,
-        borderWidth: 1,
-        borderColor: '#ccc',
-        borderRadius: 10,
+        marginTop:10,
+        marginRight: 10,
         padding: 10,
       },
       image: {
-        width: 150,
-        height: 150,
+        width: 60,
+        height: 60,
         borderRadius: 5,
       },
       cardText: {
@@ -111,6 +120,11 @@ const styles = StyleSheet.create({
         fontSize: 16,
         textAlign: 'center',
       },
+      selectedCard: {
+        borderColor: 'blue', 
+        borderWidth: 2,
+        borderRadius:20
+      }
     
 })
 export default Logo_list;
