@@ -1,20 +1,30 @@
-import React, { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Feather from "react-native-vector-icons/Feather";
-import { ScrollView, View, StyleSheet, SafeAreaView, Text, Image, Modal, Button, Pressable, TouchableOpacity, PermissionsAndroid, Platform, ActivityIndicator, Alert, Linking, ImageBackground, LogBox } from "react-native";
-import GalleryCard from '../components/GalleryCard';
+import {
+  View,
+  StyleSheet,
+  SafeAreaView,
+  Text,
+  Image,
+  Modal,
+  Pressable,
+  TouchableOpacity,
+  PermissionsAndroid,
+  Platform,
+  ActivityIndicator,
+  Alert,
+  LogBox,
+} from "react-native";
 import VideoPlayer from "react-native-video-player";
 import RNFetchBlob from 'rn-fetch-blob';
-import PhotoEditor from "react-native-photo-editor";
+ import PhotoEditor from "react-native-photo-editor";
 import RNFS from 'react-native-fs'
-import { editAndSaveImage } from '../components/OverlayComponent';
 import { uploadImage } from '../components/OverlayComponent';
 import Frame_list from '../components/Frames';
-// import {openPhotoEditor} from "../components/OverlayComponent";
-import resolveAssetSource from 'react-native/Libraries/Image/resolveAssetSource'
-import CategoriesList from '../components/CategoriesList';
 import ViewShot from 'react-native-view-shot';
 import { SCREEN_WIDTH } from '@gorhom/bottom-sheet';
+import { Frames } from '../vectors/frames/Frames';
 
 const POSTER_WIDTH = SCREEN_WIDTH - 60;
 const POSTER_RATIO = 1 / 1;
@@ -68,7 +78,6 @@ function PreviewScreen({ navigation, route }) {
   useEffect(() => {
     getUserData();
   }, []);
-
 
   const captureImage = async () => {
     if (viewShotRef.current) {
@@ -177,7 +186,8 @@ function PreviewScreen({ navigation, route }) {
   const openPhotoEditor = (img) => {
     try {
       PhotoEditor.Edit({
-        path: img
+        path: img,
+        onDone: () => console.log("done")
       });
 
     } catch (error) {
@@ -291,80 +301,82 @@ function PreviewScreen({ navigation, route }) {
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
-      <ScrollView contentContainerStyle={{ flexGrow: 1 }} ref={scrollViewRef}>
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => {
+          Alert.alert('Modal has been closed.');
+          setModalVisible(!modalVisible);
+        }}>
         <View style={styles.centeredView}>
-          <Modal
-            animationType="fade"
-            transparent={true}
-            visible={modalVisible}
-            onRequestClose={() => {
-              Alert.alert('Modal has been closed.');
-              setModalVisible(!modalVisible);
-            }}>
-            <View style={styles.centeredView}>
-              <View style={styles.modalView}>
+          <View style={styles.modalView}>
 
-                <Text style={styles.modalText}>Downloading Starting...</Text>
+            <Text style={styles.modalText}>Downloading Starting...</Text>
 
-                <Pressable
-                  style={[styles.button, styles.buttonClose]}
-                  onPress={() => setModalVisible(!modalVisible)}>
-                  <Text style={styles.textStyle}>Ok</Text>
-                </Pressable>
-              </View>
-            </View>
-          </Modal>
+            <Pressable
+              style={[styles.button, styles.buttonClose]}
+              onPress={() => setModalVisible(!modalVisible)}>
+              <Text style={styles.textStyle}>Ok</Text>
+            </Pressable>
+          </View>
         </View>
-        <View style={styles.top_container}>
-          {isVideo ? (
-            <View style={styles.videoContainer}>
-              <VideoPlayer
-                video={{ uri: url }}
-                style={styles.video}
-                resizeMode="cover"
-                controls={false}
-                repeat={true}
-                disableControlsAutoHide={true}
-                pauseOnPress={true}
-                onLoadStart={handleLoadStart}
-                onBuffer={handleBuffering}
-                onLoad={() => setIndicator(false)}
+      </Modal>
+      <View style={styles.top_container}>
+        {isVideo ? (
+          <View style={styles.videoContainer}>
+            <VideoPlayer
+              video={{ uri: url }}
+              style={styles.video}
+              resizeMode="cover"
+              controls={false}
+              repeat={true}
+              disableControlsAutoHide={true}
+              pauseOnPress={true}
+              onLoadStart={handleLoadStart}
+              onBuffer={handleBuffering}
+              onLoad={() => setIndicator(false)}
+            />
+            {indicator ? <ActivityIndicator size='small' color='black' style={styles.activityIndicator} /> : null}
+          </View>
+
+        ) : (
+
+
+          <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+            <ViewShot ref={viewShotRef} options={{ format: 'jpg', quality: 0.9 }} style={styles.preview_image}>
+              {/* Background Image */}
+              <View style={styles.backgroundImage}>
+                {Frames.filter((item) => item.id === selectedFrame)[0]?.image(POSTER_WIDTH + 1, POSTER_HEIGHT + 1, {
+                  name: userData?.userData?.name,
+                  email: userData?.userData.email,
+                  mobileNumber: `+91-${userData?.userData.mobileNumber}`,
+                  whatsappNumber: `+91-${userData?.userData.WhatsappNumber}`,
+                  politicalImgUrl: userData?.userData?.politicalImgUrl,
+                  imageUrl: userData?.userData?.imageUrl
+
+                })}
+              </View>
+              <Image
+                source={{ uri: REMOTE_IMAGE_PATH }}
+                style={styles.overlayImage}
               />
-              {indicator ? <ActivityIndicator size='small' color='black' style={styles.activityIndicator} /> : null}
-            </View>
-
-          ) : (
-
-
-            <View style={{ flex: 1 }}>
-              <ViewShot ref={viewShotRef} options={{ format: 'jpg', quality: 0.9 }} style={styles.preview_image}>
-                {/* Background Image */}
-                <Image
-                  resizeMode='contain'
-                  source={{
-                    uri: selectedFrame ?
-                      selectedFrame : 'https://res.cloudinary.com/dmhyncob4/image/upload/v1696171333/images/nvtrzysiax9zxkjmdmth.png'
-                  }} style={styles.backgroundImage} />
-
-                {/* Overlay Image and Text */}
-                <View style={styles.overlayContainer}>
+              <Image
+                source={{ uri: userData?.userData?.politicalImgUrl }}
+                style={styles.logo}
+              />
+              <Image
+                source={{ uri: userData?.userData?.imageUrl }}
+                style={styles.profile_picture}
+              />
+              {/* Overlay Image and Text */}
+              {/* <View style={styles.overlayContainer}>
                   <View style={{ position: "absolute", top: 0, zIndex: -1 }}>
-                    <Image
-                      source={{ uri: REMOTE_IMAGE_PATH }}
-                      style={styles.overlayImage}
-                    />
-                    <Image
-                      source={{ uri: userData?.userData?.politicalImgUrl }}
-                      style={styles.logo}
-                    />
-                    <Image
-                      source={{ uri: userData?.userData?.imageUrl }}
-                      style={styles.profile_picture}
-                    />
+                  
                     <Text style={styles.userName}>{userData?.userData?.name}</Text>
                   </View>
-                </View>
-                  <View style={{
+                </View> */}
+              {/* <View style={{
                     position: 'absolute', bottom: 0, zIndex: 9, right: 0, left: 0,
                     flexDirection: 'row', alignItems: 'flex-start',
                     justifyContent: 'space-around'
@@ -380,22 +392,21 @@ function PreviewScreen({ navigation, route }) {
                     <View style={{ paddingRight: 5,  }}>
                       <Text style={styles.nameText}>{userData?.userData.email}</Text>
                     </View>
-                </View>
-              </ViewShot>
-            </View>
-
-          )}
-
-          <Frame_list selectedImage={selectedImage} onSelectImage={handleSelectImage} />
-          <View style={styles.btns_wrapper}>
-            <TouchableOpacity onPress={checkPermission} style={styles.btns}>
-              <Text style={styles.btns_text}>Download</Text>
-              <Feather name="download" style={{ color: 'white' }} size={20} />
-            </TouchableOpacity>
+                </View> */}
+            </ViewShot>
           </View>
-        </View>
 
-      </ScrollView>
+        )}
+        <Frame_list selectedImage={selectedImage} onSelectImage={handleSelectImage} image={REMOTE_IMAGE_PATH} />
+        <View style={styles.btns_wrapper}>
+          <TouchableOpacity onPress={checkPermission} style={styles.btns}>
+            <Text style={styles.btns_text}>Download</Text>
+            <Feather name="download" style={{ color: 'white' }} size={20} />
+          </TouchableOpacity>
+        </View>
+      </View>
+
+
     </SafeAreaView>
   );
 }
@@ -405,9 +416,9 @@ function PreviewScreen({ navigation, route }) {
 const styles = StyleSheet.create({
   top_container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
     flexDirection: 'column',
+    backgroundColor: "#Fff",
+    // alignItems:'center'
 
   },
 
@@ -422,7 +433,12 @@ const styles = StyleSheet.create({
   btns_wrapper: {
     flexDirection: 'row',
     padding: 20,
-    gap: 30
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    justifyContent: 'center',
+
   },
   btns: {
     borderWidth: 1,
@@ -517,14 +533,14 @@ const styles = StyleSheet.create({
     resizeMode: "cover",
 
   },
-  textContainer: {    
-    padding: 10, 
-    paddingLeft:0
+  textContainer: {
+    padding: 10,
+    paddingLeft: 0
   },
   nameText: {
     fontSize: 10,
     fontWeight: 'bold',
-    color: 'black',    
+    color: 'black',
 
   },
   phoneText: {
@@ -538,10 +554,10 @@ const styles = StyleSheet.create({
   },
   logo: {
     position: 'absolute',
-    top: 10,
-    left: 15,
-    width: 60, // Adjust the size as needed
-    height: 60,
+    top: 5,
+    left: 5,
+    width: 40, // Adjust the size as needed
+    height: 40,
     borderRadius: 50
   },
   profile_picture: {
