@@ -43,6 +43,7 @@ function PreviewScreen({ navigation, route }) {
   const LOCAL_IMAGE_PATH = `${RNFS.DocumentDirectoryPath}/photo.jpg`;
   const viewShotRef = useRef(null);
 
+  console.log("PreviewScreen userData",userData)
   // async function processImage() {
   //   console.log("RemoteUrl",REMOTE_IMAGE_PATH)
   //   try {
@@ -79,6 +80,7 @@ function PreviewScreen({ navigation, route }) {
     getUserData();
   }, []);
 
+  
   const captureImage = async () => {
     if (viewShotRef.current) {
       try {
@@ -350,11 +352,15 @@ function PreviewScreen({ navigation, route }) {
                 {Frames.filter((item) => item.id === selectedFrame)[0]?.image(POSTER_WIDTH + 1, POSTER_HEIGHT + 1, {
                   name: userData?.userData?.name,
                   email: userData?.userData.email,
+                  designation:  userData?.userData.designation,
                   mobileNumber: `+91-${userData?.userData.mobileNumber}`,
                   whatsappNumber: `+91-${userData?.userData.WhatsappNumber}`,
                   politicalImgUrl: userData?.userData?.politicalImgUrl,
-                  imageUrl: userData?.userData?.imageUrl
-
+                  imageUrl: userData?.userData?.imageUrl,
+                  FacebookUrl: userData?.userData.FacebookUrl,
+                  InstaUrl: userData?.userData.InstaUrl,
+                  TwitterUrl: userData?.userData.TwitterUrl
+                    
                 })}
               </View>
               <Image
@@ -562,18 +568,18 @@ const styles = StyleSheet.create({
   },
   profile_picture: {
     position: 'absolute',
-    bottom: 78,
-    right: 20,
-    width: 60,
-    height: 60,
-    borderRadius: 30,
+    bottom: 20,
+    right: 2,
+    width: 70,
+    height: 70,
+    borderRadius:5
   },
   userName: {
     position: 'absolute',
     bottom: 46,
     left: 15,
     fontSize: 16,
-    color: "#fff"
+    color: "#000"
   }
 
 });

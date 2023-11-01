@@ -118,20 +118,23 @@ export const Frame1 = (props) => {
             />
         </G>
         <G>
-            <Text x="78%" y="82.5%" fill="#fff" fontSize={13} fontWeight={'600'}>
+            <Text x="8%" y="85%" fill="#fff" fontSize={21} fontWeight={'600'}>
                 {props?.data?.name}
+            </Text>
+            <Text x="38%" y="91%" fill="#fff" fontSize={17} fontWeight={'600'}>
+            {props?.data?.designation}
             </Text>
             <Text x="20" y="91.5%" fill="#DEDEDE" fontSize={13} fontWeight={'600'} >
                 {props?.data?.whatsappNumber}
             </Text>
             <Text x="18" y="97.5%" fill="#DEDEDE" fontSize={8} fontWeight={'600'}>
-                {props?.data?.email}
+            {props?.data?.FacebookUrl}
             </Text>
             <Text x="41%" y="97.5%" fill="#DEDEDE" fontSize={8} fontWeight={'600'}>
-                {props?.data?.mobileNumber}
+            {props?.data?.TwitterUrl}
             </Text>
             <Text x="75%" y="97.5%" fill="#DEDEDE" fontSize={8} fontWeight={'600'}>
-                {props?.data?.mobileNumber}
+            {props?.data?.InstaUrl}
             </Text>
         </G>
     </Svg>
@@ -244,14 +247,17 @@ export const Frame2 = (props) => {
             </Defs>
         </G>
         <G>
-            <Text x="78%" y="82.5%" fill="#fff" fontSize={13} fontWeight={'600'}>
+        <Text x="8%" y="85%" fill="#fff" fontSize={21} fontWeight={'600'}>
                 {props?.data?.name}
             </Text>
+            <Text x="38%" y="91%" fill="#fff" fontSize={17} fontWeight={'600'}>
+            {props?.data?.designation}
+            </Text>
             <Text x="20" y="93.5%" fill="#fff" fontSize={12} fontWeight={'600'} >
-                {props?.data?.email}
+            {props?.data?.FacebookUrl}
             </Text>
             <Text x="18" y="98.5%" fill="#fff" fontSize={10} fontWeight={'600'}>
-                {props?.data?.whatsappNumber}
+            {props?.data?.TwitterUrl}
             </Text>
             <Text x="44%" y="97.9%" fill="#fff" fontSize={10} fontWeight={'600'}>
                 {props?.data?.mobileNumber}
@@ -358,14 +364,17 @@ export const Frame3 = (props) => {
             />
         </G>
         <G>
-            <Text x="78%" y="82.5%" fill="#fff" fontSize={13} fontWeight={'600'}>
+        <Text x="8%" y="84%" fill="#fff" fontSize={21} fontWeight={'600'}>
                 {props?.data?.name}
             </Text>
+            <Text x="38%" y="89%" fill="#fff" fontSize={17} fontWeight={'600'}>
+            {props?.data?.designation}
+            </Text>
             <Text x="20" y="97.5%" fill="#000" fontSize={8} fontWeight={'600'}>
-                {props?.data?.email}
+            {props?.data?.FacebookUrl}
             </Text>
             <Text x="40%" y="97.5%" fill="#000" fontSize={8} fontWeight={'600'}>
-                {props?.data?.whatsappNumber}
+            {props?.data?.TwitterUrl}
             </Text>
             <Text x="73%" y="97.5%" fill="#000" fontSize={8} fontWeight={'600'}>
                 {props?.data?.mobileNumber}
@@ -465,8 +474,11 @@ export const Frame4 = (props) => {
         </G>
 
         <G>
-            <Text x="78%" y="82.5%" fill="#fff" fontSize={13} fontWeight={'600'}>
+        <Text x="2%" y="85%" fill="#fff" fontSize={21} fontWeight={'600'}>
                 {props?.data?.name}
+            </Text>
+            <Text x="20%" y="89%" fill="#fff" fontSize={14} fontWeight={'600'}>
+            {props?.data?.designation}
             </Text>
             <Text x="55%" y="90%" fill="#151515" fontSize={9} fontWeight={'600'} >
                 {props?.data?.email}
@@ -518,8 +530,11 @@ export const Frame5 = (props) => {
             </Defs>
         </G>
         <G>
-            <Text x="78%" y="82.5%" fill="#fff" fontSize={13} fontWeight={'600'}>
+        <Text x="8%" y="85%" fill="#fff" fontSize={21} fontWeight={'600'}>
                 {props?.data?.name}
+            </Text>
+            <Text x="33%" y="91%" fill="#fff" fontSize={21} fontWeight={'600'}>
+            {props?.data?.designation}
             </Text>
             <Text x="30%" y="98.5%" fill="#fff" fontSize={9} fontWeight={'600'} >
                 {props?.data?.email}
@@ -675,17 +690,20 @@ export const Frame6 = (props) => {
             </Defs>
         </G>
         <G>
-            <Text x="78%" y="82.5%" fill="#fff" fontSize={13} fontWeight={'600'}>
+        <Text x="8%" y="83%" fill="#fff" fontSize={21} fontWeight={'600'}>
                 {props?.data?.name}
             </Text>
+            <Text x="33%" y="87%" fill="#fff" fontSize={15} fontWeight={'600'}>
+            {props?.data?.designation}
+            </Text>
             <Text x="7%" y="97.8%" fill="#fff" fontSize={10} fontWeight={'600'} >
-                twitterid
+            {props?.data?.TwitterUrl}
             </Text>
             <Text x="39%" y="97.8%" fill="#fff" fontSize={10} fontWeight={'600'} >
-                instagramid
+            {props?.data?.InstaUrl}
             </Text>
             <Text x="73%" y="97.8%" fill="#fff" fontSize={10} fontWeight={'600'} >
-                facebookid
+            {props?.data?.FacebookUrl}
             </Text>
             <Text x="57%" y="92.5%" fill="#fff" fontSize={12} fontWeight={'600'}>
                 {props?.data?.whatsappNumber}
@@ -822,17 +840,20 @@ export const Frame7 = (props) => {
             />
         </G>
         <G>
-            <Text x="78%" y="82.5%" fill="#fff" fontSize={13} fontWeight={'600'}>
+        <Text x="8%" y="84%" fill="#fff" fontSize={21} fontWeight={'600'}>
                 {props?.data?.name}
             </Text>
+            <Text x="33%" y="88%" fill="#fff" fontSize={15} fontWeight={'600'}>
+            {props?.data?.designation}
+            </Text>
             <Text x="7%" y="97.8%" fill="#000" fontSize={10} fontWeight={'600'}>
-                facebookid
+            {props?.data?.FacebookUrl}
             </Text>
             <Text x="43%" y="97.8%" fill="#000" fontSize={10} fontWeight={'600'} >
-                twitterid
+            {props?.data?.TwitterUrl}
             </Text>
             <Text x="79%" y="97.8%" fill="#000" fontSize={10} fontWeight={'600'} >
-                instagramid
+            {props?.data?.InstaUrl}
             </Text>
             <Text x="57%" y="92.5%" fill="#fff" fontSize={12} fontWeight={'600'} >
                 {props?.data?.whatsappNumber}

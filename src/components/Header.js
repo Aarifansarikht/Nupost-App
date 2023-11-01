@@ -3,7 +3,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Image, View, Text } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { useNavigation } from '@react-navigation/native';
-
+import { SCREEN_WIDTH } from '@gorhom/bottom-sheet';
 
 function Header() {
     const navigation = useNavigation();
@@ -38,11 +38,12 @@ function Header() {
                     }
                 </View>
             </TouchableOpacity>
-
+           <View style={{alignSelf:"center",flex:1,justifyContent:"center",marginHorizontal:"30%"}}>
             <Image
                 source={require("../assets/img/welcomeimg.png")} // Use the correct source for the right image
-                style={{ height: 150, width: 150, borderRadius: 50, marginLeft: '25%' }}
-            />
+                style={{ height: 100, width: 100, borderRadius: 50,resizeMode:"cover"}}
+                />
+                </View>
         </View>
     );
 }

@@ -43,7 +43,7 @@ function SignupScreen({ navigation }) {
     const [FacebookUrl,setFacebookUrl] = useState('')
     const [TwitterUrl,setTwitterUrl] = useState('')
     const [WhatsappNumber, setWhatsappNumber] = useState('');
-
+    
 
     const toggleTermsCheck = () => {
         setIsTermsChecked(!isTermsChecked);
@@ -139,7 +139,8 @@ function SignupScreen({ navigation }) {
                 politicalParty,
                 InstaUrl,
                 FacebookUrl,
-                TwitterUrl
+                TwitterUrl,
+                timestamp:Date.now()
             });
             setName('');
             setEmail('');

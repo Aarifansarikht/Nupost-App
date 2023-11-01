@@ -11,9 +11,8 @@ import MyDownloadScreen from '../screens/MyDownloadScreen';
 import { useNavigation } from '@react-navigation/native';
 
 const Drawer = createDrawerNavigator();
-function DrawerNavigation(props) {
-    const [userData, setUserData] = useState(null);
-
+function DrawerNavigation({props,route}) {
+    const [userData, setUserData] = useState(null); 
     const getUserData = async () => {
         const data = await AsyncStorage.getItem('userData');
    
@@ -34,8 +33,8 @@ function DrawerNavigation(props) {
             headerShown: false, drawerPosition: 'right', headerLeft: () => <Header />, headerRight: () => <View style={{ alignItems: 'center', flexDirection: 'row' }}>
 
 
-                <TouchableOpacity onPress={() => navigation.navigate('Search')}><Feather name='search' style={{ color: 'black', padding: 5 }} size={20} /></TouchableOpacity>
-                <DrawerToggleButton url={userData?.userData?.politicalImgUrl}/>
+                <TouchableOpacity onPress={() => navigation.navigate('Search')}><Feather name='search' style={{ color: 'black', padding: 5 }} size={23} /></TouchableOpacity>
+                {/* <DrawerToggleButton /> */}
             </View>, headerTitle: "",
 
         }}>

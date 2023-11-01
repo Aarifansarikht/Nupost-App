@@ -134,6 +134,8 @@ function ProfileScreen({navigation}) {
         FacebookUrl: FacebookUrl || userData?.userData?.FacebookUrl,
         TwitterUrl: TwitterUrl || userData?.userData?.TwitterUrl,
         WhatsappNumber: WhatsappNumber || userData?.userData?.WhatsappNumber,
+ 
+
       };
       console.log('Update_______________Data______log', updatedData);
       
