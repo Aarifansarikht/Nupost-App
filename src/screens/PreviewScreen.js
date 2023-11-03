@@ -36,7 +36,7 @@ function PreviewScreen({ navigation, route }) {
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedImage_p, setSelectedImage_p] = useState(null);
   const [selectedFrame, setSelectedFrame] = useState(null);
-
+  const [isLoading,setIsLoading] = useState(false)
   const { selectedImage, filteredData } = route.params;
   const scrollViewRef = useRef(null);
   const REMOTE_IMAGE_PATH = selectedImage?.data.url
@@ -111,9 +111,11 @@ function PreviewScreen({ navigation, route }) {
   };
 
   const checkPermission = async () => {
+    setIsLoading(true)
     if (Platform.OS === 'ios') {
 
       downloadImage(REMOTE_IMAGE_PATH);
+      setIsLoading(false)
     } else {
       try {
 
@@ -132,9 +134,11 @@ function PreviewScreen({ navigation, route }) {
             console.log('Storage Permission Granted.');
             setModalVisible(!modalVisible)
             captureImage();
+            setIsLoading(false)
           } else {
             // If permission denied then show alert
             alert('Storage Permission Not Granted');
+            setIsLoading(false)
           }
         }
         else {
@@ -171,15 +175,18 @@ function PreviewScreen({ navigation, route }) {
             console.log('All Permissions Granted.');
             setModalVisible(!modalVisible);
             captureImage();
+            setIsLoading(false)
           } else {
             // If any permission is denied, show an alert
             alert('Permissions Not Granted');
+            setIsLoading(false)
           }
         }
       } catch (err) {
 
-        console.warn(err);
+        console.log(err);
         alert('Error requesting storage permission: ' + err.message);
+        setIsLoading(false)
       }
     }
   };
@@ -303,7 +310,7 @@ function PreviewScreen({ navigation, route }) {
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
-      <Modal
+      {/* <Modal
         animationType="fade"
         transparent={true}
         visible={modalVisible}
@@ -312,10 +319,11 @@ function PreviewScreen({ navigation, route }) {
           setModalVisible(!modalVisible);
         }}>
         <View style={styles.centeredView}>
+      
           <View style={styles.modalView}>
-
-            <Text style={styles.modalText}>Downloading Starting...</Text>
-
+        
+              
+        
             <Pressable
               style={[styles.button, styles.buttonClose]}
               onPress={() => setModalVisible(!modalVisible)}>
@@ -323,7 +331,8 @@ function PreviewScreen({ navigation, route }) {
             </Pressable>
           </View>
         </View>
-      </Modal>
+      </Modal> */}
+
       <View style={styles.top_container}>
         {isVideo ? (
           <View style={styles.videoContainer}>
@@ -346,6 +355,7 @@ function PreviewScreen({ navigation, route }) {
 
 
           <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+                   
             <ViewShot ref={viewShotRef} options={{ format: 'jpg', quality: 0.9 }} style={styles.preview_image}>
               {/* Background Image */}
               <View style={styles.backgroundImage}>
@@ -371,6 +381,7 @@ function PreviewScreen({ navigation, route }) {
                 source={{ uri: userData?.userData?.politicalImgUrl }}
                 style={styles.logo}
               />
+
               <Image
                 source={{ uri: userData?.userData?.imageUrl }}
                 style={styles.profile_picture}
@@ -568,11 +579,12 @@ const styles = StyleSheet.create({
   },
   profile_picture: {
     position: 'absolute',
-    bottom: 20,
-    right: 2,
-    width: 70,
-    height: 70,
-    borderRadius:5
+  bottom: 20,
+  right: 2,
+  width: 70,
+  height: 70,
+  borderRadius: 5,
+ 
   },
   userName: {
     position: 'absolute',

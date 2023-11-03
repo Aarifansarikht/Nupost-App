@@ -1,10 +1,10 @@
 import React,{useState,useEffect} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Image, View, Text } from 'react-native';
-import { TouchableOpacity } from 'react-native-gesture-handler';
+import { Image, View, Text,TouchableOpacity } from 'react-native';
+
 import { useNavigation } from '@react-navigation/native';
 import { SCREEN_WIDTH } from '@gorhom/bottom-sheet';
-
+import Feather from 'react-native-vector-icons/Feather'
 function Header() {
     const navigation = useNavigation();
     const [userData, setUserData] = useState(null);
@@ -30,7 +30,7 @@ function Header() {
     }, []);
 
     return (
-        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+        <View style={{ flexDirection:"row", alignItems:"center",justifyContent:"space-between",backgroundColor:"white"}}>
             <TouchableOpacity onPress={handleProfile}>
                 <View style={{ backgroundColor: '#5F76FD', justifyContent: 'center', alignItems: 'center', height: 35, width: 35, borderRadius: 50, marginLeft: 10 }}>
                     {userData?.userData?.imageUrl ? <Image style={{ height: "100%", width: "100%", borderRadius: 20 }} source={{ uri: userData?.userData?.imageUrl }} /> :
@@ -38,12 +38,13 @@ function Header() {
                     }
                 </View>
             </TouchableOpacity>
-           <View style={{alignSelf:"center",flex:1,justifyContent:"center",marginHorizontal:"30%"}}>
+           <View >
             <Image
-                source={require("../assets/img/welcomeimg.png")} // Use the correct source for the right image
-                style={{ height: 100, width: 100, borderRadius: 50,resizeMode:"cover"}}
+                source={require("../assets/img/logo.png")} // Use the correct source for the right image
+                style={{ height: 50, width: 70,resizeMode:"contain",marginTop:5}}
                 />
                 </View>
+                <TouchableOpacity onPress={() => navigation.navigate('Search')}><Feather name='search' style={{ color: 'black', padding: 5 }} size={23} /></TouchableOpacity>
         </View>
     );
 }

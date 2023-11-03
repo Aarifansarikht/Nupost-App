@@ -109,7 +109,7 @@ function SignupScreen({ navigation }) {
                 setEmailError(true)
             } else {
                 setEmailError(false)
-            }
+            }pan
             if (password === "") {
                 setPasswordError(true)
             } else {

@@ -17,6 +17,7 @@ function App() {
       if (data !== null) {
         // Parse the retrieved data as a boolean
         const parsedData = JSON.parse(data);
+        console.log(parsedData,"data")
         setIsLogged(parsedData);
       }
     } catch (error) {

@@ -7,6 +7,7 @@ export function getImageData(item){
     }
 }
 export function getUserData(item){
+    console.log(item,"userdata")
     return{
         type:GET_USER_DATA,
         data:item

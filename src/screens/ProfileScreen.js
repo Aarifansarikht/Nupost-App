@@ -9,6 +9,7 @@ import {
   Linking,
   PermissionsAndroid,
   Alert,
+  ActivityIndicator
 } from 'react-native';
 import {
   collection,
@@ -20,8 +21,7 @@ import {
 } from '@firebase/firestore';
 import {firestore} from '../firebase/firebase';
 import {storage, ref, uploadBytes, getDownloadURL} from '../firebase/firebase';
-import { useDispatch } from 'react-redux';
-
+import { useDispatch ,useSelector} from 'react-redux';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {
   ScrollView,
@@ -31,7 +31,7 @@ import {
 import {SafeAreaView} from 'react-native-safe-area-context';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import ImagePicker from 'react-native-image-crop-picker';
-
+import AwesomeAlert from 'react-native-awesome-alerts';
 import {
   BottomSheetScrollView,
   BottomSheetModal,
@@ -58,14 +58,21 @@ function ProfileScreen({navigation}) {
   const [TwitterUrl, setTwitterUrl] = useState(null);
   const [isProfile, setIsProfile] = useState(false);
   const [selectedPartyId, setSelectedPartyId] = useState(null);
-
+  const  [isLoading,setIsLoading] = useState(false)
+  const  [showAlert,setShowAlert] = useState(false)
+  const  [title,setTitle] = useState('')
+  const  [message,setMessage] = useState('')
+  const [refresh,setRefresh] = useState(false);
   const dispatch = useDispatch();
   // console.warn("profile________image",profileimg);
+
 
   const handleLogout = async () => {
     await AsyncStorage.removeItem('keepLoggedIn');
     navigation.navigate('Welcome');
   };
+
+
 
   const handleSelectlogo = (uri) => {
     console.log('selected______frame_____uri', uri);
@@ -90,6 +97,7 @@ function ProfileScreen({navigation}) {
     getUserData();
   }, []);
 
+
   const getUserIDByEmail = async email => {
     const querySnapshot = await getDocs(collection(firestore, 'users'));
 
@@ -105,58 +113,75 @@ function ProfileScreen({navigation}) {
     return userId;
   };
 
-  const updateProfile = async () => {
-    const emailToFind = userData?.userData.email;
+  const hideAlert = () => {
+    setShowAlert(false);
+  };
 
+  const confirmAlert = async () => {
+    navigation.navigate('Welcome');
+    AsyncStorage.clear();
+  };
+
+  const updateProfile = async () => {
+    setIsLoading(true)
+    const emailToFind = userData?.userData.email;
     console.log('check___________Users', emailToFind);
     try {
       const userId = await getUserIDByEmail(emailToFind);
       console.log('userId______', userId);
-      const imageUrl = await uploadImage();
-      const imageUrl1 = await uploadImage1();
-      console.log(
-        'URL1_____________',
-        imageUrl,
-        'URL2_______________________',
-        imageUrl1,
-      );
+      // const imageUrl =  await  uploadImage() ;
+   
+      // console.log(
+      //   'URL1_____________',
+      //   imageUrl,
+      // );
 
       const docRef = doc(firestore, 'users', userId);
       console.log('docref_______________Data______log', docRef);
       const updatedData = {
         name: UserName || userData?.userData?.name,
         designation: designation || userData?.userData?.designation,
-        imageUrl: imageUrl || userData?.userData?.imageUrl,
+        imageUrl: profileimg || userData?.userData?.imageUrl,
         mobileNumber: mobileNumber || userData?.userData?.mobileNumber,
         politicalParty: politicalParty || userData?.userData?.politicalParty,
-        politicalImgUrl: imageUrl1 || userData?.userData?.politicalImgUrl,
+        politicalImgUrl: politicalImgUrl || userData?.userData?.politicalImgUrl,
         InstaUrl: InstaUrl || userData?.userData?.InstaUrl,
         FacebookUrl: FacebookUrl || userData?.userData?.FacebookUrl,
         TwitterUrl: TwitterUrl || userData?.userData?.TwitterUrl,
         WhatsappNumber: WhatsappNumber || userData?.userData?.WhatsappNumber,
- 
-
       };
       console.log('Update_______________Data______log', updatedData);
-      
       await updateDoc(docRef, updatedData);
-      Alert.alert(
-        'Profile Updated Successfully!',
-        'Your profile has been updated successfully.',
-        [
-          {
-            text: 'OK',
-            onPress: () => navigation.navigate('Welcome'),
-          },
-        ],
-      );
+      // await AsyncStorage.setItem('userData', JSON.stringify(updatedData));
+      setIsLoading(false)
+      setShowAlert(true)
+      setRefresh(true)
+      setTitle('Profile Updated Successfully!')
+      setMessage('Your profile has been updated successfully.')
+      // Alert.alert(
+      //   'Profile Updated Successfully!',
+      //   'Your profile has been updated successfully.',
+      //   [
+      //     {
+      //       text: 'OK',
+      //       onPress: () => navigation.navigate('Welcome'),
+      //     },
+      //   ],
+      // );
     } catch (error) {
-      console.error('Error updating profile:', error);
-      alert('Failed to update profile. Please check the console for details.');
+
+      setShowAlert(true)
+      setTitle('')
+      setMessage('Failed to update profile. Please check the console for details.')
+      console.log('Error updating profile:', error);
+      // alert('Failed to update profile. Please check the console for details.');
     }
   };
 
+
+
   const bottomSheetModalRef = useRef(null);
+
   const handleImagePick = () => {
     setIsProfile(true);
     bottomSheetModalRef.current?.present();
@@ -183,20 +208,22 @@ function ProfileScreen({navigation}) {
           console.log(image);
           if (isProfile) {
             setProfileImg(image.path);
-          } else {
-            setPoliticalImgUrl(image.path);
-          }
+          } 
+          // else {
+          //   setPoliticalImgUrl(image.path);
+          // }
           bottomSheetModalRef.current?.close();
         });
       } else {
-        console.warn('Camera permission denied');
+        console.log('Camera permission denied');
       }
     } catch (error) {
-      console.error('Error requesting camera permission:', error);
+      console.log('Error requesting camera permission:', error);
     }
   };
 
-  const openLibrary = () => {
+  const openLibrary = async () => {
+    console.log("library called")
     ImagePicker.openPicker({
       width: 300,
       height: 300,
@@ -204,13 +231,16 @@ function ProfileScreen({navigation}) {
       compressImageQuality: 0.7,
     }).then(image => {
       console.log('image', image);
+      
       if (isProfile) {
-        setProfileImg(image.path);
-        console.log('isprofile_____________true');
-      } else {
-        setPoliticalImgUrl(image.path);
-        console.log('isprofile_____________false', isProfile);
-      }
+        uploadImage(image.path)
+        // setProfileImg(image.path);
+        console.log('isprofile_____________true',isProfile);
+      } 
+      // else {
+      //   setPoliticalImgUrl(image.path);
+      //   console.log('isprofile_____________false', isProfile);
+      // }
       bottomSheetModalRef.current?.close();
     });
   };
@@ -219,9 +249,10 @@ function ProfileScreen({navigation}) {
     bottomSheetModalRef.current?.close();
   };
 
-  const uploadImage = async () => {
+  const uploadImage = async (profileimg) => {
+    console.log('upload image called')
     if (profileimg == null) {
-      return null;
+      return console.log("profile image is null");
     }
 
     const uploadUri = profileimg;
@@ -247,67 +278,70 @@ function ProfileScreen({navigation}) {
       // Get the download URL of the uploaded image
       const imageUrl = await getDownloadURL(storageRef);
 
+      console.log(imageUrl,"url_image")
       // Set the image URL state or use it as needed
-
       setProfileImg(imageUrl);
 
       // Display a success message or perform any other necessary actions
-      alert(
-        'Image uploaded!',
-        'Your image has been uploaded to Firebase Cloud Storage successfully!',
-      );
+      // setShowAlert(true)
+      // setTitle('Image uploaded!')
+      // setMessage('Your image has been uploaded to Firebase Cloud Storage successfully!')
+      // alert(
+      //   'Image uploaded!',
+      //   'Your image has been uploaded to Firebase Cloud Storage successfully!',
+      // );
 
-      return imageUrl;
+      // return imageUrl;
     } catch (e) {
-      console.error('Error uploading image:', e);
+      console.log('Error uploading image:', e);
       return null;
     }
   };
 
-  const uploadImage1 = async () => {
-    // if (politicalImgUrl == null) {
-    //     return null;
-    // }
+  // const uploadImage1 = async () => {
+  //   // if (politicalImgUrl == null) {
+  //   //     return null;
+  //   // }
 
-    const uploadUri = politicalImgUrl;
-    let filename = uploadUri.substring(uploadUri.lastIndexOf('/') + 1);
+  //   const uploadUri = politicalImgUrl;
+  //   let filename = uploadUri.substring(uploadUri.lastIndexOf('/') + 1);
 
-    // Add timestamp to File Name
-    const extension = filename.split('.').pop();
-    const name = filename.split('.').slice(0, -1).join('.');
-    filename = name + Date.now() + '.' + extension;
+  //   // Add timestamp to File Name
+  //   const extension = filename.split('.').pop();
+  //   const name = filename.split('.').slice(0, -1).join('.');
+  //   filename = name + Date.now() + '.' + extension;
 
-    const storageRef = ref(storage, `user_profile/${filename}`);
+  //   const storageRef = ref(storage, `user_profile/${filename}`);
 
-    try {
-      // Fetch the image data from the local file path
-      const response = await fetch(uploadUri);
-      const blob = await response.blob();
+  //   try {
+  //     // Fetch the image data from the local file path
+  //     const response = await fetch(uploadUri);
+  //     const blob = await response.blob();
 
-      // Upload the image to Firebase Cloud Storage
-      const uploadTaskSnapshot = await uploadBytes(storageRef, blob, {
-        contentType: 'image/jpeg', // Specify the content type here
-      });
+  //     // Upload the image to Firebase Cloud Storage
+  //     const uploadTaskSnapshot = await uploadBytes(storageRef, blob, {
+  //       contentType: 'image/jpeg', // Specify the content type here
+  //     });
 
-      // Get the download URL of the uploaded image
-      const imageUrl = await getDownloadURL(storageRef);
+  //     // Get the download URL of the uploaded image
+  //     const imageUrl = await getDownloadURL(storageRef);
 
-      // Set the image URL state or use it as needed
+  //     // Set the image URL state or use it as needed
 
-      setPoliticalImgUrl(imageUrl);
+  //     setPoliticalImgUrl(imageUrl);
 
-      // Display a success message or perform any other necessary actions
-      alert(
-        'Image uploaded!',
-        'Your image has been uploaded to Firebase Cloud Storage successfully!',
-      );
+  //     // Display a success message or perform any other necessary actions
+  //     // alert(
+  //     //   'Image uploaded!',
+  //     //   'Your image has been uploaded to Firebase Cloud Storage successfully!',
+  //     // );
 
-      return imageUrl;
-    } catch (e) {
-      console.error('Error uploading image:', e);
-      return null;
-    }
-  };
+  //     return imageUrl;
+  //   } catch (e) {
+  //     console.log('Error uploading image:', e);
+  //     return null;
+  //   }
+  // };
 
   // console.log(politicalImgUrl,"image___________________url")
 
@@ -327,6 +361,7 @@ function ProfileScreen({navigation}) {
     <BottomSheetModalProvider>
       <SafeAreaView style={styles.main_container}>
         <ScrollView style={{flex: 1}}>
+       
           <View style={styles.profile_container}>
             <View style={styles.images_wrapper}>
               <TouchableOpacity onPress={handleImagePick}>
@@ -342,7 +377,7 @@ function ProfileScreen({navigation}) {
                       <Image
                         style={styles.logo_images}
                         resizeMode="contain"
-                        source={{uri: userData?.userData.imageUrl}}
+                        source={{uri: userData?.userData?.imageUrl}}
                       />
                     )}
                     <MaterialIcons
@@ -406,9 +441,7 @@ function ProfileScreen({navigation}) {
                 </View>
               </BottomSheetScrollView>
             </BottomSheetModal>
-            <View>
-            
-            </View>
+         
             <View style={styles.fields_wrapper}>
               {userData?.userData && userData?.userData.email ? (
                 <>
@@ -565,6 +598,23 @@ function ProfileScreen({navigation}) {
           </View>
         </ScrollView>
       </SafeAreaView>
+      {isLoading &&  <ActivityIndicator size="large" color={'black'} marginTop={20} style={styles.activityIndicator}/>}
+      {showAlert &&   <AwesomeAlert
+        show={showAlert}
+        showProgress={false}
+        title={title}
+        message={message}
+        closeOnTouchOutside={true}
+        closeOnHardwareBackPress={false}
+        showCancelButton={true}
+        showConfirmButton={true}
+        cancelText="No, cancel"
+        confirmText="Ok"
+        confirmButtonColor="#DD6B55"
+        onCancelPressed={hideAlert}
+        onConfirmPressed={confirmAlert}
+      />}
+      
     </BottomSheetModalProvider>
   );
 }
@@ -651,7 +701,7 @@ const styles = StyleSheet.create({
     color: 'black',
     fontSize: 16,
     textAlign: 'center',
-  },
+  }
 });
 
 export default ProfileScreen;

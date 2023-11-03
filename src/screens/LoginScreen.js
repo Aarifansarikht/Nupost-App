@@ -8,10 +8,12 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import { collection, getDocs, query, where } from '@firebase/firestore';
 import { firestore } from "../firebase/firebase";
 import { useNavigation } from '@react-navigation/native';
+import { useDispatch } from 'react-redux';
+import { getUserData } from '../redux/action/imageData';
 
 function LoginScreen() {
 
-
+    const dispatch = useDispatch();
     const navigation = useNavigation();
     const [showPassword, setShowPassword] = useState(false);
     const handlePasswordShow = () => setShowPassword(!showPassword)
@@ -53,7 +55,7 @@ function LoginScreen() {
             const q = query(usersRef, where('email', '==', email));
             const querySnapshot = await getDocs(q);
             const userDoc = querySnapshot.docs[0];
-            const userData = userDoc.data();
+            const userData = userDoc?.data();
 
 
             if (querySnapshot.empty) {
@@ -70,7 +72,8 @@ function LoginScreen() {
             setName(userData.name)
 
             const user = { userData };
-            console.log("UserData__________loginScreen",userData)
+            console.log("UserData__________loginScreen",JSON.stringify(user))
+            // dispatch(getUserData(user));
             AsyncStorage.setItem('userData', JSON.stringify(user));
             AsyncStorage.setItem('keepLoggedIn', JSON.stringify(true));
             navigation.navigate('Home');
@@ -80,6 +83,7 @@ function LoginScreen() {
             setClicked(true);
         } catch (error) {
             console.error('Login error:', error);
+            setClicked(true);
             setLoginError('An error occurred');
         }
     };

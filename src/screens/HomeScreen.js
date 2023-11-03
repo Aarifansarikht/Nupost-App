@@ -14,16 +14,17 @@ function HomeScreen({ navigation,route }) {
     const [imagesData, setImagesData] = useState([])
     const [filteredData, setFilteredData] = useState(null);
     const [ctgData, setCtgData] = useState(null);
+    const [videoData, setvideoData] = useState(null);
     const [selectedImage, setSelectedImage] = useState(null);
-
+    const [videocategories,setVideoCategories] = useState(null)
 
 
     useEffect(() => {
         fetchCategories();
         fetchImages();
- 
-        console.log(route.params,"route")
-    }, [route.params])
+        fetchVideos()
+        fetchVideoCategories()
+    }, [])
 
     const fetchCategories = async () => {
         try {
@@ -33,7 +34,7 @@ function HomeScreen({ navigation,route }) {
                 id: doc.id,
                 data: doc.data(),
             }));
-            console.log("categories__________data",categories);
+            // console.log("categories__________data",categories);
             setCtgData(categories)
         } catch (error) {
             console.error('Error fetching categories:', error);
@@ -61,11 +62,47 @@ function HomeScreen({ navigation,route }) {
 
     }
 
-console.log(ctgData,"filter_data",filteredData)
+    const fetchVideos = async () => {
+        try {
+            const videosCollection = collection(firestore, 'videos');
+            const videosdocument = await getDocs(videosCollection);
+            const videosData = videosdocument.docs.map((doc) => ({
+                id: doc.id,
+                data: doc.data(),
+            }));
+         console.log(videosData,"video Data")
+         setvideoData(videosData)
+            // dispatch(getImageData(imagesDataf))
+            // setImagesData(imagesDataf)
+            // setFilteredData(imagesDataf)
+        }
+        catch (error) {
+            console.error('Error fetching images:', error);
+        }
+
+    }
+
+
+    const fetchVideoCategories = async () => {
+        try {
+            const categoriesCollection = collection(firestore, 'videocategories');
+            const categoriesdocument = await getDocs(categoriesCollection);
+            const categories = categoriesdocument.docs?.map((doc) => ({
+                id: doc.id,
+                data: doc.data(),
+            }));
+            console.log("videos categories__________data",categories);
+            setVideoCategories(categories)
+        } catch (error) {
+            console.error('Error fetching categories:', error);
+        }
+    };
+
 
     return (
         <SafeAreaView style={{ flex: 1 }}>
-            <CategoriesList ctgData={ctgData} filteredData={filteredData} navigation={navigation} />
+            <Header/>
+            <CategoriesList ctgData={ctgData} filteredData={filteredData} navigation={navigation} videoData={videoData} videocategories={videocategories}/>
             <Bottom/>
         </SafeAreaView>
     );

@@ -30,7 +30,7 @@ function DrawerNavigation({props,route}) {
     const navigation = useNavigation();
     return (
         <Drawer.Navigator screenOptions={{
-            headerShown: false, drawerPosition: 'right', headerLeft: () => <Header />, headerRight: () => <View style={{ alignItems: 'center', flexDirection: 'row' }}>
+            headerShown: false, headerLeft: () => <Header />, headerRight: () => <View style={{ alignItems: 'center', flexDirection: 'row' ,justifyContent:"space-between"}}>
 
 
                 <TouchableOpacity onPress={() => navigation.navigate('Search')}><Feather name='search' style={{ color: 'black', padding: 5 }} size={23} /></TouchableOpacity>
@@ -40,6 +40,7 @@ function DrawerNavigation({props,route}) {
         }}>
 
             <Drawer.Screen name="Home!" component={HomeScreen} options={{
+                swipeEnabled: false,
                 headerShown: true, drawerIcon: ({ focused, size }) => (
                     <Ionicons
                         name="home"
@@ -52,6 +53,7 @@ function DrawerNavigation({props,route}) {
 
 
             <Drawer.Screen name='MyDownloads' component={MyDownloadScreen} options={{
+                swipeEnabled: false,
                 drawerIcon: () => (<FontAwesome
                     name="download"
                     size={20}

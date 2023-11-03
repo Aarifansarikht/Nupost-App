@@ -30,7 +30,7 @@ function StackNavigations() {
         };
       },
     }} >
-      <Stack.Screen name='Home' component={DrawerNavigation} />
+        <Stack.Screen name='Home' component={HomeScreen} />
       <Stack.Screen name="Profile" component={ProfileScreen} options={{
         headerShown: true
       }} />

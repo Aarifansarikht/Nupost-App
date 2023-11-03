@@ -35,27 +35,32 @@ const Bottom = () => {
         style={[styles.tab, activeTab === 'Home' ? styles.activeTab : null]}
         onPress={() => handleTabPress('Home')}
       >
-        <Text style={styles.tabText}>Home</Text>
-        {/* <Ionicons
+        {/* <Text style={styles.tabText}>Home</Text> */}
+        <Ionicons
                         name="home"
                         size={20}
                         style={{ color: 'black' }}
-                    /> */}
+                    />
+                          <Text style={styles.tabText}>Home</Text>
       </TouchableOpacity>
 
       <TouchableOpacity
         style={[styles.tab, activeTab === 'Video' ? styles.activeTab : null]}
         onPress={() => handleTabPress('Video') }
       >
+        <Ionicons
+                        name="videocam-outline"
+                        size={20}
+                        style={{ color: 'black' }}
+                    />
         <Text style={styles.tabText}>Video</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity
+      {/* <TouchableOpacity
         style={[styles.tab, activeTab === 'Downloads' ? styles.activeTab : null]}
-        onPress={() => handleTabPress('Downloads')}
       >
         <Text style={styles.tabText}>Downloads</Text>
-      </TouchableOpacity>
+      </TouchableOpacity> */}
     </View>
   );
 };
