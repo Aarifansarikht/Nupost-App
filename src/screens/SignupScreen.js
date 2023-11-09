@@ -83,10 +83,10 @@ function SignupScreen({ navigation }) {
 
     const openLibrary = () => {
         ImagePicker.openPicker({
-            width: 300,
-            height: 300,
+            // width: 300,
+            // height: 300,
             cropping: true,
-            compressImageQuality: 0.7
+            // compressImageQuality: 0.7
         }).then(image => {
             console.log(image);
             setImage(image.path);

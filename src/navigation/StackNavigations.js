@@ -5,13 +5,12 @@ import { createStackNavigator } from '@react-navigation/stack';
 import LoginScreen from '../screens/LoginScreen';
 import HomeScreen from '../screens/HomeScreen';
 import PreviewScreen from '../screens/PreviewScreen';
-import DrawerNavigation from './DrawerNavigation';
 import ProfileScreen from '../screens/ProfileScreen';
 import SearchBar from '../components/SearchBar';
 import WelcomeScreen from '../screens/WelcomeScreen';
 import SignupScreen from '../screens/SignupScreen';
 import MyDownloadScreen from '../screens/MyDownloadScreen';
-
+import VideoPlayerComponent from '../components/FullScreen';
 
 const Stack = createStackNavigator();
 function StackNavigations() {
@@ -43,7 +42,7 @@ function StackNavigations() {
 
       <Stack.Screen name="Welcome" component={WelcomeScreen} />
       <Stack.Screen name="Downloads" component={MyDownloadScreen} />
-
+      <Stack.Screen name='FullScreen' component={VideoPlayerComponent}/>
      
 
     </Stack.Navigator>

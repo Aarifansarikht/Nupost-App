@@ -10,7 +10,7 @@ import { firestore } from "../firebase/firebase";
 import { useNavigation } from '@react-navigation/native';
 import { useDispatch } from 'react-redux';
 import { getUserData } from '../redux/action/imageData';
-
+import AwesomeAlert from 'react-native-awesome-alerts';
 function LoginScreen() {
 
     const dispatch = useDispatch();
@@ -22,9 +22,9 @@ function LoginScreen() {
     const [name, setName] = useState('')
     const [password, setPassword] = useState('');
     const [passwordError, setPasswordError] = useState(false);
-
     const [loginError, setLoginError] = useState(null);
     const [clicked, setClicked] = useState(true);
+    const  [showAlert,setShowAlert] = useState(false)
 
     const handleLogin = async () => {
         try {
@@ -42,9 +42,7 @@ function LoginScreen() {
                 setClicked(true);
                 return;
             }
-
             setClicked(false);
-
             if (!email) {
                 setClicked(true);
                 setLoginError('Email is required.');
@@ -63,7 +61,6 @@ function LoginScreen() {
                 setLoginError('User not found!');
                 return;
             }
-
             if (!userData || userData.password !== password) {
                 setClicked(true);
                 setLoginError('Incorrect email or password');
@@ -89,24 +86,30 @@ function LoginScreen() {
     };
 
 
+    
+    const hideAlert = () => {
+        setShowAlert(false);
+      };
+    
+      const confirmAlert =  () => {
+        navigation.navigate('resetpassword');
+        setShowAlert(false)
+      };
+    
+
 
     return (
         <SafeAreaView style={styles.main_container}>
-
-
             <View style={styles.top_container}>
                 <Image style={styles.top_image} source={require('../assets/img/welcomeimg.png')}></Image>
             </View>
-
             <View style={styles.bottom_container}>
-
                 <ScrollView>
                     <KeyboardAvoidingView behavior='padding'>
                         <View style={styles.form_wrapper}>
                             <View style={styles.login_text_container}>
                                 <Text style={styles.login_text}>Log In</Text>
                             </View>
-
                             <View style={styles.inputfields}>
                                 <MaterialIcons name='email' size={20} style={styles.inputfields_icons} />
                                 <TextInput style={styles.textfields} placeholder='Email' placeholderTextColor={'black'} value={email} onChangeText={(text) => setEmail(text)}></TextInput>
@@ -121,15 +124,13 @@ function LoginScreen() {
                                 </TouchableOpacity>
                             </View>
                             {passwordError && <Text style={styles.error_text}>Password must be filled out.</Text>}
-
                             <View >
-                                <TouchableOpacity onPress={() => navigation.navigate('forgotpassword')}>
+                                <TouchableOpacity onPress={() => setShowAlert(true)}>
                                     <Text style={styles.forgot_pass_text}>
                                         Forgot Password?
                                     </Text>
                                 </TouchableOpacity>
                             </View>
-
                             {
                                 clicked ? <TouchableOpacity style={styles.submit_btn} activeOpacity={0.7} onPress={handleLogin}>
 
@@ -137,12 +138,25 @@ function LoginScreen() {
 
                                 </TouchableOpacity> : <ActivityIndicator size="large" color={'white'} marginTop={20} />
                             }
-
                             <View >
                                 {loginError && <Text style={styles.login_error_text}>{loginError}</Text>}
                             </View>
                         </View>
-
+                     <AwesomeAlert
+                            show={showAlert}
+                            showProgress={false}
+                            title={'Forgot Password?'}
+                            message={'Are you sure, You want to submit the reset password request?'}
+                            closeOnTouchOutside={true}
+                            closeOnHardwareBackPress={false}
+                            showCancelButton={true}
+                            showConfirmButton={true}
+                            cancelText="No, cancel"
+                            confirmText="YES"
+                            confirmButtonColor="#DA6F29"
+                            onCancelPressed={hideAlert}
+                            onConfirmPressed={confirmAlert}
+                        />
                     </KeyboardAvoidingView>
                 </ScrollView>
             </View>

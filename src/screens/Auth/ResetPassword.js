@@ -1,50 +1,131 @@
-import React, { useState } from 'react';
-import { Text, View, StyleSheet, Image, TouchableOpacity, KeyboardAvoidingView, ActivityIndicator } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { Text, View, StyleSheet, Image, TouchableOpacity, KeyboardAvoidingView, ActivityIndicator ,Alert} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { SafeAreaView } from 'react-native-safe-area-context';
-
+import AwesomeAlert from 'react-native-awesome-alerts';
 import { ScrollView, TextInput } from 'react-native-gesture-handler';
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
+import FontAwesome from "react-native-vector-icons/FontAwesome";
 import Ionicons from "react-native-vector-icons/Ionicons";
-import { collection, getDocs, query, where } from '@firebase/firestore';
-import { firestore } from "../firebase/firebase";
+import { collection, getDocs, query, where ,addDoc} from '@firebase/firestore';
+import { firestore } from "../../firebase/firebase";
 import { useNavigation } from '@react-navigation/native';
-function ResetPassword(props) {
 
+
+
+function ResetPassword(props) {
+    const dbRef = collection(firestore, 'ResetPasswordRequest');
     const navigation = useNavigation();
-    const [showPassword, setShowPassword] = useState(false);
-    const handlePasswordShow = () => setShowPassword(!showPassword)
+
+    const [name, setName] = useState('');
+    const [nameError, setNameError] = useState(false);
+
     const [email, setEmail] = useState('');
     const [emailError, setEmailError] = useState(false);
 
-    const [password, setPassword] = useState('');
-    const [passwordError, setPasswordError] = useState(false);
+    const [phone, setPhone] = useState('');
+    const [phoneError, setPhoneError] = useState(false);
 
-    const [loginError, setLoginError] = useState(null);
     const [clicked, setClicked] = useState(true);
+    const [showAlert,setShowAlert] = useState(false);
+    const [title,setTitle] = useState('')
+    const [message,setMessage] = useState('')
+    const [isLoading , setIsLoading] = useState(true);
 
-    const handleLogin = async () => {
-        try {
-            if (email === '' || password === '') {
-                if (email === "") {
-                    setEmailError(true)
-                } else {
-                    setEmailError(false)
-                }
-                if (password === "") {
-                    setPasswordError(true)
-                } else {
-                    setPasswordError(false)
-                }
-                setClicked(true);
-                return;
+    const getUserIDByEmail = async email => {
+        const querySnapshot = await getDocs(collection(firestore, 'users'));
+    
+        let userId = null;
+    
+        querySnapshot.forEach(doc => {
+          const userData = doc.data();
+          if (userData.email === email) {
+            userId = doc.id;
+          }
+        });
+    
+        return userId;
+      };
+
+      const hideAlert = () => {
+        setShowAlert(false);
+      };
+    
+      const confirmAlert = async () => {
+        navigation.navigate('LogIn');
+      };
+    
+// const getUserData =async () => {
+
+//     const querySnapshot = await getDocs(collection(firestore, 'ResetPasswordRequest'));
+//     querySnapshot.forEach(doc => {
+//         const userData = doc.data();
+//         console.log(userData,"Data")
+//     });
+// }
+  
+// useEffect(()=>{
+//  getUserData()
+// },[])
+
+
+    const resetPasswordRequest = async () => {
+        setClicked(true)
+        if (name === '' || email === '' || phone === ''  || email.indexOf('@') === -1) {
+            if (name === "") {
+                setNameError(true)
+            } else {
+                setNameError(false)
             }
-            
+            if (email === "" || email.indexOf('@') === -1) {
+                setEmailError(true)
+            } else {
+                setEmailError(false)
+            }
+            if (phone === "") {
+                setPhoneError(true)
+            } else {
+                setPhoneError(false)
+            }
+            // setClicked(false)
+            return;
         }
-        catch{
-
+        setClicked(false)
+         const userId = await getUserIDByEmail(email)
+         if(!userId){
+             setTitle("Invalid Email")
+             setMessage("User Not Found with This Email Address Please check your email")
+             setShowAlert(true)
+            // Alert.alert("Invalid Email", "User Not Found with This Email Address Please check your email");
+            setClicked(true)
+             return;
+         }
+        try {
+            const docRef = await addDoc(dbRef, {
+                userId,
+                name,
+                email,
+                phone,
+                timestamp:Date.now()
+            });
+            console.log(docRef,"documnet submit")
+            setName('');
+            setEmail('');
+            setPhone('')
+            setIsLoading(false);
+            setClicked(true)
+            setTitle("Success")
+            setMessage("Reset Password Request Submit Succesfully")
+            setShowAlert(true)
+        } catch (error) {
+            console.error('Error found: ', error);
+            setClicked(false)
+            setIsLoading(false);
         }
     };
+
+
+
 
     return (
         <SafeAreaView style={styles.main_container}>
@@ -59,44 +140,46 @@ function ResetPassword(props) {
                 <KeyboardAvoidingView behavior='padding'>
                     <View style={styles.form_wrapper}>
                         <View style={styles.login_text_container}>
-                            <Text style={styles.login_text}>Reset password</Text>
-                            <Text>Create new password</Text>
+                            <Text>Please Enter the Details Below</Text>
                         </View>
-
-                
-
                         <View style={styles.inputfields}>
-                            <MaterialIcons name='lock' size={20} style={styles.inputfields_icons} />
-                            <TextInput style={styles.textfields} placeholder='New Password' secureTextEntry={showPassword ? false : true} placeholderTextColor={'black'} value={password} onChangeText={(text) => setPassword(text)}></TextInput>
-                            <TouchableOpacity style={styles.inputfields_icons} onPress={handlePasswordShow} activeOpacity={0.8}>
-                                <Ionicons name={showPassword ? "eye" : "eye-off"} style={{ color: 'black' }} size={20} />
-                            </TouchableOpacity>
-                        </View>
-                        {passwordError && <Text style={styles.error_text}>Password must be filled out.</Text>}
+                        <FontAwesome name='user' size={25} style={styles.inputfields_icons} />
+                            <TextInput style={styles.textfields} placeholder='Name'  placeholderTextColor={'black'} value={name} onChangeText={(text) => setName(text)}></TextInput>
+                        </View>    
+                        {nameError && <Text style={styles.error_text}>Name must be filled out.</Text>}
                         <View style={styles.inputfields}>
-                            <MaterialIcons name='lock' size={20} style={styles.inputfields_icons} />
-                            <TextInput style={styles.textfields} placeholder='Confirm Password' secureTextEntry={showPassword ? false : true} placeholderTextColor={'black'} value={password} onChangeText={(text) => setPassword(text)}></TextInput>
-                            <TouchableOpacity style={styles.inputfields_icons} onPress={handlePasswordShow} activeOpacity={0.8}>
-                                <Ionicons name={showPassword ? "eye" : "eye-off"} style={{ color: 'black' }} size={20} />
-                            </TouchableOpacity>
-                        </View>
-                        {passwordError && <Text style={styles.error_text}>Password must be filled out.</Text>}
-
-                    
-
+                            <MaterialIcons name='email' size={20} style={styles.inputfields_icons} />
+                            <TextInput style={styles.textfields} placeholder='Email'  placeholderTextColor={'black'} value={email} onChangeText={(text) => setEmail(text)}></TextInput>
+                        </View>  
+                        {emailError && <Text style={styles.error_text}>Please enter a valid email address</Text>}
+                          <View style={styles.inputfields}>
+                            <MaterialIcons name='phone' size={20} style={styles.inputfields_icons} />
+                            <TextInput style={styles.textfields} placeholder='Mobile'  placeholderTextColor={'black'} value={phone} onChangeText={(text) => setPhone(text)}></TextInput>
+                        </View>  
+                        {phoneError && <Text style={styles.error_text}>MobileNumber must be filled out.</Text>}
                         {
-                            clicked ? <TouchableOpacity style={styles.submit_btn} activeOpacity={0.7} onPress={handleLogin}>
-
-                                <Text style={styles.submit_btn_text}>Reset</Text>
-
+                            clicked ? <TouchableOpacity style={styles.submit_btn} activeOpacity={0.7} onPress={resetPasswordRequest}>
+                                <Text style={styles.submit_btn_text}>Submit</Text>
                             </TouchableOpacity> : <ActivityIndicator size="large" color={'white'} marginTop={20} />
                         }
-
-                        <View >
+                        {/* <View >
                             {loginError && <Text style={styles.login_error_text}>{loginError}</Text>}
-                        </View>
+                        </View> */}
                     </View>
-
+                    <AwesomeAlert
+                                show={showAlert}
+                                showProgress={false}
+                                title={title}
+                                message={message}
+                                closeOnTouchOutside={true}
+                                closeOnHardwareBackPress={false}
+                                showCancelButton={true}
+                                showConfirmButton={true}
+                                confirmText="Ok"
+                                confirmButtonColor="#DD6B55"
+                                onCancelPressed={hideAlert}
+                                onConfirmPressed={confirmAlert}
+                            />
                 </KeyboardAvoidingView>
             </ScrollView>
         </View>

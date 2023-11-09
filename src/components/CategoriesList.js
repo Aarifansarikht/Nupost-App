@@ -9,9 +9,10 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import VideoPlayer from 'react-native-video-player';
 import {UseSelector} from 'react-redux/es/hooks/useSelector';
 import {useSelector} from 'react-redux';
+import VideoPlayerComponent from './FullScreen';
+
 function CategoriesList({
   ctgData,
   filteredData,
@@ -37,7 +38,7 @@ function CategoriesList({
     });
   };
 
- 
+
 
   return (
     <ScrollView style={{backgroundColor: '#0031'}}>
@@ -64,7 +65,8 @@ function CategoriesList({
         </Text>
       )}
 
-      {isVideo &&
+      {
+      isVideo &&
         videoData &&
         videocategories?.map((ctgitem, index) => (
           <View key={index}>
@@ -89,7 +91,27 @@ function CategoriesList({
                           key={index}
                           style={{height: 160, width: 145, borderRadius: 10}}>
                           <View style={styles.videoContainer}>
-                            <VideoPlayer
+                          {/* {indicator ? (
+                              <ActivityIndicator
+                                size="small"
+                                color="black"
+                                style={styles.activityIndicator}
+                              />
+                            ) : null} */}
+                            <View 
+                            style={{
+                                height: 160,
+                                width: 145,
+                                borderRadius: 20,
+                                backgroundColor:"black",
+                                justifyContent:"center",
+                              }}  >
+                                <TouchableOpacity onPress={()=>navigation.navigate('FullScreen',{uri:filteredItem.data.url})}>
+                                <Image   source={require("../assets/img/play.png")} resizeMode='contain' style={{width:30,height:30,alignSelf:"center"}}/>
+                                </TouchableOpacity>
+                              </View>
+                           
+                            {/* <VideoPlayer
                               style={{
                                 height: 160,
                                 width: 145,
@@ -98,19 +120,14 @@ function CategoriesList({
                               video={{uri: filteredItem.data.url}}
                               autoPlay={true}
                               controlsTimeout={1000}
-                              defaultMuted={true}
                               repeat={true}
                               onLoadStart={handleLoadStart}
-                              hideSeekBar={true}
+                              seekBarFullWidth={true}
+                              defaultMuted={true}
                               onLoad={() => setIndicator(false)}
-                            />
-                            {indicator ? (
-                              <ActivityIndicator
-                                size="small"
-                                color="white"
-                                style={styles.activityIndicator}
-                              />
-                            ) : null}
+                            
+                            /> */}
+               
                           </View>
                         </View>
                       ))

@@ -1,33 +1,52 @@
 import React,{useState,useEffect} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Image, View, Text,TouchableOpacity } from 'react-native';
-
 import { useNavigation } from '@react-navigation/native';
 import { SCREEN_WIDTH } from '@gorhom/bottom-sheet';
 import Feather from 'react-native-vector-icons/Feather'
-function Header() {
+import {
+    collection,
+    getDocs,
+    query,
+    where,
+    doc,
+    updateDoc,
+  } from '@firebase/firestore';
+import {firestore} from '../firebase/firebase';
+import {storage, ref, uploadBytes, getDownloadURL} from '../firebase/firebase';
+
+function Header({userData}) {
     const navigation = useNavigation();
-    const [userData, setUserData] = useState(null);
+    console.log(userData,"header")
+    // const [userData, setUserData] = useState(null);
 
     const handleProfile = () => {
         navigation.navigate('Profile')
     }
 
-    const getUserData = async () => {
-        const data = await AsyncStorage.getItem('userData');
-   
-        if (data) {
-            const parsedData = JSON.parse(data);
-          
-            console.log("Parsed_____________header_________data",parsedData)
-            setUserData(parsedData);
-        }
-    };
-    // console.log(userData?.userData?.imageUrl,"userdata")
+    // const getUserData = async () => {
+    //     try {
+    //       const data = await AsyncStorage.getItem('userData');
+    //       if (data) {
+    //         const parsedData = JSON.parse(data);
+    //         console.log("Parsed_____________user_data", parsedData)
+    //         const email = parsedData?.userData?.email;
+    //         const usersRef = collection(firestore, 'users');
+    //         const q = query(usersRef, where('email', '==', email));
+    //         const querySnapshot = await getDocs(q);
+    //         const userDoc = querySnapshot.docs[0];
+    //         const updatedData = userDoc?.data();
+    //         setUserData({userData:updatedData});
+    //       }
+    //     } catch (error) {
+    //       console.log(error,"error")
+    //     }
+    //   };
 
-    useEffect(() => {
-        getUserData();
-    }, []);
+
+    // useEffect(() => {
+    //     getUserData();
+    // }, []);
 
     return (
         <View style={{ flexDirection:"row", alignItems:"center",justifyContent:"space-between",backgroundColor:"white"}}>

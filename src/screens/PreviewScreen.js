@@ -16,6 +16,16 @@ import {
   Alert,
   LogBox,
 } from "react-native";
+import {
+  collection,
+  getDocs,
+  query,
+  where,
+  doc,
+  updateDoc,
+} from '@firebase/firestore';
+import {firestore} from '../firebase/firebase';
+import {storage, ref, uploadBytes, getDownloadURL} from '../firebase/firebase';
 import VideoPlayer from "react-native-video-player";
 import RNFetchBlob from 'rn-fetch-blob';
  import PhotoEditor from "react-native-photo-editor";
@@ -25,7 +35,8 @@ import Frame_list from '../components/Frames';
 import ViewShot from 'react-native-view-shot';
 import { SCREEN_WIDTH } from '@gorhom/bottom-sheet';
 import { Frames } from '../vectors/frames/Frames';
-
+import { err } from 'react-native-svg/lib/typescript/xml';
+// import { get_user } from '../utils/user';
 const POSTER_WIDTH = SCREEN_WIDTH - 60;
 const POSTER_RATIO = 1 / 1;
 const POSTER_HEIGHT = POSTER_WIDTH / POSTER_RATIO
@@ -66,13 +77,22 @@ function PreviewScreen({ navigation, route }) {
 
 
   const getUserData = async () => {
-    const data = await AsyncStorage.getItem('userData');
-
-    if (data) {
-      const parsedData = JSON.parse(data);
-
-      console.log("Parsed_____________user_data", parsedData)
-      setUserData(parsedData);
+    try {
+      const data = await AsyncStorage.getItem('userData');
+      if (data) {
+        const parsedData = JSON.parse(data);
+        console.log("Parsed_____________user_data", parsedData)
+        const email = parsedData?.userData?.email;
+        const usersRef = collection(firestore, 'users');
+        const q = query(usersRef, where('email', '==', email));
+        const querySnapshot = await getDocs(q);
+        const userDoc = querySnapshot.docs[0];
+        const updatedData = userDoc?.data();
+        // console.log({userData:updatedData},"userData from firebase")
+        setUserData({userData:updatedData});
+      }
+    } catch (error) {
+      console.log(error,"error")
     }
   };
 
@@ -110,17 +130,15 @@ function PreviewScreen({ navigation, route }) {
     }
   };
 
+
   const checkPermission = async () => {
     setIsLoading(true)
     if (Platform.OS === 'ios') {
-
       downloadImage(REMOTE_IMAGE_PATH);
       setIsLoading(false)
     } else {
       try {
-
         if (Platform.Version <= 31) {
-
           const storagePermission = await PermissionsAndroid.request(
             PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
             {
@@ -149,7 +167,6 @@ function PreviewScreen({ navigation, route }) {
               message: 'App needs access to media images.',
             }
           );
-
           const mediaVideosPermission = await PermissionsAndroid.request(
             'android.permission.READ_MEDIA_VIDEO',
             {
@@ -165,7 +182,6 @@ function PreviewScreen({ navigation, route }) {
               message: 'App needs access to media audio.',
             }
           );
-
           if (
             mediaImagesPermission === PermissionsAndroid.RESULTS.GRANTED &&
             mediaVideosPermission === PermissionsAndroid.RESULTS.GRANTED &&
@@ -183,7 +199,6 @@ function PreviewScreen({ navigation, route }) {
           }
         }
       } catch (err) {
-
         console.log(err);
         alert('Error requesting storage permission: ' + err.message);
         setIsLoading(false)
@@ -319,11 +334,7 @@ function PreviewScreen({ navigation, route }) {
           setModalVisible(!modalVisible);
         }}>
         <View style={styles.centeredView}>
-      
           <View style={styles.modalView}>
-        
-              
-        
             <Pressable
               style={[styles.button, styles.buttonClose]}
               onPress={() => setModalVisible(!modalVisible)}>
@@ -350,12 +361,8 @@ function PreviewScreen({ navigation, route }) {
             />
             {indicator ? <ActivityIndicator size='small' color='black' style={styles.activityIndicator} /> : null}
           </View>
-
         ) : (
-
-
           <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-                   
             <ViewShot ref={viewShotRef} options={{ format: 'jpg', quality: 0.9 }} style={styles.preview_image}>
               {/* Background Image */}
               <View style={styles.backgroundImage}>
@@ -364,13 +371,12 @@ function PreviewScreen({ navigation, route }) {
                   email: userData?.userData.email,
                   designation:  userData?.userData.designation,
                   mobileNumber: `+91-${userData?.userData.mobileNumber}`,
-                  whatsappNumber: `+91-${userData?.userData.WhatsappNumber}`,
+                  WhatsappNumber: `+91-${userData?.userData.WhatsappNumber}`,
                   politicalImgUrl: userData?.userData?.politicalImgUrl,
                   imageUrl: userData?.userData?.imageUrl,
                   FacebookUrl: userData?.userData.FacebookUrl,
                   InstaUrl: userData?.userData.InstaUrl,
                   TwitterUrl: userData?.userData.TwitterUrl
-                    
                 })}
               </View>
               <Image
@@ -381,15 +387,13 @@ function PreviewScreen({ navigation, route }) {
                 source={{ uri: userData?.userData?.politicalImgUrl }}
                 style={styles.logo}
               />
-
               <Image
                 source={{ uri: userData?.userData?.imageUrl }}
                 style={styles.profile_picture}
               />
               {/* Overlay Image and Text */}
               {/* <View style={styles.overlayContainer}>
-                  <View style={{ position: "absolute", top: 0, zIndex: -1 }}>
-                  
+                  <View style={{ position: "absolute", top: 0, zIndex: -1 }}>         
                     <Text style={styles.userName}>{userData?.userData?.name}</Text>
                   </View>
                 </View> */}
@@ -412,7 +416,6 @@ function PreviewScreen({ navigation, route }) {
                 </View> */}
             </ViewShot>
           </View>
-
         )}
         <Frame_list selectedImage={selectedImage} onSelectImage={handleSelectImage} image={REMOTE_IMAGE_PATH} />
         <View style={styles.btns_wrapper}>
@@ -422,8 +425,6 @@ function PreviewScreen({ navigation, route }) {
           </TouchableOpacity>
         </View>
       </View>
-
-
     </SafeAreaView>
   );
 }
@@ -529,12 +530,12 @@ const styles = StyleSheet.create({
 
   },
   backgroundImage: {
-
     position: 'absolute',
     width: POSTER_WIDTH,
     height: POSTER_HEIGHT,
     zIndex: 9,
     top: 0,
+    
 
   },
   overlayContainer: {
@@ -571,20 +572,19 @@ const styles = StyleSheet.create({
   },
   logo: {
     position: 'absolute',
-    top: 5,
-    left: 5,
+    top: 15,
+    right: 15,
     width: 40, // Adjust the size as needed
     height: 40,
     borderRadius: 50
   },
   profile_picture: {
-    position: 'absolute',
-  bottom: 20,
+  position: 'absolute',
+  bottom: 50,
   right: 2,
-  width: 70,
-  height: 70,
-  borderRadius: 5,
- 
+  width: 100,
+  height: 100,
+  resizeMode:"contain"
   },
   userName: {
     position: 'absolute',

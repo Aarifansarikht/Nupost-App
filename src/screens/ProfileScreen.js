@@ -40,6 +40,7 @@ import {
 import {deleteObject, updateMetadata} from 'firebase/storage';
 import DropdownComponent from '../components/Dropdown';
 import Logo_list from '../components/logo';
+import { get_user } from '../utils/user';
 
 function ProfileScreen({navigation}) {
   const [userData, setUserData] = useState(null);
@@ -64,8 +65,6 @@ function ProfileScreen({navigation}) {
   const  [message,setMessage] = useState('')
   const [refresh,setRefresh] = useState(false);
   const dispatch = useDispatch();
-  // console.warn("profile________image",profileimg);
-
 
   const handleLogout = async () => {
     await AsyncStorage.removeItem('keepLoggedIn');
@@ -79,15 +78,18 @@ function ProfileScreen({navigation}) {
     setPoliticalImgUrl(uri);
   };
 
-  // console.warn("User__________data",userData);
+
   const getUserData = async () => {
-    const data = await AsyncStorage.getItem('userData');
-
-    if (data) {
-      const parsedData = JSON.parse(data);
-
-      console.log('Parsed_____________user_data', parsedData);
-      setUserData(parsedData);
+    setIsLoading(true)
+    try {
+      const user = await get_user();
+      // console.log(user,"user")
+      setUserData(user);
+      setIsLoading(false)
+  
+    } catch (error) {
+      console.log(error,"error")
+      setIsLoading(false)
     }
   };
 
@@ -118,41 +120,40 @@ function ProfileScreen({navigation}) {
   };
 
   const confirmAlert = async () => {
-    navigation.navigate('Welcome');
-    AsyncStorage.clear();
+    navigation.navigate('Home');
   };
 
   const updateProfile = async () => {
     setIsLoading(true)
     const emailToFind = userData?.userData.email;
-    console.log('check___________Users', emailToFind);
+    // console.log('check___________Users', emailToFind);
     try {
       const userId = await getUserIDByEmail(emailToFind);
       console.log('userId______', userId);
       // const imageUrl =  await  uploadImage() ;
-   
       // console.log(
       //   'URL1_____________',
       //   imageUrl,
       // );
 
       const docRef = doc(firestore, 'users', userId);
-      console.log('docref_______________Data______log', docRef);
+      // console.log('docref_______________Data______log', docRef);
       const updatedData = {
         name: UserName || userData?.userData?.name,
         designation: designation || userData?.userData?.designation,
         imageUrl: profileimg || userData?.userData?.imageUrl,
         mobileNumber: mobileNumber || userData?.userData?.mobileNumber,
         politicalParty: politicalParty || userData?.userData?.politicalParty,
-        politicalImgUrl: politicalImgUrl || userData?.userData?.politicalImgUrl,
+        politicalImgUrl: politicalImgUrl ,
         InstaUrl: InstaUrl || userData?.userData?.InstaUrl,
         FacebookUrl: FacebookUrl || userData?.userData?.FacebookUrl,
         TwitterUrl: TwitterUrl || userData?.userData?.TwitterUrl,
         WhatsappNumber: WhatsappNumber || userData?.userData?.WhatsappNumber,
       };
-      console.log('Update_______________Data______log', updatedData);
       await updateDoc(docRef, updatedData);
+        console.log(updatedData,"updatedData")
       // await AsyncStorage.setItem('userData', JSON.stringify(updatedData));
+      // dispatch(getUserData(updatedData))
       setIsLoading(false)
       setShowAlert(true)
       setRefresh(true)
@@ -169,7 +170,6 @@ function ProfileScreen({navigation}) {
       //   ],
       // );
     } catch (error) {
-
       setShowAlert(true)
       setTitle('')
       setMessage('Failed to update profile. Please check the console for details.')
@@ -177,8 +177,6 @@ function ProfileScreen({navigation}) {
       // alert('Failed to update profile. Please check the console for details.');
     }
   };
-
-
 
   const bottomSheetModalRef = useRef(null);
 
@@ -222,21 +220,22 @@ function ProfileScreen({navigation}) {
     }
   };
 
+
   const openLibrary = async () => {
     console.log("library called")
     ImagePicker.openPicker({
-      width: 300,
-      height: 300,
+      // width: 300,
+      // height: 300,
       cropping: true,
-      compressImageQuality: 0.7,
+      // compressImageQuality: 0.7,
+      mime:'image/png'
     }).then(image => {
       console.log('image', image);
-      
       if (isProfile) {
         uploadImage(image.path)
         // setProfileImg(image.path);
         console.log('isprofile_____________true',isProfile);
-      } 
+      }  
       // else {
       //   setPoliticalImgUrl(image.path);
       //   console.log('isprofile_____________false', isProfile);
@@ -254,27 +253,24 @@ function ProfileScreen({navigation}) {
     if (profileimg == null) {
       return console.log("profile image is null");
     }
-
     const uploadUri = profileimg;
     let filename = uploadUri.substring(uploadUri.lastIndexOf('/') + 1);
-
+    console.log(filename,"filename")
     // Add timestamp to File Name
     const extension = filename.split('.').pop();
+    console.log(extension,"extension")
     const name = filename.split('.').slice(0, -1).join('.');
     filename = name + Date.now() + '.' + extension;
-
     const storageRef = ref(storage, `user_profile/${filename}`);
-
     try {
       // Fetch the image data from the local file path
       const response = await fetch(uploadUri);
       const blob = await response.blob();
-
       // Upload the image to Firebase Cloud Storage
       const uploadTaskSnapshot = await uploadBytes(storageRef, blob, {
-        contentType: 'image/jpeg', // Specify the content type here
+        contentType: 'image/png', // Specify the content type here
       });
-
+  
       // Get the download URL of the uploaded image
       const imageUrl = await getDownloadURL(storageRef);
 
@@ -354,8 +350,6 @@ function ProfileScreen({navigation}) {
   };
 
 
-
-  
 
   return (
     <BottomSheetModalProvider>
@@ -468,9 +462,10 @@ function ProfileScreen({navigation}) {
                           ? mobileNumber
                           : userData.userData.mobileNumber
                       }
+                      keyboardType='numeric'
                       placeholder="Mobile Number"
                       placeholderTextColor="#888"
-                      onChangeText={text =>setMobileNumber(text)}
+                      onChangeText={text =>text !== null ? setMobileNumber(text) : setMobileNumber(userData.userData.mobileNumber) }
                     />
                     <TextInput
                       style={styles.textInput}
@@ -479,6 +474,7 @@ function ProfileScreen({navigation}) {
                           ? WhatsappNumber
                           : userData.userData.WhatsappNumber
                       }
+                      keyboardType='numeric'
                       placeholder="WhatsApp Number"
                       placeholderTextColor="#888"
                       onChangeText={text => setWhatsappNumber(text)}
@@ -598,7 +594,27 @@ function ProfileScreen({navigation}) {
           </View>
         </ScrollView>
       </SafeAreaView>
+      
+  {isLoading && (
+    <View
+      style={{
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: 'rgba(0, 0, 0, 0.5)', 
+        zIndex: 1, 
+      }}
+    >
+      <ActivityIndicator size="large" color={'black'} />
+    </View>
+  )}
+      {/* <View style={{justifyContent:"center",alignSelf:"center"}}>
       {isLoading &&  <ActivityIndicator size="large" color={'black'} marginTop={20} style={styles.activityIndicator}/>}
+      </View> */}
       {showAlert &&   <AwesomeAlert
         show={showAlert}
         showProgress={false}
