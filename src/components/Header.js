@@ -51,19 +51,32 @@ function Header({userData}) {
     return (
         <View style={{ flexDirection:"row", alignItems:"center",justifyContent:"space-between",backgroundColor:"white"}}>
             <TouchableOpacity onPress={handleProfile}>
-                <View style={{ backgroundColor: '#5F76FD', justifyContent: 'center', alignItems: 'center', height: 35, width: 35, borderRadius: 50, marginLeft: 10 }}>
+                <View style={{ backgroundColor: '#000', justifyContent: 'center', alignItems: 'center', height: 35, width: 35, borderRadius: 50, marginLeft: 10 }}>
                     {userData?.userData?.imageUrl ? <Image style={{ height: "100%", width: "100%", borderRadius: 20 }} source={{ uri: userData?.userData?.imageUrl }} /> :
                         <Image style={{ height: "100%", width: "100%", borderRadius: 20 }} source={require("../assets/img/profileImg.png")} />
                     }
                 </View>
             </TouchableOpacity>
-           <View >
-            <Image
-                source={require("../assets/img/logo.png")} // Use the correct source for the right image
-                style={{ height: 50, width: 70,resizeMode:"contain",marginTop:5}}
-                />
-                </View>
-                <TouchableOpacity onPress={() => navigation.navigate('Search')}><Feather name='search' style={{ color: 'black', padding: 5 }} size={23} /></TouchableOpacity>
+                        <View>
+                                        <TouchableOpacity ><Feather name='help-circle' style={{ color: 'black', padding: 5 ,}} size={20} /></TouchableOpacity>
+                                        <Text style={{color:"black",fontSize:14}}>Use how</Text>
+                        </View>
+
+                   <View>
+                         <Image
+                            source={require("../assets/img/logo.png")} // Use the correct source for the right image
+                            style={{ height: 50, width: 70,resizeMode:"contain",marginTop:5}}
+                            />
+                   </View>
+                                    <View>
+                                                <TouchableOpacity ><Feather name='phone-call' style={{ color: 'black', padding: 5 }} size={20} /></TouchableOpacity>
+                                                <Text style={{color:"black",fontSize:14}}>Support</Text>
+                                    </View>
+                                    <View style={{justifyContent:"center"}}>
+                                        <TouchableOpacity onPress={() => navigation.navigate('Search')}><Feather name='search' style={{ color: 'black', padding: 5 }} size={20} /></TouchableOpacity>
+                                        <Text style={{color:"black",fontSize:14}}>Search</Text>
+                                    </View>
+                 
         </View>
     );
 }

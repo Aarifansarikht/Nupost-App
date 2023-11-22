@@ -26,6 +26,7 @@ function LoginScreen() {
     const [clicked, setClicked] = useState(true);
     const  [showAlert,setShowAlert] = useState(false)
 
+
     const handleLogin = async () => {
         try {
             if (email === '' || password === '') {
@@ -55,7 +56,6 @@ function LoginScreen() {
             const userDoc = querySnapshot.docs[0];
             const userData = userDoc?.data();
 
-
             if (querySnapshot.empty) {
                 setClicked(true);
                 setLoginError('User not found!');
@@ -67,7 +67,6 @@ function LoginScreen() {
                 return;
             }
             setName(userData.name)
-
             const user = { userData };
             console.log("UserData__________loginScreen",JSON.stringify(user))
             // dispatch(getUserData(user));
@@ -85,19 +84,15 @@ function LoginScreen() {
         }
     };
 
-
+                const hideAlert = () => {
+                     setShowAlert(false);
+                };
     
-    const hideAlert = () => {
-        setShowAlert(false);
-      };
+            const confirmAlert =  () => {
+                navigation.navigate('resetpassword');
+                setShowAlert(false)
+            };
     
-      const confirmAlert =  () => {
-        navigation.navigate('resetpassword');
-        setShowAlert(false)
-      };
-    
-
-
     return (
         <SafeAreaView style={styles.main_container}>
             <View style={styles.top_container}>
@@ -115,7 +110,6 @@ function LoginScreen() {
                                 <TextInput style={styles.textfields} placeholder='Email' placeholderTextColor={'black'} value={email} onChangeText={(text) => setEmail(text)}></TextInput>
                             </View>
                             {emailError && <Text style={styles.error_text} >Email must be filled out.</Text>}
-
                             <View style={styles.inputfields}>
                                 <MaterialIcons name='lock' size={20} style={styles.inputfields_icons} />
                                 <TextInput style={styles.textfields} placeholder='Password' secureTextEntry={showPassword ? false : true} placeholderTextColor={'black'} value={password} onChangeText={(text) => setPassword(text)}></TextInput>
@@ -124,39 +118,36 @@ function LoginScreen() {
                                 </TouchableOpacity>
                             </View>
                             {passwordError && <Text style={styles.error_text}>Password must be filled out.</Text>}
-                            <View >
+                            <View>
                                 <TouchableOpacity onPress={() => setShowAlert(true)}>
                                     <Text style={styles.forgot_pass_text}>
                                         Forgot Password?
                                     </Text>
                                 </TouchableOpacity>
                             </View>
-                            {
-                                clicked ? <TouchableOpacity style={styles.submit_btn} activeOpacity={0.7} onPress={handleLogin}>
-
+                            { clicked ? <TouchableOpacity style={styles.submit_btn} activeOpacity={0.7} onPress={handleLogin}>
                                     <Text style={styles.submit_btn_text}>Log In</Text>
-
                                 </TouchableOpacity> : <ActivityIndicator size="large" color={'white'} marginTop={20} />
                             }
                             <View >
                                 {loginError && <Text style={styles.login_error_text}>{loginError}</Text>}
                             </View>
                         </View>
-                     <AwesomeAlert
-                            show={showAlert}
-                            showProgress={false}
-                            title={'Forgot Password?'}
-                            message={'Are you sure, You want to submit the reset password request?'}
-                            closeOnTouchOutside={true}
-                            closeOnHardwareBackPress={false}
-                            showCancelButton={true}
-                            showConfirmButton={true}
-                            cancelText="No, cancel"
-                            confirmText="YES"
-                            confirmButtonColor="#DA6F29"
-                            onCancelPressed={hideAlert}
-                            onConfirmPressed={confirmAlert}
-                        />
+                        <AwesomeAlert
+                                show={showAlert}
+                                showProgress={false}
+                                title={'Forgot Password?'}
+                                message={'Are you sure, You want to submit the reset password request?'}
+                                closeOnTouchOutside={true}
+                                closeOnHardwareBackPress={false}
+                                showCancelButton={true}
+                                showConfirmButton={true}
+                                cancelText="No, cancel"
+                                confirmText="YES"
+                                confirmButtonColor="#DA6F29"
+                                onCancelPressed={hideAlert}
+                                onConfirmPressed={confirmAlert}
+                            />
                     </KeyboardAvoidingView>
                 </ScrollView>
             </View>

@@ -7,6 +7,8 @@ import { decode, encode } from 'base-64';
 import DrawerNavigation from './src/navigation/DrawerNavigation';
 import StackNavigations from './src/navigation/StackNavigations';
 import AuthStack from './src/navigation/AuthStack';
+import { ThemeProvider } from './src/utils/ThemeContext';
+
 function App() {
 
   const [isLogged, setIsLogged] = useState(false);
@@ -42,10 +44,11 @@ function App() {
 
   return (
     <NavigationContainer>
+      <ThemeProvider>
       {
         isLogged ? <StackNavigations /> : <AuthStack />
       }
-
+      </ThemeProvider>
     </NavigationContainer>
   );
 }

@@ -14,7 +14,7 @@ export const get_user = async () => {
       const data = await AsyncStorage.getItem('userData');
       if (data) {
         const parsedData = JSON.parse(data);
-        console.log("Parsed_____________user_data", parsedData)
+        
         const email = parsedData?.userData?.email;
         const usersRef = collection(firestore, 'users');
         const q = query(usersRef, where('email', '==', email));
@@ -22,7 +22,7 @@ export const get_user = async () => {
         const userDoc = querySnapshot.docs[0];
         const userData = userDoc?.data();
         const user = { userData };
-
+        console.log("user_data", user)
         return user;  
       }
     } catch (error) {

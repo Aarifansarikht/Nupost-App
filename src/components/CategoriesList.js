@@ -9,9 +9,8 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {UseSelector} from 'react-redux/es/hooks/useSelector';
 import {useSelector} from 'react-redux';
-import VideoPlayerComponent from './FullScreen';
+
 
 function CategoriesList({
   ctgData,
@@ -139,12 +138,13 @@ function CategoriesList({
 
       {ctgData?.map((ctgitem, index) => (
         <View key={index}>
-          {!isVideo && (
-            <View style={styles.category_name}>
+          {!isVideo && (          <View style={styles.category_name}>
               <Text style={styles.category_text}>{ctgitem.data?.ctgName}</Text>
+              <TouchableOpacity onPress={()=>navigation.navigate('ViewAllPost',{catId:ctgitem.id})}>
+              <Text style={styles.viewAll_text}>View All</Text>
+              </TouchableOpacity>
             </View>
-          )}
-
+              )}
           <ScrollView horizontal={true}>
             <View style={styles.imageitems}>
               {!isVideo &&
@@ -152,7 +152,7 @@ function CategoriesList({
                   .filter(
                     imageitem =>
                       !/^(mp4|mov|avi|mkv)$/i.test(imageitem.data?.url) &&
-                      imageitem.data.ctgIds.includes(ctgitem.id),
+                      imageitem.data.ctgIds.includes(ctgitem.id)
                   )
                   .map((filteredItem, index) => (
                     <TouchableOpacity
@@ -175,6 +175,8 @@ function CategoriesList({
 const styles = StyleSheet.create({
   category_name: {
     padding: 6,
+    flexDirection:"row",
+    justifyContent:'space-between',
   },
   category_text: {
     color: 'black',
@@ -186,5 +188,11 @@ const styles = StyleSheet.create({
     gap: 10,
     padding: 6,
   },
+  viewAll_text:{
+    paddingLeft:5,
+    color:"#000",
+    textDecorationLine:"underline",
+    fontSize:18
+  }
 });
 export default CategoriesList;

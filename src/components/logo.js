@@ -3,7 +3,7 @@ import { ActivityIndicator, FlatList, Image, ScrollView, StyleSheet, Text, Touch
 import { firestore } from "../firebase/firebase";
 import { collection, getDocs } from "firebase/firestore";
 
-function Logo_list({ onSelectImage,partyId}) {
+function Logo_list({ onSelectImage,partyId ,title}) {
   console.log("Getting Party id for logo List",partyId)
     const [LogoData,SetLogoData]= useState([]);
     const [selectedLogo ,SetSelectedLogo] = useState();
@@ -36,7 +36,7 @@ function Logo_list({ onSelectImage,partyId}) {
 
     return (
         <View style={styles.container}>
-          <Text style={{fontSize:16,color:"#000",textAlign:"center"}}>Choose Political logo</Text>
+          <Text style={{fontSize:16,color:"#000",textAlign:"center"}}>{title}</Text>
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}

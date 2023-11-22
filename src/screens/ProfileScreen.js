@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import React, {useEffect, useState, useRef} from 'react';
+import React, {useEffect, useState, useRef,useContext} from 'react';
 import {
   Image,
   View,
@@ -41,12 +41,17 @@ import {deleteObject, updateMetadata} from 'firebase/storage';
 import DropdownComponent from '../components/Dropdown';
 import Logo_list from '../components/logo';
 import { get_user } from '../utils/user';
+import { ThemeContext } from '../utils/ThemeContext';
+import { setDarkTrue } from '../redux/reducer/isDarkMode';
 
-function ProfileScreen({navigation}) {
+
+ function ProfileScreen({navigation}) {
+
   const [userData, setUserData] = useState(null);
   const [UserName, setUserName] = useState(null);
   const [profileimg, setProfileImg] = useState('');
   const [politicalImgUrl, setPoliticalImgUrl] = useState('');
+  const [businesslogoUrl, setbusinesslogoUrl] = useState('');
   const [mobileNumber, setMobileNumber] = useState(null);
   const [WhatsappNumber, setWhatsappNumber] = useState(null);
   const [designation, setDesignation] = useState(null);
@@ -59,20 +64,26 @@ function ProfileScreen({navigation}) {
   const [TwitterUrl, setTwitterUrl] = useState(null);
   const [isProfile, setIsProfile] = useState(false);
   const [selectedPartyId, setSelectedPartyId] = useState(null);
-  const  [isLoading,setIsLoading] = useState(false)
-  const  [showAlert,setShowAlert] = useState(false)
-  const  [title,setTitle] = useState('')
-  const  [message,setMessage] = useState('')
+  const [isLoading,setIsLoading] = useState(false)
+  const [showAlert,setShowAlert] = useState(false)
+  const [title,setTitle] = useState('')
+  const [message,setMessage] = useState('')
   const [refresh,setRefresh] = useState(false);
-  const dispatch = useDispatch();
+ 
+  
+
+
+const {isDarkMode} = useContext(ThemeContext)
+
+   console.log(isDarkMode,"isDarkMode")
+  
 
   const handleLogout = async () => {
     await AsyncStorage.removeItem('keepLoggedIn');
     navigation.navigate('Welcome');
   };
 
-
-
+    
   const handleSelectlogo = (uri) => {
     console.log('selected______frame_____uri', uri);
     setPoliticalImgUrl(uri);
@@ -94,7 +105,6 @@ function ProfileScreen({navigation}) {
   };
 
 
-
   useEffect(() => {
     getUserData();
   }, []);
@@ -102,16 +112,13 @@ function ProfileScreen({navigation}) {
 
   const getUserIDByEmail = async email => {
     const querySnapshot = await getDocs(collection(firestore, 'users'));
-
     let userId = null;
-
     querySnapshot.forEach(doc => {
       const userData = doc.data();
       if (userData.email === email) {
         userId = doc.id;
       }
     });
-
     return userId;
   };
 
@@ -122,6 +129,7 @@ function ProfileScreen({navigation}) {
   const confirmAlert = async () => {
     navigation.navigate('Home');
   };
+
 
   const updateProfile = async () => {
     setIsLoading(true)
@@ -149,8 +157,10 @@ function ProfileScreen({navigation}) {
         FacebookUrl: FacebookUrl || userData?.userData?.FacebookUrl,
         TwitterUrl: TwitterUrl || userData?.userData?.TwitterUrl,
         WhatsappNumber: WhatsappNumber || userData?.userData?.WhatsappNumber,
+        businesslogoUrl:businesslogoUrl
       };
-      await updateDoc(docRef, updatedData);
+      const response =  await updateDoc(docRef, updatedData);
+      console.log(response,"get_updated_response")
         console.log(updatedData,"updatedData")
       // await AsyncStorage.setItem('userData', JSON.stringify(updatedData));
       // dispatch(getUserData(updatedData))
@@ -236,10 +246,10 @@ function ProfileScreen({navigation}) {
         // setProfileImg(image.path);
         console.log('isprofile_____________true',isProfile);
       }  
-      // else {
-      //   setPoliticalImgUrl(image.path);
-      //   console.log('isprofile_____________false', isProfile);
-      // }
+      else {
+        console.log('isprofile_____________true',isProfile);
+        uploadBusinesslogo(image.path);
+      }
       bottomSheetModalRef.current?.close();
     });
   };
@@ -249,9 +259,11 @@ function ProfileScreen({navigation}) {
   };
 
   const uploadImage = async (profileimg) => {
+    setIsLoading(true)
     console.log('upload image called')
     if (profileimg == null) {
       return console.log("profile image is null");
+      setIsLoading(false)
     }
     const uploadUri = profileimg;
     let filename = uploadUri.substring(uploadUri.lastIndexOf('/') + 1);
@@ -275,13 +287,60 @@ function ProfileScreen({navigation}) {
       const imageUrl = await getDownloadURL(storageRef);
 
       console.log(imageUrl,"url_image")
+      setIsLoading(false)
       // Set the image URL state or use it as needed
       setProfileImg(imageUrl);
-
       // Display a success message or perform any other necessary actions
       // setShowAlert(true)
       // setTitle('Image uploaded!')
       // setMessage('Your image has been uploaded to Firebase Cloud Storage successfully!')
+      // alert(
+      //   'Image uploaded!',
+      //   'Your image has been uploaded to Firebase Cloud Storage successfully!',
+      // );
+      // return imageUrl;
+    } catch (e) {
+      console.log('Error uploading image:', e);
+      return null;
+    }
+  };
+
+  const uploadBusinesslogo = async (businesslogoUrl) => {
+    setIsLoading(true)
+    console.log("upload business logo called")
+    if (profileimg == null) {
+      setIsLoading(false)
+      return console.log("businesslogoUrl image is null");
+    }
+
+    const uploadUri = businesslogoUrl;
+    let filename = uploadUri.substring(uploadUri.lastIndexOf('/') + 1);
+
+    // Add timestamp to File Name
+    const extension = filename.split('.').pop();
+    const name = filename.split('.').slice(0, -1).join('.');
+    filename = name + Date.now() + '.' + extension;
+
+    const storageRef = ref(storage, `business_logo/${filename}`);
+
+    try {
+      // Fetch the image data from the local file path
+      const response = await fetch(uploadUri);
+      const blob = await response.blob();
+
+      // Upload the image to Firebase Cloud Storage
+      const uploadTaskSnapshot = await uploadBytes(storageRef, blob, {
+        contentType: 'image/jpeg', // Specify the content type here
+      });
+
+      // Get the download URL of the uploaded image
+      const imageUrl = await getDownloadURL(storageRef);
+       console.log(imageUrl)
+      // Set the image URL state or use it as needed
+      setIsLoading(false)
+      setbusinesslogoUrl(imageUrl);
+
+      // Display a success message or perform any other necessary actions
       // alert(
       //   'Image uploaded!',
       //   'Your image has been uploaded to Firebase Cloud Storage successfully!',
@@ -293,51 +352,6 @@ function ProfileScreen({navigation}) {
       return null;
     }
   };
-
-  // const uploadImage1 = async () => {
-  //   // if (politicalImgUrl == null) {
-  //   //     return null;
-  //   // }
-
-  //   const uploadUri = politicalImgUrl;
-  //   let filename = uploadUri.substring(uploadUri.lastIndexOf('/') + 1);
-
-  //   // Add timestamp to File Name
-  //   const extension = filename.split('.').pop();
-  //   const name = filename.split('.').slice(0, -1).join('.');
-  //   filename = name + Date.now() + '.' + extension;
-
-  //   const storageRef = ref(storage, `user_profile/${filename}`);
-
-  //   try {
-  //     // Fetch the image data from the local file path
-  //     const response = await fetch(uploadUri);
-  //     const blob = await response.blob();
-
-  //     // Upload the image to Firebase Cloud Storage
-  //     const uploadTaskSnapshot = await uploadBytes(storageRef, blob, {
-  //       contentType: 'image/jpeg', // Specify the content type here
-  //     });
-
-  //     // Get the download URL of the uploaded image
-  //     const imageUrl = await getDownloadURL(storageRef);
-
-  //     // Set the image URL state or use it as needed
-
-  //     setPoliticalImgUrl(imageUrl);
-
-  //     // Display a success message or perform any other necessary actions
-  //     // alert(
-  //     //   'Image uploaded!',
-  //     //   'Your image has been uploaded to Firebase Cloud Storage successfully!',
-  //     // );
-
-  //     return imageUrl;
-  //   } catch (e) {
-  //     console.log('Error uploading image:', e);
-  //     return null;
-  //   }
-  // };
 
   // console.log(politicalImgUrl,"image___________________url")
 
@@ -353,9 +367,8 @@ function ProfileScreen({navigation}) {
 
   return (
     <BottomSheetModalProvider>
-      <SafeAreaView style={styles.main_container}>
+      <SafeAreaView style={[styles.main_container,{backgroundColor:isDarkMode ? "#000" : "#fff"}]}>
         <ScrollView style={{flex: 1}}>
-       
           <View style={styles.profile_container}>
             <View style={styles.images_wrapper}>
               <TouchableOpacity onPress={handleImagePick}>
@@ -386,29 +399,29 @@ function ProfileScreen({navigation}) {
                     />
                   </View>
                   <Text
-                    style={{color: 'black', textAlign: 'center', fontSize: 12}}>
+                    style={{color: isDarkMode ? '#fff' : "#000", textAlign: 'center', fontSize: 12}}>
                     Upload Profile
                   </Text>
                 </View>
               </TouchableOpacity>
-              {/* <TouchableOpacity onPress={handleImagePick1}>
+              { userData?.userData?.category === "Business" && <>
+                          <TouchableOpacity onPress={handleImagePick1}>
                                 <View>
-                                    <View style={styles.logos}>
-
+                                <View style={styles.logos}>
                                     {
-                                          politicalImgUrl ? (
-
-                                                <Image style={styles.logo_images} resizeMode='contain' source={{ uri: politicalImgUrl }} />
-
+                                          businesslogoUrl ? (
+                                                <Image style={styles.logo_images} resizeMode='contain' source={{ uri: businesslogoUrl }} />
                                             )
                                                 :
-                                                (<Image style={styles.logo_images} resizeMode='contain' source={{ uri: userData?.userData.politicalImgUrl }} />)
-                                        }
-                                        <MaterialIcons style={{ position: 'absolute', right: 10, bottom: 0, color: 'black' }} name='add-a-photo' size={30} />
-                                    </View>
-                                    <Text style={{ color: 'black', textAlign: 'center', fontSize: 12 }}>Upload Political Logo</Text>
-                                </View>
-                            </TouchableOpacity> */}
+                                                (<Image style={styles.logo_images} resizeMode='contain' source={{ uri: userData?.userData.businesslogoUrl }} />)
+                                              }
+                                              <MaterialIcons style={{ position: 'absolute', right: 10, bottom: 0, color: 'black' }} name='add-a-photo' size={30} />
+                                              </View>
+                                              <Text style={{ color: isDarkMode ? '#fff' : "#000", textAlign: 'center', fontSize: 12 }}>Upload Business Logo</Text>
+                                              </View>
+                              </TouchableOpacity> 
+                          </>}
+
             </View>
             <BottomSheetModal
               ref={bottomSheetModalRef}
@@ -441,22 +454,22 @@ function ProfileScreen({navigation}) {
                 <>
                   <View>
                     <TextInput
-                      style={styles.textInput}
+                      style={[styles.textInput,{color: isDarkMode ? '#fff' : "#000"}]}
                       value={
                         UserName !== null
                           ? UserName
                           : userData.userData.name
                       }
-                      placeholderTextColor="#888"
+                      placeholderTextColor= { isDarkMode ? '#fff' :  "#888"}
                       onChangeText={text =>setUserName(text)}
                     />
                     <TextInput
-                      style={styles.textInput}
+                      style={[styles.textInput,{color: isDarkMode ? '#fff' : "#000"}]}
                       value={userData.userData.email}
                       placeholderTextColor="#888"
                     />
                     <TextInput
-                      style={styles.textInput}
+                      style={[styles.textInput,{color: isDarkMode ? '#fff' : "#000"}]}
                       value={
                         mobileNumber !== null
                           ? mobileNumber
@@ -465,10 +478,10 @@ function ProfileScreen({navigation}) {
                       keyboardType='numeric'
                       placeholder="Mobile Number"
                       placeholderTextColor="#888"
-                      onChangeText={text =>text !== null ? setMobileNumber(text) : setMobileNumber(userData.userData.mobileNumber) }
+                      onChangeText={text => text == "" ? setMobileNumber(" ") : setMobileNumber(text) }
                     />
                     <TextInput
-                      style={styles.textInput}
+                      style={[styles.textInput,{color: isDarkMode ? '#fff' : "#000"}]}
                       value={
                         WhatsappNumber !== null
                           ? WhatsappNumber
@@ -477,10 +490,10 @@ function ProfileScreen({navigation}) {
                       keyboardType='numeric'
                       placeholder="WhatsApp Number"
                       placeholderTextColor="#888"
-                      onChangeText={text => setWhatsappNumber(text)}
+                      onChangeText={text => text == "" ? setWhatsappNumber(" ") : setWhatsappNumber(text)}
                     />
                     <TextInput
-                      style={styles.textInput}
+                      style={[styles.textInput,{color: isDarkMode ? '#fff' : "#000"}]}
                       value={
                         designation !== null
                           ? designation
@@ -488,18 +501,20 @@ function ProfileScreen({navigation}) {
                       }
                       placeholder="Designation"
                       placeholderTextColor="#888"
-                      onChangeText={text => setDesignation(text)}
+                      onChangeText={text => text == "" ? setDesignation(" ") : setDesignation(text)}
                     />
+                    {userData?.userData?.category === "Political" && <>
                     <DropdownComponent
-                      onPartySelect={handlePartySelect}
-                      politicalParty={userData.userData.politicalParty}
+                    onPartySelect={handlePartySelect}
+                    politicalParty={userData.userData.politicalParty}
                     />
-                      <Logo_list onSelectImage={handleSelectlogo} partyId={selectedPartyId}/>
-                    {/* <TextInput style={styles.textInput} value={userData.userData.politicalParty} placeholder='Political Party' placeholderTextColor="#888" onChangeText={(text) => setPoliticalParty(text)} /> */}
+                      <Logo_list onSelectImage={handleSelectlogo} partyId={selectedPartyId} title="Choose Political logo"/>
+                      </> }
+                    {/* <TextInput style={[styles.textInput,{color: isDarkMode ? '#fff' : "#000"}]} value={userData.userData.politicalParty} placeholder='Political Party' placeholderTextColor="#888" onChangeText={(text) => setPoliticalParty(text)} /> */}
                     {showInsta && (
                       <View>
                         <TextInput
-                          style={styles.textInput}
+                          style={[styles.textInput,{color: isDarkMode ? '#fff' : "#000"}]}
                           value={
                             InstaUrl !== null
                               ? InstaUrl
@@ -507,14 +522,14 @@ function ProfileScreen({navigation}) {
                           }
                           placeholder="Paste Instagram Url"
                           placeholderTextColor="#888"
-                          onChangeText={text => setInstaUrl(text)}
+                          onChangeText={text => text == "" ? setInstaUrl(" ") : setInstaUrl(text)}
                         />
                       </View>
                     )}
                     {showFacebook && (
                       <View>
                         <TextInput
-                          style={styles.textInput}
+                          style={[styles.textInput,{color: isDarkMode ? '#fff' : "#000"}]}
                           value={
                             FacebookUrl !== null
                               ? FacebookUrl
@@ -522,14 +537,14 @@ function ProfileScreen({navigation}) {
                           }
                           placeholder="Paste Facebook Url"
                           placeholderTextColor="#888"
-                          onChangeText={text => setFacebookUrl(text)}
+                          onChangeText={text => text == "" ? setFacebookUrl(" ") : setFacebookUrl(text)}
                         />
                       </View>
                     )}
                     {showTwitter && (
                       <View>
                         <TextInput
-                          style={styles.textInput}
+                          style={[styles.textInput,{color: isDarkMode ? '#fff' : "#000"}]}
                           value={
                             TwitterUrl !== null
                               ? TwitterUrl
@@ -537,7 +552,7 @@ function ProfileScreen({navigation}) {
                           }
                           placeholder="Paste Twitter Url"
                           placeholderTextColor="#888"
-                          onChangeText={text => setTwitterUrl(text)}
+                          onChangeText={text => text == "" ? setTwitterUrl(" ") : setTwitterUrl(text)}
                         />
                       </View>
                     )}
@@ -552,25 +567,19 @@ function ProfileScreen({navigation}) {
                     <View style={styles.icons_view}>
                       <TouchableOpacity onPress={() => SetshowInsta(true)}>
                         <Image
-                          source={{
-                            uri: 'https://static.vecteezy.com/system/resources/previews/023/986/555/original/instagram-logo-instagram-logo-transparent-instagram-icon-transparent-free-free-png.png',
-                          }}
+                          source={require("../assets/img/instagram-png.webp")}
                           style={styles.icons}
                         />
                       </TouchableOpacity>
                       <TouchableOpacity onPress={() => setshowFacebook(true)}>
                         <Image
-                          source={{
-                            uri: 'https://www.edigitalagency.com.au/wp-content/uploads/Facebook-logo-blue-circle-large-transparent-png.png',
-                          }}
+                          source={require("../assets/img/Facebook-png.png")}
                           style={styles.icons}
                         />
                       </TouchableOpacity>
                       <TouchableOpacity onPress={() => SetshowTwitter(true)}>
                         <Image
-                          source={{
-                            uri: 'https://png.pngtree.com/png-vector/20221018/ourmid/pngtree-twitter-social-media-round-icon-png-image_6315985.png',
-                          }}
+                          source={require("../assets/img/twiter.png")}
                           style={styles.icons}
                         />
                       </TouchableOpacity>
@@ -578,7 +587,7 @@ function ProfileScreen({navigation}) {
                     <TouchableOpacity
                       style={styles.profile_edit_btn}
                       onPress={updateProfile}>
-                      <Text style={styles.logout_btn_text}>Update Profile</Text>
+                      <Text style={[styles.logout_btn_text,{color: isDarkMode ? '#fff' : "#000"}]}>Update Profile</Text>
                     </TouchableOpacity>
                     <TouchableOpacity
                       style={styles.logout_btn}
@@ -609,7 +618,7 @@ function ProfileScreen({navigation}) {
         zIndex: 1, 
       }}
     >
-      <ActivityIndicator size="large" color={'black'} />
+      <ActivityIndicator size="large" color={isDarkMode ? "#000" : "#fff"} />
     </View>
   )}
       {/* <View style={{justifyContent:"center",alignSelf:"center"}}>
@@ -633,12 +642,13 @@ function ProfileScreen({navigation}) {
       
     </BottomSheetModalProvider>
   );
-}
+      }
 
-const styles = StyleSheet.create({
+  const styles = StyleSheet.create({
   main_container: {
     flex: 1,
     padding: 5,
+
   },
   profile_container: {
     flex: 1,
@@ -719,5 +729,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   }
 });
+
 
 export default ProfileScreen;

@@ -11,6 +11,7 @@ import SearchBar from '../components/SearchBar';
 import ResetPassword from '../screens/Auth/ResetPassword';
 import MyDownloadScreen from '../screens/MyDownloadScreen';
 import VideoPlayerComponent from '../components/FullScreen';
+import ViewAllPost from '../screens/ViewallPost';
 
 const Stack = createStackNavigator();
 
@@ -43,7 +44,10 @@ function AuthStack() {
           <Stack.Screen name='verifyOTP' component={VerifyOtp}/> */}
           <Stack.Screen name='Downloads' component={MyDownloadScreen}/>
           <Stack.Screen name='FullScreen' component={VideoPlayerComponent}/>
-      
+          <Stack.Screen name='ViewAllPost' component={ViewAllPost} options={{
+        headerShown: true,
+        title: 'View All'
+      }}/>
     </Stack.Navigator>
   );
 }

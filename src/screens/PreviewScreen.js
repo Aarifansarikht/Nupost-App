@@ -36,6 +36,11 @@ import ViewShot from 'react-native-view-shot';
 import { SCREEN_WIDTH } from '@gorhom/bottom-sheet';
 import { Frames } from '../vectors/frames/Frames';
 import { err } from 'react-native-svg/lib/typescript/xml';
+import {
+  BottomSheetScrollView,
+  BottomSheetModal,
+  BottomSheetModalProvider,
+} from '@gorhom/bottom-sheet';
 // import { get_user } from '../utils/user';
 const POSTER_WIDTH = SCREEN_WIDTH - 60;
 const POSTER_RATIO = 1 / 1;
@@ -44,17 +49,42 @@ const POSTER_HEIGHT = POSTER_WIDTH / POSTER_RATIO
 
 function PreviewScreen({ navigation, route }) {
   const [userData, setUserData] = useState(null);
+  const [userId, setUserId] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedImage_p, setSelectedImage_p] = useState(null);
   const [selectedFrame, setSelectedFrame] = useState(null);
   const [isLoading,setIsLoading] = useState(false)
+  const [isPolitical,setIsPolitical] = useState(true)
   const { selectedImage, filteredData } = route.params;
   const scrollViewRef = useRef(null);
   const REMOTE_IMAGE_PATH = selectedImage?.data.url
   const LOCAL_IMAGE_PATH = `${RNFS.DocumentDirectoryPath}/photo.jpg`;
   const viewShotRef = useRef(null);
 
-  console.log("PreviewScreen userData",userData)
+  const bottomSheetModalRef = useRef(null);
+
+  const openModel = () => {
+    bottomSheetModalRef.current?.present();
+  };
+
+  const closeModel = () => {
+    bottomSheetModalRef.current?.close();
+  };
+
+  useEffect(()=>{
+   openModel()
+  },[])
+
+  const handelPolitical = ()=>{
+    setIsPolitical(true)
+    bottomSheetModalRef.current?.close();
+  }
+
+  const handelBusiness = ()=>{
+    setIsPolitical(false)
+    bottomSheetModalRef.current?.close();
+  }
+
   // async function processImage() {
   //   console.log("RemoteUrl",REMOTE_IMAGE_PATH)
   //   try {
@@ -74,6 +104,17 @@ function PreviewScreen({ navigation, route }) {
   // }
 
   // processImage();
+  const getUserIDByEmail = async email => {
+    const querySnapshot = await getDocs(collection(firestore, 'users'));
+    let userId = null;
+    querySnapshot.forEach(doc => {
+      const userData = doc.data();
+      if (userData.email === email) {
+        userId = doc.id;
+      }
+    });
+    return userId;
+  };
 
 
   const getUserData = async () => {
@@ -81,8 +122,9 @@ function PreviewScreen({ navigation, route }) {
       const data = await AsyncStorage.getItem('userData');
       if (data) {
         const parsedData = JSON.parse(data);
-        console.log("Parsed_____________user_data", parsedData)
         const email = parsedData?.userData?.email;
+        const userId = await getUserIDByEmail(email)
+        setUserId(userId)
         const usersRef = collection(firestore, 'users');
         const q = query(usersRef, where('email', '==', email));
         const querySnapshot = await getDocs(q);
@@ -100,6 +142,7 @@ function PreviewScreen({ navigation, route }) {
     getUserData();
   }, []);
 
+
   
   const captureImage = async () => {
     if (viewShotRef.current) {
@@ -107,7 +150,7 @@ function PreviewScreen({ navigation, route }) {
         const uri = await viewShotRef.current.capture();
         console.log('Captured image URI:', uri);
         const EditdedUri = await uploadImage(uri)
-        await downloadImage(EditdedUri)
+        await checkDownloadLimit(EditdedUri,userId,userData?.userData?.userType)
         // You can now use this URI as needed, e.g., save it or share it.
       } catch (error) {
         console.error('Error capturing image:', error);
@@ -134,7 +177,7 @@ function PreviewScreen({ navigation, route }) {
   const checkPermission = async () => {
     setIsLoading(true)
     if (Platform.OS === 'ios') {
-      downloadImage(REMOTE_IMAGE_PATH);
+      checkDownloadLimit(REMOTE_IMAGE_PATH,userId,userData?.userData?.userType);
       setIsLoading(false)
     } else {
       try {
@@ -226,8 +269,73 @@ function PreviewScreen({ navigation, route }) {
   };
 
 
+  const checkDownloadLimit = async (editedImage,userId, userType) => {
 
-  const downloadImage = editedImage => {
+    console.log(userData,"userData download limit function")
+    // console.log('props',JSON.stringify(userId),userType)
+    const currentDate = new Date().toDateString();
+    if (userType === 'free') {
+      // Retrieve user's download count and last download date from Firestore
+
+          if (userData?.userData) {
+            const lastDownloadDate = userData?.userData?.lastDownloadDate || '';
+            const userDownloadCount = userData?.userData?.downloadCount || 0;
+          
+            if (lastDownloadDate !== currentDate) {
+              // Reset download count for a new day
+              const userDocRef = doc(firestore, 'users', userId);
+              const updatedData = {
+                downloadCount: 0,
+                lastDownloadDate: currentDate,
+              };
+            
+              updateDoc(userDocRef, updatedData)
+                .then(() => {
+                  console.log("Successfully updated")
+                  // Successfully updated last download date and reset download count
+                })
+                .catch(error => {
+                  console.error('Error updating last download date:', error);
+                });
+            }
+  
+            if (userDownloadCount >= 7) {
+              alert('You have reached your daily download limit')
+              console.log('You have reached your daily download limit');
+              return; // Stop the download process
+            }
+  
+            // Continue with the download process for free users
+           downloadImage(editedImage)
+  
+            // After successful download, update the download count for free users
+            const newDownloadCount = userDownloadCount + 1;
+            const userDocRef = doc(firestore, 'users', userId);
+            const updatedData = {
+              downloadCount: newDownloadCount,
+            };
+          console.log(updatedData,"updated download count")
+            updateDoc(userDocRef, updatedData)
+              .then(() => {
+                console.log("Successfully updated")
+                // Successfully updated last download date and reset download count
+              })
+              .catch(error => {
+                console.error('Error updating new download count:', error);
+              });
+          } else {
+            console.log('User data not found calling from Checkdownload fun');
+          }
+        
+      
+    } else {
+       downloadImage(editedImage)
+    }
+  };
+
+
+
+  const downloadImage =async (editedImage) => {
     console.log(editedImage, "check______")
     let date = new Date();
     let ext = getExtention(editedImage);
@@ -237,7 +345,6 @@ function PreviewScreen({ navigation, route }) {
     const { config, fs } = RNFetchBlob;
     const PictureDir = fs.dirs.PictureDir;
     const nupostImagesDir = PictureDir + '/Nupost_Images';
-
     // Check if the 'Nupost_Images' directory exists, and create it if not
     if (!fs.exists(nupostImagesDir)) {
       fs.mkdir(nupostImagesDir)
@@ -311,6 +418,12 @@ function PreviewScreen({ navigation, route }) {
     setIndicator(true);
   };
 
+
+
+  const handleSelect = (option) => {
+    setSelectedOption(option); 
+  };
+
   const handleBuffering = (isBuffering) => {
     if (isBuffering) {
 
@@ -322,8 +435,8 @@ function PreviewScreen({ navigation, route }) {
   };
   LogBox.ignoreAllLogs()
 
-
   return (
+    <BottomSheetModalProvider>
     <SafeAreaView style={{ flex: 1 }}>
       {/* <Modal
         animationType="fade"
@@ -370,8 +483,8 @@ function PreviewScreen({ navigation, route }) {
                   name: userData?.userData?.name,
                   email: userData?.userData.email,
                   designation:  userData?.userData.designation,
-                  mobileNumber: `+91-${userData?.userData.mobileNumber}`,
-                  WhatsappNumber: `+91-${userData?.userData.WhatsappNumber}`,
+                  mobileNumber: userData?.userData.mobileNumber,
+                  WhatsappNumber: userData?.userData.WhatsappNumber,
                   politicalImgUrl: userData?.userData?.politicalImgUrl,
                   imageUrl: userData?.userData?.imageUrl,
                   FacebookUrl: userData?.userData.FacebookUrl,
@@ -387,10 +500,10 @@ function PreviewScreen({ navigation, route }) {
                 source={{ uri: userData?.userData?.politicalImgUrl }}
                 style={styles.logo}
               />
-              <Image
+              {/* <Image
                 source={{ uri: userData?.userData?.imageUrl }}
                 style={styles.profile_picture}
-              />
+              /> */}
               {/* Overlay Image and Text */}
               {/* <View style={styles.overlayContainer}>
                   <View style={{ position: "absolute", top: 0, zIndex: -1 }}>         
@@ -417,7 +530,14 @@ function PreviewScreen({ navigation, route }) {
             </ViewShot>
           </View>
         )}
+      {isPolitical && 
         <Frame_list selectedImage={selectedImage} onSelectImage={handleSelectImage} image={REMOTE_IMAGE_PATH} />
+      }
+      {!isPolitical && <View style={{flex:1,justifyContent:"center"}}>
+       <Text style={{color:"#000",fontSize:18,fontWeight:"bold",textAlign:"center"}}>
+        No Frames in Business
+        </Text>
+      </View>  }
         <View style={styles.btns_wrapper}>
           <TouchableOpacity onPress={checkPermission} style={styles.btns}>
             <Text style={styles.btns_text}>Download</Text>
@@ -425,7 +545,35 @@ function PreviewScreen({ navigation, route }) {
           </TouchableOpacity>
         </View>
       </View>
+
+
+      <BottomSheetModal
+              ref={bottomSheetModalRef}
+              index={0}
+              snapPoints={['30%', '50%']}
+              backdropComponent={null}>
+              <BottomSheetScrollView>
+                <View styles={styles.button_wrapper}>
+                  <TouchableOpacity onPress={handelBusiness}>
+                    <View style={styles.bottomButton}>
+                      <Text style={styles.buttonText}>Business</Text>
+                    </View>
+                  </TouchableOpacity>
+                  <TouchableOpacity onPress={handelPolitical}>
+                    <View style={styles.bottomButton}>
+                      <Text style={styles.buttonText}>Political</Text>
+                    </View>
+                  </TouchableOpacity>
+                  <TouchableOpacity onPress={closeModel}>
+                    <View style={styles.bottomButton}>
+                      <Text style={styles.buttonText}>Cancel</Text>
+                    </View>
+                  </TouchableOpacity>
+                </View>
+              </BottomSheetScrollView>
+            </BottomSheetModal>
     </SafeAreaView>
+    </BottomSheetModalProvider>
   );
 }
 
@@ -439,15 +587,25 @@ const styles = StyleSheet.create({
     // alignItems:'center'
 
   },
-
   // preview_image: {
   //   height: 380,
   //   width: "100%",
   //   marginBottom: 170,
   //   position:"relative",
-
-
   // },
+  bottomButton: {
+    borderWidth: 2,
+    borderColor: 'black',
+    margin: 10,
+    padding: 10,
+    borderRadius: 10,
+    textAlign: 'center',
+  },
+  buttonText: {
+    color: 'black',
+    fontSize: 16,
+    textAlign: 'center',
+  },
   btns_wrapper: {
     flexDirection: 'row',
     padding: 20,
@@ -456,7 +614,6 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     justifyContent: 'center',
-
   },
   btns: {
     borderWidth: 1,

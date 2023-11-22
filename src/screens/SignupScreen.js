@@ -11,9 +11,10 @@ import CheckBox from '@react-native-community/checkbox';
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import 'firebase/storage';
 import RNFetchBlob from 'rn-fetch-blob';
-
+import { Dropdown } from 'react-native-element-dropdown';
 import ImagePicker from 'react-native-image-crop-picker';
 import { BottomSheetScrollView, BottomSheetModal, BottomSheetModalProvider } from '@gorhom/bottom-sheet';
+
 function SignupScreen({ navigation }) {
 
     const dbRef = collection(firestore, 'users');
@@ -29,6 +30,7 @@ function SignupScreen({ navigation }) {
     const [isPasswordMatch, setIsPasswordMatch] = useState(false)
     const [nameError, setNameError] = useState(false);
     const [emailError, setEmailError] = useState(false);
+    const [CategoryError, setCategoryError] = useState(false);
     const [passwordError, setPasswordError] = useState(false);
     const [confirmpasswordError, setconfirmPasswordError] = useState(false);
     const passRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/
@@ -36,14 +38,22 @@ function SignupScreen({ navigation }) {
     const [isTermsChecked, setIsTermsChecked] = useState(false);
     const [image, setImage] = useState(null);
     const [politicalImgUrl, setPoliticalImgUrl] = useState(null);
-    const [mobileNumber, setMobileNumber] = useState(null);
-    const [designation, setDesignation] = useState(null);
+    const [mobileNumber, setMobileNumber] = useState('');
+    const [designation, setDesignation] = useState('');
     const [politicalParty, setPoliticalParty] = useState(null);
     const [InstaUrl,setInstaUrl] = useState('')
     const [FacebookUrl,setFacebookUrl] = useState('')
     const [TwitterUrl,setTwitterUrl] = useState('')
     const [WhatsappNumber, setWhatsappNumber] = useState('');
-    
+    const [value, setValue] = useState(null);
+    const [isFocus, setIsFocus] = useState(false);
+    const [category,setSelectedCategory] = useState('')
+    const [businesslogoUrl, setbusinesslogoUrl] = useState('');
+    const [downloadCount,setDownloadCount]  = useState(0);
+    const [lastDownloadDate , setlastDownloadDate] = useState('');
+    const [userType , setUserType] = useState('free');
+
+    const categories = [{id:"1",label:"Political",value:"Political"},{ id:"2",label:"Business",value:"Business"}];
 
     const toggleTermsCheck = () => {
         setIsTermsChecked(!isTermsChecked);
@@ -99,7 +109,7 @@ function SignupScreen({ navigation }) {
 
     const storeUser = async () => {
         setClicked(true)
-        if (name === '' || email === '' || password === '' || confirmPassword === '' || password === "" || email.indexOf('@') === -1) {
+        if (name === '' || email === '' || category === '' || password === '' || confirmPassword === '' || password === "" || email.indexOf('@') === -1) {
             if (name === "") {
                 setNameError(true)
             } else {
@@ -109,7 +119,12 @@ function SignupScreen({ navigation }) {
                 setEmailError(true)
             } else {
                 setEmailError(false)
-            }pan
+            }
+            if(businesslogoUrl === ""){
+                setCategoryError(true)
+            }else{
+                setCategoryError(false)
+            }
             if (password === "") {
                 setPasswordError(true)
             } else {
@@ -133,6 +148,7 @@ function SignupScreen({ navigation }) {
                 password,
                 imageUrl,
                 politicalImgUrl,
+                businesslogoUrl,
                 mobileNumber,
                 designation,
                 WhatsappNumber,
@@ -140,6 +156,10 @@ function SignupScreen({ navigation }) {
                 InstaUrl,
                 FacebookUrl,
                 TwitterUrl,
+                category,
+                downloadCount,
+                lastDownloadDate,
+                userType,
                 timestamp:Date.now()
             });
             setName('');
@@ -155,6 +175,8 @@ function SignupScreen({ navigation }) {
             setFacebookUrl('')
             setTwitterUrl('')
             setPoliticalParty('');
+            setSelectedCategory('')
+            setbusinesslogoUrl('')
             setIsLoading(false);
             setModalVisible(true);
 
@@ -249,6 +271,13 @@ function SignupScreen({ navigation }) {
         Linking.openURL(url);
     };
 
+    const handleCategoryChange = (category) => {
+        console.log(category,"categorie")
+        setSelectedCategory(category);
+      };
+
+
+
     return (
         <BottomSheetModalProvider>
             <SafeAreaView style={styles.main_container}>
@@ -316,6 +345,47 @@ function SignupScreen({ navigation }) {
                                     <TextInput style={styles.textfields} placeholder='Email' placeholderTextColor={'black'} value={email} onChangeText={handleEmailChange}></TextInput>
                                 </View>
                                 {emailError && <Text style={styles.error_text} > eg: xyz@gmail.com</Text>}
+                               {/* <View style={styles.inputfields}> */}
+                                <View style={{ backgroundColor: 'white',marginBottom: 15,borderRadius: 5 }}>
+                               <Dropdown
+                                        style={[styles.dropdown, isFocus && { borderColor: 'gray' }]}
+                                        placeholderStyle={styles.placeholderStyle}
+                                        selectedTextStyle={styles.selectedTextStyle}
+                                        inputSearchStyle={styles.inputSearchStyle}
+                                        iconStyle={styles.iconStyle}
+                                        data={categories}
+                                        // search
+                                        maxHeight={200}
+                                        textStyle={{ color: 'black' }}
+                                        labelField="label"
+                                        valueField='value'
+                                        placeholder={'Select Category'}
+                                        // searchPlaceholder="Search..."
+                                        value={value}
+                                        onFocus={() => setIsFocus(true)}
+                                        onBlur={() => setIsFocus(false)}
+                                        onChange={item => {
+                                        console.log("Dropdown_Item",item)
+                                        setValue(item.value);
+                                        setIsFocus(false);
+                                        handleCategoryChange(item.value)
+                                        }}
+                                        renderItem={(item, index, isSelected) => (
+                                            <View
+                                            key={item.id}
+                                            style={{
+                                            backgroundColor: isSelected ? 'lightgray' : 'white',
+                                            padding: 10,
+                                            }}
+                                        >
+                                            <Text style={{ color: 'black' ,fontWeight:"bold" ,fontSize:16}}>{item.label}</Text>
+                                        </View>
+                                        )}
+                                 />
+                                  </View>
+                                  {CategoryError && <Text style={styles.error_text} >Category must be Selected.</Text>}
+                               {/* </View> */}
+
 
                                 <View style={styles.inputfields}>
                                     <MaterialIcons name='lock' size={20} style={styles.inputfields_icons} />
@@ -509,7 +579,51 @@ const styles = StyleSheet.create({
         fontSize: 16,
         textAlign: 'center'
     }
-
+,
+dropdown: {
+    height: 50,
+    borderColor: 'gray',
+    borderWidth: 1,
+    borderRadius: 5,
+    paddingHorizontal: 10,
+    color: 'black'
+},
+icon: {
+  marginRight: 5,
+},
+label: {
+  position: 'absolute',
+  backgroundColor: 'black',
+  left: 22,
+  top: 8,
+  zIndex: 999,
+  paddingHorizontal: 8,
+  fontSize: 14,
+},
+placeholderStyle: {
+  fontSize: 18,
+  color:"black",
+  fontWeight:"bold"
+},
+selectedTextStyle: {
+  fontSize: 18,
+  color:"black",
+  fontWeight:"bold"
+},
+iconStyle: {
+  width: 20,
+  height: 20,
+},
+inputSearchStyle: {
+  height: 40,
+  fontSize: 16,
+  color:"black"
+},
+icon: {
+    marginRight: 5,
+    width: 20,
+    height: 20,
+  },
 })
 
 export default SignupScreen;

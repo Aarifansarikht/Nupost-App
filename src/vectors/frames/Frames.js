@@ -1,5 +1,5 @@
 import * as React from "react";
-import Svg, { Defs, ClipPath, Path, Rect, G, Image, LinearGradient, Stop, Line, Polygon, Mask, Text, } from "react-native-svg";
+import Svg, { Defs, ClipPath, Path, Rect, G, Image, LinearGradient, Stop, Line, Polygon, Mask, Text } from "react-native-svg";
 
 
 export const Frame1 = (props) => {
@@ -9,6 +9,7 @@ export const Frame1 = (props) => {
         viewBox="0 0 346 346"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
+        preserveAspectRatio="xMidYMid meet"
         {...props}
     >
         <G>
@@ -121,11 +122,11 @@ export const Frame1 = (props) => {
             <Text x="8%" y="85%" fill="#fff" fontSize={21} fontWeight={'600'}>
                 {props?.data?.name}
             </Text>
-            <Text x="38%" y="91%" fill="#fff" fontSize={17} fontWeight={'600'}>
+            <Text x="20%" y="91%" fill="#fff" fontSize={17} fontWeight={'600'}>
             {props?.data?.designation}
             </Text>
             <Text x="20" y="91.5%" fill="#DEDEDE" fontSize={13} fontWeight={'600'} >
-                {props?.data?.whatsappNumber}
+                     {props?.data?.WhatsappNumber ? `+91-${props?.data?.WhatsappNumber}` : "" }
             </Text>
             <Text x="18" y="97.5%" fill="#DEDEDE" fontSize={8} fontWeight={'600'}>
             {props?.data?.FacebookUrl}
@@ -136,6 +137,14 @@ export const Frame1 = (props) => {
             <Text x="75%" y="97.5%" fill="#DEDEDE" fontSize={8} fontWeight={'600'}>
             {props?.data?.InstaUrl}
             </Text>
+            <Image
+          x="30%"
+          y="57%"
+          width="100%"
+          height="36%"
+          href={{uri:props?.data?.imageUrl}}
+          clipPath="url(#image-clip)"
+        />
         </G>
     </Svg>
 }
@@ -250,7 +259,7 @@ export const Frame2 = (props) => {
         <Text x="8%" y="85%" fill="#fff" fontSize={21} fontWeight={'600'}>
                 {props?.data?.name}
             </Text>
-            <Text x="38%" y="91%" fill="#fff" fontSize={17} fontWeight={'600'}>
+            <Text x="23%" y="91%" fill="#fff" fontSize={17} fontWeight={'600'}>
             {props?.data?.designation}
             </Text>
             <Text x="20" y="93.5%" fill="#fff" fontSize={12} fontWeight={'600'} >
@@ -260,8 +269,17 @@ export const Frame2 = (props) => {
             {props?.data?.TwitterUrl}
             </Text>
             <Text x="44%" y="97.9%" fill="#fff" fontSize={10} fontWeight={'600'}>
-                {props?.data?.mobileNumber}
+               {props?.data?.mobileNumber ? `+91-${props?.data?.mobileNumber}` : "" }
             </Text>
+            <Image
+          x="30%"
+          y="60%"
+          width="100%"
+          height="36%"
+          preserveAspectRatio="xMidYMid meet" 
+          href={{uri:props?.data?.imageUrl}}
+          clipPath="url(#image-clip)"
+        />
         </G>
     </Svg>
 }
@@ -367,7 +385,7 @@ export const Frame3 = (props) => {
         <Text x="8%" y="84%" fill="#fff" fontSize={21} fontWeight={'600'}>
                 {props?.data?.name}
             </Text>
-            <Text x="38%" y="89%" fill="#fff" fontSize={17} fontWeight={'600'}>
+            <Text x="20%" y="89%" fill="#fff" fontSize={17} fontWeight={'600'}>
             {props?.data?.designation}
             </Text>
             <Text x="20" y="97.5%" fill="#000" fontSize={8} fontWeight={'600'}>
@@ -377,8 +395,17 @@ export const Frame3 = (props) => {
             {props?.data?.TwitterUrl}
             </Text>
             <Text x="73%" y="97.5%" fill="#000" fontSize={8} fontWeight={'600'}>
-                {props?.data?.mobileNumber}
+                {props?.data?.mobileNumber ? `+91-${props?.data?.mobileNumber}` : "" }
             </Text>
+            <Image
+          x="30%"
+          y="55%"
+          width="100%"
+          height="36%"
+          preserveAspectRatio="xMidYMid meet" 
+          href={{uri:props?.data?.imageUrl}}
+          clipPath="url(#image-clip)"
+        />
         </G>
     </Svg>
 }
@@ -484,11 +511,20 @@ export const Frame4 = (props) => {
                 {props?.data?.email}
             </Text>
             <Text x="10%" y="97%" fill="#151515" fontSize={10} fontWeight={'600'} >
-                {props?.data?.whatsappNumber}
+                     {props?.data?.WhatsappNumber ? `+91-${props?.data?.WhatsappNumber}` : "" }
             </Text>
             <Text x="10%" y="92%" fill="#151515" fontSize={10} fontWeight={'600'}>
-                {props?.data?.mobileNumber}
+                {props?.data?.mobileNumber ? `+91-${props?.data?.mobileNumber}` : "" }
             </Text>
+            <Image
+          x="30%"
+          y="53%"
+          width="100%"
+          height="36%"
+          preserveAspectRatio="xMidYMid meet" 
+          href={{uri:props?.data?.imageUrl}}
+          clipPath="url(#image-clip)"
+        />
         </G>
     </Svg>
 }
@@ -533,18 +569,27 @@ export const Frame5 = (props) => {
         <Text x="8%" y="84%" fill="#fff" fontSize={21} fontWeight={'600'}>
                 {props?.data?.name}
             </Text>
-            <Text x="30%" y="89%" fill="#fff" fontSize={18} fontWeight={'600'}>
+            <Text x="20%" y="89%" fill="#fff" fontSize={18} fontWeight={'600'}>
             {props?.data?.designation}
             </Text>
             <Text x="30%" y="98.5%" fill="#fff" fontSize={9} fontWeight={'600'} >
                 {props?.data?.email}
             </Text>
             <Text x="5%" y="98.5%" fill="#fff" fontSize={10} fontWeight={'600'}>
-                {props?.data?.WhatsappNumber}
+                     {props?.data?.WhatsappNumber ? `+91-${props?.data?.WhatsappNumber}` : "" }
             </Text>
             <Text x="5%" y="94.5%" fill="#fff" fontSize={10} fontWeight={'600'}>
-                {props?.data?.mobileNumber}
+               {props?.data?.mobileNumber ? `+91-${props?.data?.mobileNumber}` : "" }
             </Text>
+            <Image
+          x="30%"
+          y="60%"
+          width="100%"
+          height="36%"
+          preserveAspectRatio="xMidYMid meet" 
+          href={{uri:props?.data?.imageUrl}}
+          clipPath="url(#image-clip)"
+        />
         </G>
     </Svg>
 }
@@ -693,7 +738,7 @@ export const Frame6 = (props) => {
         <Text x="8%" y="83%" fill="#fff" fontSize={21} fontWeight={'600'}>
                 {props?.data?.name}
             </Text>
-            <Text x="33%" y="87%" fill="#fff" fontSize={15} fontWeight={'600'}>
+            <Text x="23%" y="87%" fill="#fff" fontSize={15} fontWeight={'600'}>
             {props?.data?.designation}
             </Text>
             <Text x="7%" y="97.8%" fill="#fff" fontSize={10} fontWeight={'600'} >
@@ -706,11 +751,20 @@ export const Frame6 = (props) => {
             {props?.data?.FacebookUrl}
             </Text>
             <Text x="57%" y="92.5%" fill="#fff" fontSize={12} fontWeight={'600'}>
-                {props?.data?.whatsappNumber}
+                     {props?.data?.WhatsappNumber ? `+91-${props?.data?.WhatsappNumber}` : "" }
             </Text>
             <Text x="7%" y="92.5%" fill="#fff" fontSize={12} fontWeight={'600'}>
-                {props?.data?.mobileNumber}
+               {props?.data?.mobileNumber ? `+91-${props?.data?.mobileNumber}` : "" }
             </Text>
+          <Image
+              x="34%"
+              y="54%"
+              width="100%"
+              height="36%"
+              preserveAspectRatio="xMidYMid meet" 
+              href={{uri:props?.data?.imageUrl}}
+              clipPath="url(#image-clip)"
+        />
         </G>
     </Svg>
 }
@@ -843,7 +897,7 @@ export const Frame7 = (props) => {
         <Text x="8%" y="84%" fill="#fff" fontSize={21} fontWeight={'600'}>
                 {props?.data?.name}
             </Text>
-            <Text x="33%" y="88%" fill="#fff" fontSize={15} fontWeight={'600'}>
+            <Text x="22%" y="88%" fill="#fff" fontSize={15} fontWeight={'600'}>
             {props?.data?.designation}
             </Text>
             <Text x="7%" y="97.8%" fill="#000" fontSize={10} fontWeight={'600'}>
@@ -856,11 +910,20 @@ export const Frame7 = (props) => {
             {props?.data?.InstaUrl}
             </Text>
             <Text x="57%" y="92.5%" fill="#fff" fontSize={12} fontWeight={'600'} >
-                {props?.data?.whatsappNumber}
+                     {props?.data?.WhatsappNumber ? `+91-${props?.data?.WhatsappNumber}` : "" }
             </Text>
             <Text x="7%" y="92.5%" fill="#fff" fontSize={12} fontWeight={'600'}>
-                {props?.data?.mobileNumber}
+               {props?.data?.mobileNumber ? `+91-${props?.data?.mobileNumber}` : "" }
             </Text>
+            <Image
+          x="30%"
+          y="55%"
+          width="100%"
+          height="36%"
+          preserveAspectRatio="xMidYMid meet" 
+          href={{uri:props?.data?.imageUrl}}
+          clipPath="url(#image-clip)"
+        />
         </G>
     </Svg>
 }
@@ -948,11 +1011,20 @@ export const Frame8 = (props) =>{
           
             {props?.data?.TwitterUrl}
             </Text>
+            <Image
+          x="30%"
+          y="55%"
+          width="100%"
+          height="36%"
+          preserveAspectRatio="xMidYMid meet" 
+          href={{uri:props?.data?.imageUrl}}
+          clipPath="url(#image-clip)"
+        />
             {/* <Text x="57%" y="92.5%" fill="#fff" fontSize={12} fontWeight={'600'} >
-                {props?.data?.whatsappNumber}
+                     {props?.data?.WhatsappNumber ? `+91-${props?.data?.WhatsappNumber}` : "" }
             </Text>
             <Text x="7%" y="92.5%" fill="#fff" fontSize={12} fontWeight={'600'}>
-                {props?.data?.mobileNumber}
+               {props?.data?.mobileNumber ? `+91-${props?.data?.mobileNumber}` : "" }
             </Text> */}
         </G>
   </Svg>
@@ -1777,6 +1849,15 @@ export const Frame9 = (props) =>{
               
                 {props?.data?.TwitterUrl}
             </Text>
+          <Image
+              x="35%"
+              y="55%"
+              width="100%"
+              height="36%"
+              preserveAspectRatio="xMidYMid meet" 
+              href={{uri:props?.data?.imageUrl}}
+              clipPath="url(#image-clip)"
+        />
         </G>
     <Defs>
       <ClipPath id="clip0_1_2">
@@ -1872,11 +1953,20 @@ xmlns="http://www.w3.org/2000/svg"
                 {props?.data?.FacebookUrl}
             </Text>
             <Text x="6%" y="94%" fill="#fff" fontSize={7} fontWeight={'600'}>
-            {props?.data?.WhatsappNumber}
+                 {props?.data?.WhatsappNumber ? `+91-${props?.data?.WhatsappNumber}` : "" }
             </Text>
             <Text x="6%" y="98%" fill="#fff" fontSize={7} fontWeight={'600'}>
-                {props?.data?.mobileNumber}
+               {props?.data?.mobileNumber ? `+91-${props?.data?.mobileNumber}` : "" }
             </Text>
+         <Image
+              x="35%"
+              y="64%"
+              width="100%"
+              height="36%"
+              preserveAspectRatio="xMidYMid meet" 
+              href={{uri:props?.data?.imageUrl}}
+              clipPath="url(#image-clip)"
+        />
         </G>
 <Defs>
   <ClipPath id="clip0_1_2">
@@ -1971,11 +2061,20 @@ export const Frame11 = (props) => {
                 {props?.data?.FacebookUrl}
             </Text>
             <Text x="6%" y="94%" fill="#65463E" fontSize={7} fontWeight={'600'}>
-            {props?.data?.WhatsappNumber}
+                 {props?.data?.WhatsappNumber ? `+91-${props?.data?.WhatsappNumber}` : "" }
             </Text>
             <Text x="6%" y="98%" fill="#65463E" fontSize={7} fontWeight={'600'}>
-                {props?.data?.mobileNumber}
+               {props?.data?.mobileNumber ? `+91-${props?.data?.mobileNumber}` : "" }
             </Text>
+         <Image
+              x="35%"
+              y="64%"
+              width="100%"
+              height="36%"
+              preserveAspectRatio="xMidYMid meet" 
+              href={{uri:props?.data?.imageUrl}}
+              clipPath="url(#image-clip)"
+        />
         </G>
   <Defs>
     <ClipPath id="clip0_0_3">
@@ -2065,11 +2164,20 @@ export const Frame12 = (props) => {
                 {props?.data?.FacebookUrl}
             </Text>
             <Text x="6%" y="94%" fill="#fff" fontSize={7} fontWeight={'600'}>
-            {props?.data?.WhatsappNumber}
+                 {props?.data?.WhatsappNumber ? `+91-${props?.data?.WhatsappNumber}` : "" }
             </Text>
             <Text x="6%" y="98%" fill="#fff" fontSize={7} fontWeight={'600'}>
-                {props?.data?.mobileNumber}
+               {props?.data?.mobileNumber ? `+91-${props?.data?.mobileNumber}` : "" }
             </Text>
+         <Image
+              x="35%"
+              y="64%"
+              width="100%"
+              height="36%"
+              preserveAspectRatio="xMidYMid meet" 
+              href={{uri:props?.data?.imageUrl}}
+              clipPath="url(#image-clip)"
+        />
         </G>
   <Defs>
     <LinearGradient
@@ -2201,11 +2309,20 @@ export const Frame13 = (props) =>{
                 {props?.data?.FacebookUrl}
             </Text>
             <Text x="6%" y="94%" fill="#fff" fontSize={7} fontWeight={'600'}>
-            {props?.data?.WhatsappNumber}
+                 {props?.data?.WhatsappNumber ? `+91-${props?.data?.WhatsappNumber}` : "" }
             </Text>
             <Text x="6%" y="98%" fill="#fff" fontSize={7} fontWeight={'600'}>
-                {props?.data?.mobileNumber}
+               {props?.data?.mobileNumber ? `+91-${props?.data?.mobileNumber}` : "" }
             </Text>
+         <Image
+              x="35%"
+              y="64%"
+              width="100%"
+              height="36%"
+              preserveAspectRatio="xMidYMid meet" 
+              href={{uri:props?.data?.imageUrl}}
+              clipPath="url(#image-clip)"
+        />
         </G>
    <Defs>
      <LinearGradient
@@ -2394,11 +2511,20 @@ export const Frame14 = (props) =>{
                 {props?.data?.FacebookUrl}
             </Text>
             <Text x="6%" y="94%" fill="#fff" fontSize={7} fontWeight={'600'}>
-            {props?.data?.WhatsappNumber}
+                 {props?.data?.WhatsappNumber ? `+91-${props?.data?.WhatsappNumber}` : "" }
             </Text>
             <Text x="6%" y="98%" fill="#fff" fontSize={7} fontWeight={'600'}>
-                {props?.data?.mobileNumber}
+               {props?.data?.mobileNumber ? `+91-${props?.data?.mobileNumber}` : "" }
             </Text>
+         <Image
+              x="35%"
+              y="64%"
+              width="100%"
+              height="36%"
+              preserveAspectRatio="xMidYMid meet" 
+              href={{uri:props?.data?.imageUrl}}
+              clipPath="url(#image-clip)"
+        />
         </G>
   <Defs>
     <LinearGradient
@@ -2529,11 +2655,20 @@ export const Frame15 = (props) =>{
                 {props?.data?.FacebookUrl}
             </Text>
             <Text x="6%" y="94%" fill="#000" fontSize={7} fontWeight={'600'}>
-            {props?.data?.WhatsappNumber}
+                 {props?.data?.WhatsappNumber ? `+91-${props?.data?.WhatsappNumber}` : "" }
             </Text>
             <Text x="6%" y="98%" fill="#000" fontSize={7} fontWeight={'600'}>
-                {props?.data?.mobileNumber}
+               {props?.data?.mobileNumber ? `+91-${props?.data?.mobileNumber}` : "" }
             </Text>
+         <Image
+              x="35%"
+              y="64%"
+              width="100%"
+              height="36%"
+              preserveAspectRatio="xMidYMid meet" 
+              href={{uri:props?.data?.imageUrl}}
+              clipPath="url(#image-clip)"
+        />
         </G>
   <Defs>
     <LinearGradient
@@ -2561,6 +2696,7 @@ export const Frame16 = (props) =>{
   height={346}
   viewBox="0 0 346 346"
   fill="none"
+  preserveAspectRatio="xMidYMid meet"
   xmlns="http://www.w3.org/2000/svg"
   {...props}
 >
@@ -2668,11 +2804,20 @@ export const Frame16 = (props) =>{
                 {props?.data?.FacebookUrl}
             </Text>
             <Text x="6%" y="94%" fill="#fff" fontSize={7} fontWeight={'600'}>
-            {props?.data?.WhatsappNumber}
+            {props?.data?.WhatsappNumber ? `+91-${props?.data?.WhatsappNumber}` : "" }
             </Text>
             <Text x="6%" y="98%" fill="#fff" fontSize={7} fontWeight={'600'}>
-                {props?.data?.mobileNumber}
+              {props?.data?.mobileNumber ? `+91-${props?.data?.mobileNumber}` : "" }
             </Text>
+            <Image
+              x="35%"
+              y="64%"
+              width="100%"
+              height="36%"
+              preserveAspectRatio="xMidYMid meet" 
+              href={{uri:props?.data?.imageUrl}}
+              clipPath="url(#image-clip)"
+        />
         </G>
   <Defs>
     <LinearGradient
@@ -2706,22 +2851,22 @@ export const Frame16 = (props) =>{
 
 
 export const Frames = [
-  {
-    id: "1",
-    image: (width, height, data) => (<Frame16 width={width} height={height} data={data} />)
-},
-{
-  id: "2",
-  image: (width, height, data) => (<Frame15 width={width} height={height} data={data} />)
-},
-{
-  id: "3",
-  image: (width, height, data) => (<Frame14 width={width} height={height} data={data} />)
-},
-{
-  id: "4",
-  image: (width, height, data) => (<Frame13 width={width} height={height} data={data} />)
-},
+            {
+              id: "1",
+              image: (width, height, data) => (<Frame16 width={width} height={height} data={data} />)
+          },
+          {
+            id: "2",
+            image: (width, height, data) => (<Frame15 width={width} height={height} data={data} />)
+          },
+          {
+            id: "3",
+            image: (width, height, data) => (<Frame14 width={width} height={height} data={data} />)
+          },
+          {
+            id: "4",
+            image: (width, height, data) => (<Frame13 width={width} height={height} data={data} />)
+          },
           {
             id: "5",
             image: (width, height, data) => (<Frame12 width={width} height={height} data={data} />)

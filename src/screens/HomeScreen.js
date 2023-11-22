@@ -45,12 +45,12 @@ function HomeScreen({ navigation,route }) {
 
     const onRefresh = React.useCallback(() => {
         setRefreshing(true);
-        
         setTimeout(() => {
           setRefreshing(false);
         }, 1000);
       }, []);
     
+      
     const fetchCategories = async () => {
         setIsLoading(true)
         try {
@@ -80,9 +80,9 @@ function HomeScreen({ navigation,route }) {
                 id: doc.id,
                 data: doc.data(),
             }));
-      
             dispatch(getImageData(imagesDataf))
             setImagesData(imagesDataf)
+            console.log(imagesDataf,"data")
             setFilteredData(imagesDataf)
             setIsLoading(false)
         }
@@ -92,6 +92,7 @@ function HomeScreen({ navigation,route }) {
             setIsLoading(false)
         }
     }
+
 
     const fetchVideos = async () => {
         setIsLoading(true)
@@ -113,7 +114,6 @@ function HomeScreen({ navigation,route }) {
             console.log('Error fetching videos:', error);
             setIsLoading(false)
         }
-
     }
 
 
@@ -154,7 +154,7 @@ function HomeScreen({ navigation,route }) {
         }
       };
 
-console.log(ctgData,videocategories,"header Data")
+     //console.log(ctgData,videocategories,"header Data")
 
     return (
         <SafeAreaView style={{ flex: 1 }}>
@@ -172,6 +172,7 @@ console.log(ctgData,videocategories,"header Data")
       videocategories={videocategories}
     />
   </ScrollView>
+ 
   {/* {!ctgData && !videocategories && <View
       style={{
         position: 'absolute',
@@ -181,7 +182,6 @@ console.log(ctgData,videocategories,"header Data")
         bottom: 0,
         alignItems: 'center',
         justifyContent: 'center',
-      
         zIndex: 1, // Ensure it's above the ScrollView
       }}
     >
@@ -205,10 +205,8 @@ console.log(ctgData,videocategories,"header Data")
       <ActivityIndicator size="large" color={'black'} />
     </View>
   )}
-
   <Bottom />
 </SafeAreaView>
-
         // <SafeAreaView style={{ flex: 1 }}>
         //     <Header   userData={userData}/>
         //     <ScrollView  refreshControl={
@@ -228,8 +226,6 @@ text:{
     fontSize:24,
     textAlign:"center"
 }
-
-
 })
 
 export default HomeScreen;
