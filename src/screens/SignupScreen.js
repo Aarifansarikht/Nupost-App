@@ -47,13 +47,12 @@ function SignupScreen({ navigation }) {
     const [WhatsappNumber, setWhatsappNumber] = useState('');
     const [value, setValue] = useState(null);
     const [isFocus, setIsFocus] = useState(false);
-    const [category,setSelectedCategory] = useState('')
     const [businesslogoUrl, setbusinesslogoUrl] = useState('');
     const [downloadCount,setDownloadCount]  = useState(0);
     const [lastDownloadDate , setlastDownloadDate] = useState('');
-    const [userType , setUserType] = useState('free');
+    const [userType , setUserType] = useState('basic');
 
-    const categories = [{id:"1",label:"Political",value:"Political"},{ id:"2",label:"Business",value:"Business"}];
+
 
     const toggleTermsCheck = () => {
         setIsTermsChecked(!isTermsChecked);
@@ -66,7 +65,7 @@ function SignupScreen({ navigation }) {
     };
 
 
-    const openCamera = async () => {
+    const openCamera = async () => { 
         try {
             const granted = await PermissionsAndroid.request(
                 PermissionsAndroid.PERMISSIONS.CAMERA,
@@ -109,7 +108,7 @@ function SignupScreen({ navigation }) {
 
     const storeUser = async () => {
         setClicked(true)
-        if (name === '' || email === '' || category === '' || password === '' || confirmPassword === '' || password === "" || email.indexOf('@') === -1) {
+        if (name === '' || email === '' ||  password === '' || confirmPassword === '' || password === "" || email.indexOf('@') === -1) {
             if (name === "") {
                 setNameError(true)
             } else {
@@ -119,11 +118,6 @@ function SignupScreen({ navigation }) {
                 setEmailError(true)
             } else {
                 setEmailError(false)
-            }
-            if(businesslogoUrl === ""){
-                setCategoryError(true)
-            }else{
-                setCategoryError(false)
             }
             if (password === "") {
                 setPasswordError(true)
@@ -156,7 +150,6 @@ function SignupScreen({ navigation }) {
                 InstaUrl,
                 FacebookUrl,
                 TwitterUrl,
-                category,
                 downloadCount,
                 lastDownloadDate,
                 userType,
@@ -175,7 +168,6 @@ function SignupScreen({ navigation }) {
             setFacebookUrl('')
             setTwitterUrl('')
             setPoliticalParty('');
-            setSelectedCategory('')
             setbusinesslogoUrl('')
             setIsLoading(false);
             setModalVisible(true);
@@ -185,7 +177,6 @@ function SignupScreen({ navigation }) {
         } catch (error) {
             console.error('Error found: ', error);
             setClicked(false)
-
             setIsLoading(false);
         }
     };
@@ -346,7 +337,7 @@ function SignupScreen({ navigation }) {
                                 </View>
                                 {emailError && <Text style={styles.error_text} > eg: xyz@gmail.com</Text>}
                                {/* <View style={styles.inputfields}> */}
-                                <View style={{ backgroundColor: 'white',marginBottom: 15,borderRadius: 5 }}>
+                                {/* <View style={{ backgroundColor: 'white',marginBottom: 15,borderRadius: 5 }}>
                                <Dropdown
                                         style={[styles.dropdown, isFocus && { borderColor: 'gray' }]}
                                         placeholderStyle={styles.placeholderStyle}
@@ -383,7 +374,7 @@ function SignupScreen({ navigation }) {
                                         )}
                                  />
                                   </View>
-                                  {CategoryError && <Text style={styles.error_text} >Category must be Selected.</Text>}
+                                  {CategoryError && <Text style={styles.error_text} >Category must be Selected.</Text>} */}
                                {/* </View> */}
 
 

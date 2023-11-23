@@ -16,6 +16,7 @@ import {ThemeProvider} from '../utils/ThemeContext';
 import {ThemeContext} from '../utils/ThemeContext';
 import {useDispatch, useSelector} from 'react-redux';
 import {setDarkTrue} from '../redux/reducer/isDarkMode';
+import ResetPassword from '../screens/Auth/ResetPassword';
 
 const Stack = createStackNavigator();
 
@@ -72,6 +73,7 @@ function StackNavigations() {
           title: 'View All',
         }}
       />
+         <Stack.Screen name='resetpassword' component={ResetPassword}/>
     </Stack.Navigator>
   );
 }

@@ -21,6 +21,7 @@ function CategoriesList({
 }) {
   const imgdata = useSelector(state => state.reducer);
   const [indicator, setIndicator] = useState(false);
+  const [userData, setUserData] = useState(null);
   const handleLoadStart = () => {
     setIndicator(true);
   };
