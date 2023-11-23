@@ -50,7 +50,7 @@ function SignupScreen({ navigation }) {
     const [businesslogoUrl, setbusinesslogoUrl] = useState('');
     const [downloadCount,setDownloadCount]  = useState(0);
     const [lastDownloadDate , setlastDownloadDate] = useState('');
-    const [userType , setUserType] = useState('basic');
+    const [userType , setUserType] = useState('premium');
 
 
 

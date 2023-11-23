@@ -56,6 +56,7 @@ function PreviewScreen({ navigation, route }) {
   const [selectedFrame, setSelectedFrame] = useState(null);
   const [isLoading,setIsLoading] = useState(false)
   const [isPolitical,setIsPolitical] = useState(true)
+  const [isWaterMark,setisWaterMark] = useState(false)
   const { selectedImage, filteredData } = route.params;
   const scrollViewRef = useRef(null);
   const REMOTE_IMAGE_PATH = selectedImage?.data.url
@@ -72,9 +73,14 @@ function PreviewScreen({ navigation, route }) {
     bottomSheetModalRef.current?.close();
   };
 
+
+
   useEffect(()=>{
    openModel()
+   getUserData();
   },[])
+
+
 
   const handelPolitical = ()=>{
     setIsPolitical(true)
@@ -130,7 +136,8 @@ function PreviewScreen({ navigation, route }) {
         const querySnapshot = await getDocs(q);
         const userDoc = querySnapshot.docs[0];
         const updatedData = userDoc?.data();
-        // console.log({userData:updatedData},"userData from firebase")
+        const user = {userData:updatedData};
+        watermark(user)
         setUserData({userData:updatedData});
       }
     } catch (error) {
@@ -138,9 +145,19 @@ function PreviewScreen({ navigation, route }) {
     }
   };
 
-  useEffect(() => {
-    getUserData();
-  }, []);
+
+ 
+        const watermark = (data) =>{
+          const user = data?.userData;
+          console.log(user,"user in watermark")
+          if(user?.userType === 'free'){
+            console.log("free user called")
+            setisWaterMark(true)
+          }else if(user?.userType === 'basic' && user?.downloadCount >= 7){
+            console.log("basic user called")
+            setisWaterMark(true)
+          }
+         }
 
 
   
@@ -276,7 +293,7 @@ function PreviewScreen({ navigation, route }) {
     const currentDate = new Date().toDateString();
     if (userType === 'free') {
       // Retrieve user's download count and last download date from Firestore
-
+           setisWaterMark(true)
           if (userData?.userData) {
             const lastDownloadDate = userData?.userData?.lastDownloadDate || '';
             const userDownloadCount = userData?.userData?.downloadCount || 0;
@@ -324,12 +341,47 @@ function PreviewScreen({ navigation, route }) {
                 console.error('Error updating new download count:', error);
               });
           } else {
-            console.log('User data not found calling from Checkdownload fun');
+            console.log('User data not found ');
           }
-        
-      
-    } else {
+    
+    }else if(userType === 'basic'){
+      if (userData?.userData) {
+        const lastDownloadDate = userData?.userData?.lastDownloadDate || '';
+        const userDownloadCount = userData?.userData?.downloadCount || 0;  
+        if (lastDownloadDate !== currentDate) {
+          const userDocRef = doc(firestore, 'users', userId);
+          const updatedData = {
+            downloadCount: 0,
+            lastDownloadDate: currentDate,
+          };       
+          updateDoc(userDocRef, updatedData)
+            .then(() => {
+              console.log("Successfully updated")
+            })
+            .catch(error => {
+              console.error('Error updating last download date:', error);
+            });
+        }
        downloadImage(editedImage)
+        const newDownloadCount = userDownloadCount + 1;
+        const userDocRef = doc(firestore, 'users', userId);
+        const updatedData = {
+          downloadCount: newDownloadCount,
+        };
+      console.log(updatedData,"updated download count")
+        updateDoc(userDocRef, updatedData)
+          .then(() => {
+            console.log("Successfully updated")
+            // Successfully updated last download date and reset download count
+          })
+          .catch(error => {
+            console.error('Error updating new download count:', error);
+          });
+      } else {
+        console.log('User data not found ');
+      }
+    }else{
+      downloadImage(editedImage)
     }
   };
 
@@ -495,6 +547,7 @@ function PreviewScreen({ navigation, route }) {
             {indicator ? <ActivityIndicator size='small' color='black' style={styles.activityIndicator} /> : null}
           </View>
         ) : (
+        
           <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
             <ViewShot ref={viewShotRef} options={{ format: 'jpg', quality: 0.9 }} style={styles.preview_image}>
               {/* Background Image */}
@@ -520,6 +573,12 @@ function PreviewScreen({ navigation, route }) {
                 source={{ uri: userData?.userData?.politicalImgUrl }}
                 style={styles.logo}
               />
+              {isWaterMark && 
+               <Image
+               source={require('../assets/img/logo.png')}
+               style={styles.watermark}
+               />
+              }
               {/* <Image
                 source={{ uri: userData?.userData?.imageUrl }}
                 style={styles.profile_picture}
@@ -551,7 +610,7 @@ function PreviewScreen({ navigation, route }) {
           </View>
         )}
       {isPolitical && 
-        <Frame_list selectedImage={selectedImage} onSelectImage={handleSelectImage} image={REMOTE_IMAGE_PATH} />
+        <Frame_list selectedImage={selectedImage} onSelectImage={handleSelectImage} image={REMOTE_IMAGE_PATH} allowedFrames={allowedFrames}/>
       }
       {!isPolitical && <View style={{flex:1,justifyContent:"center"}}>
        <Text style={{color:"#000",fontSize:18,fontWeight:"bold",textAlign:"center"}}>
@@ -565,7 +624,6 @@ function PreviewScreen({ navigation, route }) {
           </TouchableOpacity>
         </View>
       </View>
-
 
       <BottomSheetModal
               ref={bottomSheetModalRef}
@@ -754,6 +812,15 @@ const styles = StyleSheet.create({
     width: 40, // Adjust the size as needed
     height: 40,
     borderRadius: 50
+  },
+  watermark: {
+    position: 'absolute',
+    top: 15,
+    // right: 15,
+    left:10,
+    width: 35,
+    height: 15,
+    resizeMode:"cover",
   },
   profile_picture: {
   position: 'absolute',

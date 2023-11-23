@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {Image, View, Text, TouchableOpacity, StyleSheet} from 'react-native';
+import {Image, View, Text, TouchableOpacity} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {SCREEN_WIDTH} from '@gorhom/bottom-sheet';
 import Feather from 'react-native-vector-icons/Feather';
@@ -53,28 +53,18 @@ function Header({userData}) {
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
-        backgroundColor: 'black',
-        paddingBottom: 5,
-        paddingTop: 5,
+        backgroundColor: 'white',
       }}>
-      <TouchableOpacity
-        onPress={handleProfile}
-        style={{
-          justifyContent: 'center',
-          alignItems: 'center',
-          gap: 5,
-        }}>
+      <TouchableOpacity onPress={handleProfile}>
         <View
           style={{
             backgroundColor: '#000',
             justifyContent: 'center',
             alignItems: 'center',
-            height: 24,
-            width: 24,
+            height: 35,
+            width: 35,
             borderRadius: 50,
             marginLeft: 10,
-            borderWidth: 1,
-            borderColor: '#fff',
           }}>
           {userData?.userData?.imageUrl ? (
             <Image
@@ -88,72 +78,43 @@ function Header({userData}) {
             />
           )}
         </View>
-        <Text
-          style={{
-            color: 'white',
-            fontSize: 10,
-            fontWeight: 500,
-            paddingLeft: 10,
-          }}>
-          Profile
-        </Text>
       </TouchableOpacity>
-
-      <View style={{alignItems: 'center', textAlign: 'center', gap: 3}}>
+      <View>
         <TouchableOpacity>
           <Feather
             name="help-circle"
-            style={{color: 'white', padding: 2}}
+            style={{color: 'black', padding: 5}}
             size={20}
           />
         </TouchableOpacity>
-        <Text style={style.headerIconText}>Use how</Text>
+        <Text style={{color: 'black', fontSize: 14}}>Use how</Text>
       </View>
 
-      <View
-        style={{
-          alignItems: 'center',
-          textAlign: 'center',
-          gap: 3,
-        }}>
+      <View>
         <Image
-          source={require('../assets/img/logo2.png')} // Use the correct source for the right image
-          style={{
-            height: 40,
-            width: 70,
-            resizeMode: 'contain',
-            marginTop: 5,
-          }}
+          source={require('../assets/img/logo.png')} // Use the correct source for the right image
+          style={{height: 50, width: 70, resizeMode: 'contain', marginTop: 5}}
         />
       </View>
-
-      <View style={{alignItems: 'center', textAlign: 'center', gap: 3}}>
+      <View>
         <TouchableOpacity>
           <Feather
             name="phone-call"
-            style={{color: 'white', padding: 2}}
+            style={{color: 'black', padding: 5}}
             size={20}
           />
         </TouchableOpacity>
-        <Text style={style.headerIconText}>Support</Text>
+        <Text style={{color: 'black', fontSize: 14}}>Support</Text>
       </View>
-
-      <View
-        style={{
-          justifyContent: 'center',
-          gap: 3,
-          alignItems: 'center',
-          textAlign: 'center',
-          paddingRight: 8,
-        }}>
+      <View style={{justifyContent: 'center'}}>
         <TouchableOpacity onPress={() => navigation.navigate('Search')}>
           <Feather
             name="search"
-            style={{color: 'white', padding: 2}}
+            style={{color: 'black', padding: 5}}
             size={20}
           />
         </TouchableOpacity>
-        <Text style={style.headerIconText}>Search</Text>
+        <Text style={{color: 'black', fontSize: 14}}>Search</Text>
       </View>
     </View>
   );
