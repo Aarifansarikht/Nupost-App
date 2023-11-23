@@ -159,6 +159,7 @@ const {isDarkMode} = useContext(ThemeContext)
         WhatsappNumber: WhatsappNumber || userData?.userData?.WhatsappNumber,
         businesslogoUrl:businesslogoUrl
       };
+      
       const response =  await updateDoc(docRef, updatedData);
       console.log(response,"get_updated_response")
         console.log(updatedData,"updatedData")
@@ -345,7 +346,6 @@ const {isDarkMode} = useContext(ThemeContext)
       //   'Image uploaded!',
       //   'Your image has been uploaded to Firebase Cloud Storage successfully!',
       // );
-
       // return imageUrl;
     } catch (e) {
       console.log('Error uploading image:', e);
@@ -353,7 +353,7 @@ const {isDarkMode} = useContext(ThemeContext)
     }
   };
 
-  // console.log(politicalImgUrl,"image___________________url")
+
 
   const handlePartySelect =( selectedParty ,id) => {
     // Handle the selected party here
@@ -404,7 +404,7 @@ const {isDarkMode} = useContext(ThemeContext)
                   </Text>
                 </View>
               </TouchableOpacity>
-              { userData?.userData?.category === "Business" && <>
+               <>
                           <TouchableOpacity onPress={handleImagePick1}>
                                 <View>
                                 <View style={styles.logos}>
@@ -420,7 +420,7 @@ const {isDarkMode} = useContext(ThemeContext)
                                               <Text style={{ color: isDarkMode ? '#fff' : "#000", textAlign: 'center', fontSize: 12 }}>Upload Business Logo</Text>
                                               </View>
                               </TouchableOpacity> 
-                          </>}
+                          </>
 
             </View>
             <BottomSheetModal
@@ -503,13 +503,13 @@ const {isDarkMode} = useContext(ThemeContext)
                       placeholderTextColor="#888"
                       onChangeText={text => text == "" ? setDesignation(" ") : setDesignation(text)}
                     />
-                    {userData?.userData?.category === "Political" && <>
+                <>
                     <DropdownComponent
                     onPartySelect={handlePartySelect}
                     politicalParty={userData.userData.politicalParty}
                     />
                       <Logo_list onSelectImage={handleSelectlogo} partyId={selectedPartyId} title="Choose Political logo"/>
-                      </> }
+                      </> 
                     {/* <TextInput style={[styles.textInput,{color: isDarkMode ? '#fff' : "#000"}]} value={userData.userData.politicalParty} placeholder='Political Party' placeholderTextColor="#888" onChangeText={(text) => setPoliticalParty(text)} /> */}
                     {showInsta && (
                       <View>

@@ -36,6 +36,7 @@ import ViewShot from 'react-native-view-shot';
 import { SCREEN_WIDTH } from '@gorhom/bottom-sheet';
 import { Frames } from '../vectors/frames/Frames';
 import { err } from 'react-native-svg/lib/typescript/xml';
+
 import {
   BottomSheetScrollView,
   BottomSheetModal,
@@ -96,7 +97,6 @@ function PreviewScreen({ navigation, route }) {
   //       // PhotoEditor.Edit({
   //       //   path: preview_url
   //       // });
-
   //     }
   //   } catch (error) {
   //     console.log('Error in processImage:', error);
@@ -433,6 +433,26 @@ function PreviewScreen({ navigation, route }) {
       console.log('Buffering is complete.');
     }
   };
+
+  const maxFramesAllowed = {
+    free: 5,
+    basic: 10,
+    premium: Frames.length 
+  };
+  const userType = userData?.userData?.userType || 'free'; 
+  const allowedFrames = Frames.slice(0, maxFramesAllowed[userType]);
+  console.log(allowedFrames,"allowed frames")
+
+
+
+
+  if (selectedFrame >= 6 && userType === "free") {
+    // Show an alert or perform any action to notify the user
+   Alert.alert('Nupost','Please subscribe to access this frame.');
+  }else if(selectedFrame >=10 && userType === "basic"){
+   Alert.alert('Nupost','Please upgraid your plan to access all frames.');
+  }
+
   LogBox.ignoreAllLogs()
 
   return (
@@ -479,7 +499,7 @@ function PreviewScreen({ navigation, route }) {
             <ViewShot ref={viewShotRef} options={{ format: 'jpg', quality: 0.9 }} style={styles.preview_image}>
               {/* Background Image */}
               <View style={styles.backgroundImage}>
-                {Frames.filter((item) => item.id === selectedFrame)[0]?.image(POSTER_WIDTH + 1, POSTER_HEIGHT + 1, {
+                {allowedFrames.filter((item) => item.id === selectedFrame)[0]?.image(POSTER_WIDTH + 1, POSTER_HEIGHT + 1, {
                   name: userData?.userData?.name,
                   email: userData?.userData.email,
                   designation:  userData?.userData.designation,

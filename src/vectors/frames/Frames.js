@@ -2851,7 +2851,7 @@ export const Frame16 = (props) =>{
 
 
 export const Frames = [
-            {
+          {
               id: "1",
               image: (width, height, data) => (<Frame16 width={width} height={height} data={data} />)
           },
@@ -2875,44 +2875,44 @@ export const Frames = [
           id: "6",
           image: (width, height, data) => (<Frame11 width={width} height={height} data={data} />)
         },
-     {
-          id: "7",
-          image: (width, height, data) => (<Frame10 width={width} height={height} data={data} />)
-    },
-    {
-        id: "8",
-        image: (width, height, data) => (<Frame9 width={width} height={height} data={data} />)
-    },
-    {
-        id: "9",
-        image: (width, height, data) => (<Frame8 width={width} height={height} data={data} />)
-    },
-    {
-        id: "10",
-        image: (width, height, data) => (<Frame1 width={width} height={height} data={data} />)
-    },
-    {
-        id: "11",
-        image: (width, height, data) => (<Frame2 width={width} height={height} data={data} />)
-    },
-    {
-        id: "12",
-        image: (width, height, data) => (<Frame3 width={width} height={height} data={data} />)
-    },
-    {
-        id: "13",
-        image: (width, height, data) => (<Frame4 width={width} height={height} data={data} />)
-    },
-    {
-        id: "14",
-        image: (width, height, data) => (<Frame5 width={width} height={height} data={data} />)
-    },
-    {
-        id: "15",
-        image: (width, height, data) => (<Frame6 width={width} height={height} data={data} />)
-    },
-    {
-        id: "16",
-        image: (width, height, data) => (<Frame7 width={width} height={height} data={data} />)
-    },
+        {
+              id: "7",
+              image: (width, height, data) => (<Frame10 width={width} height={height} data={data} />)
+        },
+        {
+            id: "8",
+            image: (width, height, data) => (<Frame9 width={width} height={height} data={data} />)
+        },
+        {
+            id: "9",
+            image: (width, height, data) => (<Frame8 width={width} height={height} data={data} />)
+        },
+        {
+            id: "10",
+            image: (width, height, data) => (<Frame1 width={width} height={height} data={data} />)
+        },
+        {
+            id: "11",
+            image: (width, height, data) => (<Frame2 width={width} height={height} data={data} />)
+        },
+        {
+            id: "12",
+            image: (width, height, data) => (<Frame3 width={width} height={height} data={data} />)
+        },
+        {
+            id: "13",
+            image: (width, height, data) => (<Frame4 width={width} height={height} data={data} />)
+        },
+        {
+            id: "14",
+            image: (width, height, data) => (<Frame5 width={width} height={height} data={data} />)
+        },
+        {
+            id: "15",
+            image: (width, height, data) => (<Frame6 width={width} height={height} data={data} />)
+        },
+        {
+            id: "16",
+            image: (width, height, data) => (<Frame7 width={width} height={height} data={data} />)
+        },
 ]
