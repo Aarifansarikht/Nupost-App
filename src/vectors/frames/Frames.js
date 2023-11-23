@@ -2789,7 +2789,7 @@ export const Frame16 = (props) =>{
   </G>
   <G>
            <Text x="4%" y="84%" fill="#fff" fontSize={18} fontWeight={'800'}>
-                {props?.data?.name}
+           {props?.data?.name}
             </Text>
             <Text x="10%" y="89%" fill="#fff" fontSize={16} fontWeight={'600'} >
                 {props?.data?.designation} 

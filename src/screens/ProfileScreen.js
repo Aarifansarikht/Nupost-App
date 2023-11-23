@@ -159,10 +159,10 @@ const {isDarkMode} = useContext(ThemeContext)
         WhatsappNumber: WhatsappNumber || userData?.userData?.WhatsappNumber,
         businesslogoUrl:businesslogoUrl
       };
+      console.log(updatedData,"updatedData")
       
       const response =  await updateDoc(docRef, updatedData);
       console.log(response,"get_updated_response")
-        console.log(updatedData,"updatedData")
       // await AsyncStorage.setItem('userData', JSON.stringify(updatedData));
       // dispatch(getUserData(updatedData))
       setIsLoading(false)

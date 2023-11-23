@@ -82,27 +82,26 @@ const ViewallPost = ({navigation,route}) =>  {
       }
       console.log(filteredImages,"filteredImages")
       return filteredImages
-      }
+}
       
-
 
 
     return (
       <View style={{backgroundColor: '#0031',flex:1}}>
-  <FlatList
-    data={filterDatabyDate(catId)}
-    keyExtractor={(item, index) => index.toString()}
-    numColumns={2}
-    renderItem={({ item, index }) => (
-      <TouchableOpacity onPress={() => handleImagePress(item)}>
-        <Image
-          style={{ height: 160, width: '50%', aspectRatio: 0.93, borderRadius: 10, margin: 5 }}
-          source={{ uri: item.data.url }}
-          resizeMode="cover"
+        <FlatList
+          data={filterDatabyDate(catId)}
+          keyExtractor={(item, index) => index.toString()}
+          numColumns={2}
+          renderItem={({ item, index }) => (
+            <TouchableOpacity onPress={() => handleImagePress(item)}>
+              <Image
+                style={{ height: 160, width: '50%', aspectRatio: 0.93, borderRadius: 10, margin: 5 }}
+                source={{ uri: item.data.url }}
+                resizeMode="cover"
+              />
+            </TouchableOpacity>
+          )}
         />
-      </TouchableOpacity>
-    )}
-  />
 {/* </View> */}
 
           {/* <ScrollView >
