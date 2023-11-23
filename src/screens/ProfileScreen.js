@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import React, {useEffect, useState, useRef,useContext} from 'react';
+import React, {useEffect, useState, useRef, useContext} from 'react';
 import {
   Image,
   View,
@@ -9,7 +9,7 @@ import {
   Linking,
   PermissionsAndroid,
   Alert,
-  ActivityIndicator
+  ActivityIndicator,
 } from 'react-native';
 import {
   collection,
@@ -21,7 +21,7 @@ import {
 } from '@firebase/firestore';
 import {firestore} from '../firebase/firebase';
 import {storage, ref, uploadBytes, getDownloadURL} from '../firebase/firebase';
-import { useDispatch ,useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {
   ScrollView,
@@ -40,13 +40,11 @@ import {
 import {deleteObject, updateMetadata} from 'firebase/storage';
 import DropdownComponent from '../components/Dropdown';
 import Logo_list from '../components/logo';
-import { get_user } from '../utils/user';
-import { ThemeContext } from '../utils/ThemeContext';
-import { setDarkTrue } from '../redux/reducer/isDarkMode';
+import {get_user} from '../utils/user';
+import {ThemeContext} from '../utils/ThemeContext';
+import {setDarkTrue} from '../redux/reducer/isDarkMode';
 
-
- function ProfileScreen({navigation}) {
-
+function ProfileScreen({navigation}) {
   const [userData, setUserData] = useState(null);
   const [UserName, setUserName] = useState(null);
   const [profileimg, setProfileImg] = useState('');
@@ -64,51 +62,42 @@ import { setDarkTrue } from '../redux/reducer/isDarkMode';
   const [TwitterUrl, setTwitterUrl] = useState(null);
   const [isProfile, setIsProfile] = useState(false);
   const [selectedPartyId, setSelectedPartyId] = useState(null);
-  const [isLoading,setIsLoading] = useState(false)
-  const [showAlert,setShowAlert] = useState(false)
-  const [title,setTitle] = useState('')
-  const [message,setMessage] = useState('')
-  const [refresh,setRefresh] = useState(false);
- 
-  
+  const [isLoading, setIsLoading] = useState(false);
+  const [showAlert, setShowAlert] = useState(false);
+  const [title, setTitle] = useState('');
+  const [message, setMessage] = useState('');
+  const [refresh, setRefresh] = useState(false);
 
+  const {isDarkMode} = useContext(ThemeContext);
 
-const {isDarkMode} = useContext(ThemeContext)
-
-   console.log(isDarkMode,"isDarkMode")
-  
+  console.log(isDarkMode, 'isDarkMode');
 
   const handleLogout = async () => {
     await AsyncStorage.removeItem('keepLoggedIn');
     navigation.navigate('Welcome');
   };
 
-    
-  const handleSelectlogo = (uri) => {
+  const handleSelectlogo = uri => {
     console.log('selected______frame_____uri', uri);
     setPoliticalImgUrl(uri);
   };
 
-
   const getUserData = async () => {
-    setIsLoading(true)
+    setIsLoading(true);
     try {
       const user = await get_user();
       // console.log(user,"user")
       setUserData(user);
-      setIsLoading(false)
-  
+      setIsLoading(false);
     } catch (error) {
-      console.log(error,"error")
-      setIsLoading(false)
+      console.log(error, 'error');
+      setIsLoading(false);
     }
   };
-
 
   useEffect(() => {
     getUserData();
   }, []);
-
 
   const getUserIDByEmail = async email => {
     const querySnapshot = await getDocs(collection(firestore, 'users'));
@@ -130,9 +119,8 @@ const {isDarkMode} = useContext(ThemeContext)
     navigation.navigate('Home');
   };
 
-
   const updateProfile = async () => {
-    setIsLoading(true)
+    setIsLoading(true);
     const emailToFind = userData?.userData.email;
     // console.log('check___________Users', emailToFind);
     try {
@@ -152,24 +140,24 @@ const {isDarkMode} = useContext(ThemeContext)
         imageUrl: profileimg || userData?.userData?.imageUrl,
         mobileNumber: mobileNumber || userData?.userData?.mobileNumber,
         politicalParty: politicalParty || userData?.userData?.politicalParty,
-        politicalImgUrl: politicalImgUrl ,
+        politicalImgUrl: politicalImgUrl,
         InstaUrl: InstaUrl || userData?.userData?.InstaUrl,
         FacebookUrl: FacebookUrl || userData?.userData?.FacebookUrl,
         TwitterUrl: TwitterUrl || userData?.userData?.TwitterUrl,
         WhatsappNumber: WhatsappNumber || userData?.userData?.WhatsappNumber,
-        businesslogoUrl:businesslogoUrl
+        businesslogoUrl: businesslogoUrl,
       };
-      
-      const response =  await updateDoc(docRef, updatedData);
-      console.log(response,"get_updated_response")
-        console.log(updatedData,"updatedData")
+
+      const response = await updateDoc(docRef, updatedData);
+      console.log(response, 'get_updated_response');
+      console.log(updatedData, 'updatedData');
       // await AsyncStorage.setItem('userData', JSON.stringify(updatedData));
       // dispatch(getUserData(updatedData))
-      setIsLoading(false)
-      setShowAlert(true)
-      setRefresh(true)
-      setTitle('Profile Updated Successfully!')
-      setMessage('Your profile has been updated successfully.')
+      setIsLoading(false);
+      setShowAlert(true);
+      setRefresh(true);
+      setTitle('Profile Updated Successfully!');
+      setMessage('Your profile has been updated successfully.');
       // Alert.alert(
       //   'Profile Updated Successfully!',
       //   'Your profile has been updated successfully.',
@@ -181,9 +169,11 @@ const {isDarkMode} = useContext(ThemeContext)
       //   ],
       // );
     } catch (error) {
-      setShowAlert(true)
-      setTitle('')
-      setMessage('Failed to update profile. Please check the console for details.')
+      setShowAlert(true);
+      setTitle('');
+      setMessage(
+        'Failed to update profile. Please check the console for details.',
+      );
       console.log('Error updating profile:', error);
       // alert('Failed to update profile. Please check the console for details.');
     }
@@ -217,7 +207,7 @@ const {isDarkMode} = useContext(ThemeContext)
           console.log(image);
           if (isProfile) {
             setProfileImg(image.path);
-          } 
+          }
           // else {
           //   setPoliticalImgUrl(image.path);
           // }
@@ -231,24 +221,22 @@ const {isDarkMode} = useContext(ThemeContext)
     }
   };
 
-
   const openLibrary = async () => {
-    console.log("library called")
+    console.log('library called');
     ImagePicker.openPicker({
       // width: 300,
       // height: 300,
       cropping: true,
       // compressImageQuality: 0.7,
-      mime:'image/png'
+      mime: 'image/png',
     }).then(image => {
       console.log('image', image);
       if (isProfile) {
-        uploadImage(image.path)
+        uploadImage(image.path);
         // setProfileImg(image.path);
-        console.log('isprofile_____________true',isProfile);
-      }  
-      else {
-        console.log('isprofile_____________true',isProfile);
+        console.log('isprofile_____________true', isProfile);
+      } else {
+        console.log('isprofile_____________true', isProfile);
         uploadBusinesslogo(image.path);
       }
       bottomSheetModalRef.current?.close();
@@ -259,19 +247,19 @@ const {isDarkMode} = useContext(ThemeContext)
     bottomSheetModalRef.current?.close();
   };
 
-  const uploadImage = async (profileimg) => {
-    setIsLoading(true)
-    console.log('upload image called')
+  const uploadImage = async profileimg => {
+    setIsLoading(true);
+    console.log('upload image called');
     if (profileimg == null) {
-      return console.log("profile image is null");
-      setIsLoading(false)
+      return console.log('profile image is null');
+      setIsLoading(false);
     }
     const uploadUri = profileimg;
     let filename = uploadUri.substring(uploadUri.lastIndexOf('/') + 1);
-    console.log(filename,"filename")
+    console.log(filename, 'filename');
     // Add timestamp to File Name
     const extension = filename.split('.').pop();
-    console.log(extension,"extension")
+    console.log(extension, 'extension');
     const name = filename.split('.').slice(0, -1).join('.');
     filename = name + Date.now() + '.' + extension;
     const storageRef = ref(storage, `user_profile/${filename}`);
@@ -283,12 +271,12 @@ const {isDarkMode} = useContext(ThemeContext)
       const uploadTaskSnapshot = await uploadBytes(storageRef, blob, {
         contentType: 'image/png', // Specify the content type here
       });
-  
+
       // Get the download URL of the uploaded image
       const imageUrl = await getDownloadURL(storageRef);
 
-      console.log(imageUrl,"url_image")
-      setIsLoading(false)
+      console.log(imageUrl, 'url_image');
+      setIsLoading(false);
       // Set the image URL state or use it as needed
       setProfileImg(imageUrl);
       // Display a success message or perform any other necessary actions
@@ -306,12 +294,12 @@ const {isDarkMode} = useContext(ThemeContext)
     }
   };
 
-  const uploadBusinesslogo = async (businesslogoUrl) => {
-    setIsLoading(true)
-    console.log("upload business logo called")
+  const uploadBusinesslogo = async businesslogoUrl => {
+    setIsLoading(true);
+    console.log('upload business logo called');
     if (profileimg == null) {
-      setIsLoading(false)
-      return console.log("businesslogoUrl image is null");
+      setIsLoading(false);
+      return console.log('businesslogoUrl image is null');
     }
 
     const uploadUri = businesslogoUrl;
@@ -336,9 +324,9 @@ const {isDarkMode} = useContext(ThemeContext)
 
       // Get the download URL of the uploaded image
       const imageUrl = await getDownloadURL(storageRef);
-       console.log(imageUrl)
+      console.log(imageUrl);
       // Set the image URL state or use it as needed
-      setIsLoading(false)
+      setIsLoading(false);
       setbusinesslogoUrl(imageUrl);
 
       // Display a success message or perform any other necessary actions
@@ -353,21 +341,21 @@ const {isDarkMode} = useContext(ThemeContext)
     }
   };
 
-
-
-  const handlePartySelect =( selectedParty ,id) => {
+  const handlePartySelect = (selectedParty, id) => {
     // Handle the selected party here
-    console.log(id,"selected_paty_name_Id")
-    setSelectedPartyId(id)
+    console.log(id, 'selected_paty_name_Id');
+    setSelectedPartyId(id);
     setPoliticalParty(selectedParty);
     console.log('Selected party___________:', selectedParty);
   };
 
-
-
   return (
     <BottomSheetModalProvider>
-      <SafeAreaView style={[styles.main_container,{backgroundColor:isDarkMode ? "#000" : "#fff"}]}>
+      <SafeAreaView
+        style={[
+          styles.main_container,
+          {backgroundColor: isDarkMode ? '#000' : '#fff'},
+        ]}>
         <ScrollView style={{flex: 1}}>
           <View style={styles.profile_container}>
             <View style={styles.images_wrapper}>
@@ -392,36 +380,61 @@ const {isDarkMode} = useContext(ThemeContext)
                         position: 'absolute',
                         right: 10,
                         bottom: 0,
-                        color: 'black',
+                        color: 'gray',
                       }}
                       name="add-a-photo"
                       size={30}
                     />
                   </View>
                   <Text
-                    style={{color: isDarkMode ? '#fff' : "#000", textAlign: 'center', fontSize: 12}}>
+                    style={{
+                      color: isDarkMode ? '#fff' : '#000',
+                      textAlign: 'center',
+                      fontSize: 12,
+                    }}>
                     Upload Profile
                   </Text>
                 </View>
               </TouchableOpacity>
-               <>
-                          <TouchableOpacity onPress={handleImagePick1}>
-                                <View>
-                                <View style={styles.logos}>
-                                    {
-                                          businesslogoUrl ? (
-                                                <Image style={styles.logo_images} resizeMode='contain' source={{ uri: businesslogoUrl }} />
-                                            )
-                                                :
-                                                (<Image style={styles.logo_images} resizeMode='contain' source={{ uri: userData?.userData.businesslogoUrl }} />)
-                                              }
-                                              <MaterialIcons style={{ position: 'absolute', right: 10, bottom: 0, color: 'black' }} name='add-a-photo' size={30} />
-                                              </View>
-                                              <Text style={{ color: isDarkMode ? '#fff' : "#000", textAlign: 'center', fontSize: 12 }}>Upload Business Logo</Text>
-                                              </View>
-                              </TouchableOpacity> 
-                          </>
-
+              <>
+                <TouchableOpacity onPress={handleImagePick1}>
+                  <View>
+                    <View style={styles.logos}>
+                      {businesslogoUrl ? (
+                        <Image
+                          style={styles.logo_images}
+                          resizeMode="contain"
+                          source={{uri: businesslogoUrl}}
+                        />
+                      ) : (
+                        <Image
+                          style={styles.logo_images}
+                          resizeMode="contain"
+                          source={{uri: userData?.userData.businesslogoUrl}}
+                        />
+                      )}
+                      <MaterialIcons
+                        style={{
+                          position: 'absolute',
+                          right: 10,
+                          bottom: 0,
+                          color: 'gray',
+                        }}
+                        name="add-a-photo"
+                        size={30}
+                      />
+                    </View>
+                    <Text
+                      style={{
+                        color: isDarkMode ? '#fff' : '#000',
+                        textAlign: 'center',
+                        fontSize: 12,
+                      }}>
+                      Upload Business Logo
+                    </Text>
+                  </View>
+                </TouchableOpacity>
+              </>
             </View>
             <BottomSheetModal
               ref={bottomSheetModalRef}
@@ -448,52 +461,73 @@ const {isDarkMode} = useContext(ThemeContext)
                 </View>
               </BottomSheetScrollView>
             </BottomSheetModal>
-         
+
             <View style={styles.fields_wrapper}>
               {userData?.userData && userData?.userData.email ? (
                 <>
                   <View>
                     <TextInput
-                      style={[styles.textInput,{color: isDarkMode ? '#fff' : "#000"}]}
+                      style={[
+                        styles.textInput,
+                        {color: isDarkMode ? '#fff' : '#000'},
+                      ]}
                       value={
-                        UserName !== null
-                          ? UserName
-                          : userData.userData.name
+                        UserName !== null ? UserName : userData.userData.name
                       }
-                      placeholderTextColor= { isDarkMode ? '#fff' :  "#888"}
-                      onChangeText={text =>setUserName(text)}
+                      placeholderTextColor={isDarkMode ? '#fff' : '#888'}
+                      onChangeText={text => setUserName(text)}
                     />
                     <TextInput
-                      style={[styles.textInput,{color: isDarkMode ? '#fff' : "#000"}]}
+                      style={[
+                        styles.textInput,
+                        {color: isDarkMode ? '#fff' : '#000'},
+                      ]}
                       value={userData.userData.email}
                       placeholderTextColor="#888"
                     />
                     <TextInput
-                      style={[styles.textInput,{color: isDarkMode ? '#fff' : "#000"}]}
+                      style={[
+                        styles.textInput,
+                        {color: isDarkMode ? '#fff' : '#000'},
+                      ]}
                       value={
                         mobileNumber !== null
                           ? mobileNumber
                           : userData.userData.mobileNumber
                       }
-                      keyboardType='numeric'
+                      keyboardType="numeric"
                       placeholder="Mobile Number"
                       placeholderTextColor="#888"
-                      onChangeText={text => text == "" ? setMobileNumber(" ") : setMobileNumber(text) }
+                      onChangeText={text =>
+                        text == ''
+                          ? setMobileNumber(' ')
+                          : setMobileNumber(text)
+                      }
                     />
                     <TextInput
-                      style={[styles.textInput,{color: isDarkMode ? '#fff' : "#000"}]}
+                      style={[
+                        styles.textInput,
+                        {color: isDarkMode ? '#fff' : '#000'},
+                      ]}
                       value={
                         WhatsappNumber !== null
                           ? WhatsappNumber
                           : userData.userData.WhatsappNumber
                       }
-                      keyboardType='numeric'
+                      keyboardType="numeric"
                       placeholder="WhatsApp Number"
                       placeholderTextColor="#888"
-                      onChangeText={text => text == "" ? setWhatsappNumber(" ") : setWhatsappNumber(text)}
+                      onChangeText={text =>
+                        text == ''
+                          ? setWhatsappNumber(' ')
+                          : setWhatsappNumber(text)
+                      }
                     />
                     <TextInput
-                      style={[styles.textInput,{color: isDarkMode ? '#fff' : "#000"}]}
+                      style={[
+                        styles.textInput,
+                        {color: isDarkMode ? '#fff' : '#000'},
+                      ]}
                       value={
                         designation !== null
                           ? designation
@@ -501,20 +535,29 @@ const {isDarkMode} = useContext(ThemeContext)
                       }
                       placeholder="Designation"
                       placeholderTextColor="#888"
-                      onChangeText={text => text == "" ? setDesignation(" ") : setDesignation(text)}
+                      onChangeText={text =>
+                        text == '' ? setDesignation(' ') : setDesignation(text)
+                      }
                     />
-                <>
-                    <DropdownComponent
-                    onPartySelect={handlePartySelect}
-                    politicalParty={userData.userData.politicalParty}
-                    />
-                      <Logo_list onSelectImage={handleSelectlogo} partyId={selectedPartyId} title="Choose Political logo"/>
-                      </> 
+                    <>
+                      <DropdownComponent
+                        onPartySelect={handlePartySelect}
+                        politicalParty={userData.userData.politicalParty}
+                      />
+                      <Logo_list
+                        onSelectImage={handleSelectlogo}
+                        partyId={selectedPartyId}
+                        title="Choose Political logo"
+                      />
+                    </>
                     {/* <TextInput style={[styles.textInput,{color: isDarkMode ? '#fff' : "#000"}]} value={userData.userData.politicalParty} placeholder='Political Party' placeholderTextColor="#888" onChangeText={(text) => setPoliticalParty(text)} /> */}
                     {showInsta && (
                       <View>
                         <TextInput
-                          style={[styles.textInput,{color: isDarkMode ? '#fff' : "#000"}]}
+                          style={[
+                            styles.textInput,
+                            {color: isDarkMode ? '#fff' : '#000'},
+                          ]}
                           value={
                             InstaUrl !== null
                               ? InstaUrl
@@ -522,14 +565,19 @@ const {isDarkMode} = useContext(ThemeContext)
                           }
                           placeholder="Paste Instagram Url"
                           placeholderTextColor="#888"
-                          onChangeText={text => text == "" ? setInstaUrl(" ") : setInstaUrl(text)}
+                          onChangeText={text =>
+                            text == '' ? setInstaUrl(' ') : setInstaUrl(text)
+                          }
                         />
                       </View>
                     )}
                     {showFacebook && (
                       <View>
                         <TextInput
-                          style={[styles.textInput,{color: isDarkMode ? '#fff' : "#000"}]}
+                          style={[
+                            styles.textInput,
+                            {color: isDarkMode ? '#fff' : '#000'},
+                          ]}
                           value={
                             FacebookUrl !== null
                               ? FacebookUrl
@@ -537,14 +585,21 @@ const {isDarkMode} = useContext(ThemeContext)
                           }
                           placeholder="Paste Facebook Url"
                           placeholderTextColor="#888"
-                          onChangeText={text => text == "" ? setFacebookUrl(" ") : setFacebookUrl(text)}
+                          onChangeText={text =>
+                            text == ''
+                              ? setFacebookUrl(' ')
+                              : setFacebookUrl(text)
+                          }
                         />
                       </View>
                     )}
                     {showTwitter && (
                       <View>
                         <TextInput
-                          style={[styles.textInput,{color: isDarkMode ? '#fff' : "#000"}]}
+                          style={[
+                            styles.textInput,
+                            {color: isDarkMode ? '#fff' : '#000'},
+                          ]}
                           value={
                             TwitterUrl !== null
                               ? TwitterUrl
@@ -552,14 +607,18 @@ const {isDarkMode} = useContext(ThemeContext)
                           }
                           placeholder="Paste Twitter Url"
                           placeholderTextColor="#888"
-                          onChangeText={text => text == "" ? setTwitterUrl(" ") : setTwitterUrl(text)}
+                          onChangeText={text =>
+                            text == ''
+                              ? setTwitterUrl(' ')
+                              : setTwitterUrl(text)
+                          }
                         />
                       </View>
                     )}
                     <Text
                       style={{
                         fontSize: 15,
-                        color: 'black',
+                        color: '#fff',
                         textAlign: 'center',
                       }}>
                       For Adding Social Media Accounts click below.
@@ -567,19 +626,19 @@ const {isDarkMode} = useContext(ThemeContext)
                     <View style={styles.icons_view}>
                       <TouchableOpacity onPress={() => SetshowInsta(true)}>
                         <Image
-                          source={require("../assets/img/instagram-png.webp")}
+                          source={require('../assets/img/instagram-png.webp')}
                           style={styles.icons}
                         />
                       </TouchableOpacity>
                       <TouchableOpacity onPress={() => setshowFacebook(true)}>
                         <Image
-                          source={require("../assets/img/Facebook-png.png")}
+                          source={require('../assets/img/Facebook-png.png')}
                           style={styles.icons}
                         />
                       </TouchableOpacity>
                       <TouchableOpacity onPress={() => SetshowTwitter(true)}>
                         <Image
-                          source={require("../assets/img/twiter.png")}
+                          source={require('../assets/img/twiter.png')}
                           style={styles.icons}
                         />
                       </TouchableOpacity>
@@ -587,7 +646,13 @@ const {isDarkMode} = useContext(ThemeContext)
                     <TouchableOpacity
                       style={styles.profile_edit_btn}
                       onPress={updateProfile}>
-                      <Text style={[styles.logout_btn_text,{color: isDarkMode ? '#fff' : "#000"}]}>Update Profile</Text>
+                      <Text
+                        style={[
+                          styles.logout_btn_text,
+                          {color: isDarkMode ? '#fff' : '#000'},
+                        ]}>
+                        Update Profile
+                      </Text>
                     </TouchableOpacity>
                     <TouchableOpacity
                       style={styles.logout_btn}
@@ -603,52 +668,54 @@ const {isDarkMode} = useContext(ThemeContext)
           </View>
         </ScrollView>
       </SafeAreaView>
-      
-  {isLoading && (
-    <View
-      style={{
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        alignItems: 'center',
-        justifyContent: 'center',
-        backgroundColor: 'rgba(0, 0, 0, 0.5)', 
-        zIndex: 1, 
-      }}
-    >
-      <ActivityIndicator size="large" color={isDarkMode ? "#000" : "#fff"} />
-    </View>
-  )}
+
+      {isLoading && (
+        <View
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            alignItems: 'center',
+            justifyContent: 'center',
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            zIndex: 1,
+          }}>
+          <ActivityIndicator
+            size="large"
+            color={isDarkMode ? '#000' : '#fff'}
+          />
+        </View>
+      )}
       {/* <View style={{justifyContent:"center",alignSelf:"center"}}>
       {isLoading &&  <ActivityIndicator size="large" color={'black'} marginTop={20} style={styles.activityIndicator}/>}
       </View> */}
-      {showAlert &&   <AwesomeAlert
-        show={showAlert}
-        showProgress={false}
-        title={title}
-        message={message}
-        closeOnTouchOutside={true}
-        closeOnHardwareBackPress={false}
-        showCancelButton={true}
-        showConfirmButton={true}
-        cancelText="No, cancel"
-        confirmText="Ok"
-        confirmButtonColor="#DD6B55"
-        onCancelPressed={hideAlert}
-        onConfirmPressed={confirmAlert}
-      />}
-      
+      {showAlert && (
+        <AwesomeAlert
+          show={showAlert}
+          showProgress={false}
+          title={title}
+          message={message}
+          closeOnTouchOutside={true}
+          closeOnHardwareBackPress={false}
+          showCancelButton={true}
+          showConfirmButton={true}
+          cancelText="No, cancel"
+          confirmText="Ok"
+          confirmButtonColor="#DD6B55"
+          onCancelPressed={hideAlert}
+          onConfirmPressed={confirmAlert}
+        />
+      )}
     </BottomSheetModalProvider>
   );
-      }
+}
 
-  const styles = StyleSheet.create({
+const styles = StyleSheet.create({
   main_container: {
     flex: 1,
     padding: 5,
-
   },
   profile_container: {
     flex: 1,
@@ -692,17 +759,22 @@ const {isDarkMode} = useContext(ThemeContext)
     borderWidth: 2,
     padding: 10,
     borderRadius: 5,
+    borderWidth: 2,
+    borderColor: 'gray',
   },
   profile_edit_btn: {
     borderWidth: 2,
     padding: 10,
     borderRadius: 5,
     marginBottom: 10,
+    borderWidth: 2,
+    borderColor: 'gray',
   },
   logout_btn_text: {
-    color: 'black',
+    color: '#fff',
     fontSize: 18,
-    fontWeight: '700',
+    fontWeight: '600',
+    textAlign: 'center',
   },
   icons_view: {
     flex: 1,
@@ -717,18 +789,17 @@ const {isDarkMode} = useContext(ThemeContext)
   },
   button: {
     borderWidth: 2,
-    borderColor: 'black',
+    borderColor: 'gray',
     margin: 10,
     padding: 10,
     borderRadius: 10,
     textAlign: 'center',
   },
   buttonText: {
-    color: 'black',
+    color: 'white',
     fontSize: 16,
     textAlign: 'center',
-  }
+  },
 });
-
 
 export default ProfileScreen;

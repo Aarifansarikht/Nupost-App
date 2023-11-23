@@ -33,15 +33,34 @@ const Bottom = () => {
         style={[styles.tab, activeTab === 'Home' ? styles.activeTab : null]}
         onPress={() => handleTabPress('Home')}>
         {/* <Text style={styles.tabText}>Home</Text> */}
-        <Ionicons name="home" size={25} style={{color: '#fff'}} />
-        <Text style={styles.tabText}>Home</Text>
+        <Ionicons
+          name="home"
+          size={activeTab === 'Home' ? 25 : 30}
+          style={activeTab === 'Home' ? {color: '#fff'} : {color: '#666'}}
+        />
+        {activeTab === 'Home' ? (
+          <Text style={styles.tabText}>Home</Text>
+        ) : (
+          <></>
+        )}
       </TouchableOpacity>
 
       <TouchableOpacity
-        style={[styles.tab, activeTab === 'Video' ? styles.activeTab : null]}
+        style={[
+          activeTab === 'Video' ? styles.tab : styles.activeTabView,
+          activeTab === 'Video' ? styles.activeTab : null,
+        ]}
         onPress={() => handleTabPress('Video')}>
-        <Ionicons name="videocam-outline" size={25} style={{color: '#fff'}} />
-        <Text style={styles.tabText}>Video</Text>
+        <Ionicons
+          name="videocam-outline"
+          size={activeTab === 'Video' ? 25 : 30}
+          style={activeTab === 'Video' ? {color: '#fff'} : {color: '#666'}}
+        />
+        {activeTab === 'Video' ? (
+          <Text style={styles.tabText}>Videos</Text>
+        ) : (
+          <></>
+        )}
       </TouchableOpacity>
 
       {/* <TouchableOpacity
@@ -56,14 +75,19 @@ const Bottom = () => {
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
-    backgroundColor: '#333',
+    backgroundColor: '#000',
     height: 50,
+  },
+  activeTabView: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   tab: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#333',
+    backgroundColor: '#000',
   },
   activeTab: {
     backgroundColor: '#000',

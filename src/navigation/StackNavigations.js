@@ -42,6 +42,10 @@ function StackNavigations() {
             },
           };
         },
+        headerStyle: {
+          backgroundColor: '#000',
+        },
+        headerTintColor: '#fff',
       }}>
       <Stack.Screen name="Home" component={HomeScreen} />
       <Stack.Screen
@@ -71,9 +75,13 @@ function StackNavigations() {
         options={{
           headerShown: true,
           title: 'View All',
+          headerTitleAlign: 'center',
+          headerTitleStyle: {
+            fontSize: 16, // Set the desired font size
+          },
         }}
       />
-         <Stack.Screen name='resetpassword' component={ResetPassword}/>
+      <Stack.Screen name="resetpassword" component={ResetPassword} />
     </Stack.Navigator>
   );
 }

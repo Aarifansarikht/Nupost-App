@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {Image, View, Text, TouchableOpacity} from 'react-native';
+import {Image, View, Text, TouchableOpacity, StyleSheet} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {SCREEN_WIDTH} from '@gorhom/bottom-sheet';
 import Feather from 'react-native-vector-icons/Feather';
@@ -54,23 +54,23 @@ function Header({userData}) {
         alignItems: 'center',
         justifyContent: 'space-between',
         backgroundColor: 'black',
-        paddingBottom: 10,
-        paddingTop: 10,
+        paddingBottom: 5,
+        paddingTop: 5,
       }}>
       <TouchableOpacity
         onPress={handleProfile}
         style={{
           justifyContent: 'center',
           alignItems: 'center',
-          gap: 8,
+          gap: 5,
         }}>
         <View
           style={{
             backgroundColor: '#000',
             justifyContent: 'center',
             alignItems: 'center',
-            height: 32,
-            width: 32,
+            height: 24,
+            width: 24,
             borderRadius: 50,
             marginLeft: 10,
             borderWidth: 1,
@@ -91,7 +91,7 @@ function Header({userData}) {
         <Text
           style={{
             color: 'white',
-            fontSize: 12,
+            fontSize: 10,
             fontWeight: 500,
             paddingLeft: 10,
           }}>
@@ -99,53 +99,49 @@ function Header({userData}) {
         </Text>
       </TouchableOpacity>
 
-      <View style={{alignItems: 'center', textAlign: 'center', gap: 6}}>
+      <View style={{alignItems: 'center', textAlign: 'center', gap: 3}}>
         <TouchableOpacity>
           <Feather
             name="help-circle"
             style={{color: 'white', padding: 2}}
-            size={28}
+            size={20}
           />
         </TouchableOpacity>
-        <Text style={{color: 'white', fontSize: 12, fontWeight: 500}}>
-          Use how
-        </Text>
+        <Text style={style.headerIconText}>Use how</Text>
       </View>
 
       <View
         style={{
           alignItems: 'center',
           textAlign: 'center',
-          gap: 8,
+          gap: 3,
         }}>
         <Image
           source={require('../assets/img/logo2.png')} // Use the correct source for the right image
           style={{
-            height: 50,
-            width: 80,
+            height: 40,
+            width: 70,
             resizeMode: 'contain',
             marginTop: 5,
           }}
         />
       </View>
 
-      <View style={{alignItems: 'center', textAlign: 'center', gap: 6}}>
+      <View style={{alignItems: 'center', textAlign: 'center', gap: 3}}>
         <TouchableOpacity>
           <Feather
             name="phone-call"
             style={{color: 'white', padding: 2}}
-            size={25}
+            size={20}
           />
         </TouchableOpacity>
-        <Text style={{color: 'white', fontSize: 12, fontWeight: 500}}>
-          Support
-        </Text>
+        <Text style={style.headerIconText}>Support</Text>
       </View>
 
       <View
         style={{
           justifyContent: 'center',
-          gap: 6,
+          gap: 3,
           alignItems: 'center',
           textAlign: 'center',
           paddingRight: 8,
@@ -154,15 +150,20 @@ function Header({userData}) {
           <Feather
             name="search"
             style={{color: 'white', padding: 2}}
-            size={25}
+            size={20}
           />
         </TouchableOpacity>
-        <Text style={{color: 'white', fontSize: 12, fontWeight: 500}}>
-          Search
-        </Text>
+        <Text style={style.headerIconText}>Search</Text>
       </View>
     </View>
   );
 }
+const style = StyleSheet.create({
+  headerIconText: {
+    color: 'white',
+    fontSize: 10,
+    fontWeight: '500',
+  },
+});
 
 export default Header;

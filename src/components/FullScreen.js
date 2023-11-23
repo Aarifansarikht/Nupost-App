@@ -1,44 +1,49 @@
-import React,{useState} from 'react';
-import { View, StyleSheet ,ActivityIndicator, FlatList,Dimensions} from 'react-native';
-import { err } from 'react-native-svg/lib/typescript/xml';
+import React, {useState} from 'react';
+import {
+  View,
+  StyleSheet,
+  ActivityIndicator,
+  FlatList,
+  Dimensions,
+} from 'react-native';
+import {err} from 'react-native-svg/lib/typescript/xml';
 import Video from 'react-native-video';
-const { width ,height } = Dimensions.get('window');
+const {width, height} = Dimensions.get('window');
 
 const VideoPlayerComponent = ({route}) => {
+  const {uri} = route.params;
+  const [isVideoLoading, setIsVideoLoading] = useState(true);
+  console.log(uri, 'uri');
 
-    const {uri } = route.params;
-    const [isVideoLoading, setIsVideoLoading] = useState(true);
-    console.log(uri,"uri")
+  const onBuffer = buffer => {
+    if (buffer.isBuffering) {
+      setIsVideoLoading(true);
+    } else {
+      setIsVideoLoading(false);
+    }
+  };
 
-    const onBuffer = (buffer) => {
-        if (buffer.isBuffering) {
-          setIsVideoLoading(true); 
-        } else {
-          setIsVideoLoading(false); 
-        }
-      };
-
-  const videoError = (error) => {
-   console.log(error)
+  const videoError = error => {
+    console.log(error);
   };
 
   return (
     <View style={styles.container}>
-           {isVideoLoading && (
+      {isVideoLoading && (
         <View style={styles.activityIndicatorContainer}>
           <ActivityIndicator size="large" color="#fff" />
         </View>
       )}
       <Video
-        source={{ uri: uri }}
-        ref={(ref) => {
+        source={{uri: uri}}
+        ref={ref => {
           this.player = ref;
         }}
-        resizeMode={"contain"}
+        resizeMode={'contain'}
         onBuffer={onBuffer}
         onError={videoError}
         style={styles.backgroundVideo}
-        controls={true} 
+        controls={true}
         fullscreen={true}
         fullscreenAutorotate={true}
       />
@@ -51,12 +56,12 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor:"black"
+    backgroundColor: 'black',
   },
   backgroundVideo: {
     position: 'absolute',
-    width:width,
-    aspectRatio: width/height,
+    width: width,
+    aspectRatio: width / height,
   },
 });
 

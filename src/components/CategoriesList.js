@@ -10,7 +10,7 @@ import {
   View,
 } from 'react-native';
 import {useSelector} from 'react-redux';
-
+import AntDesign from 'react-native-vector-icons/AntDesign';
 function CategoriesList({
   ctgData,
   filteredData,
@@ -70,6 +70,20 @@ function CategoriesList({
               <Text style={styles.category_text}>
                 {ctgitem.data?.videoctgName}
               </Text>
+              <TouchableOpacity
+                onPress={() =>
+                  navigation.navigate('ViewAllPost', {
+                    catId: ctgitem.id,
+                    title: ctgitem.data?.ctgName,
+                  })
+                }
+                style={{
+                  backgroundColor: 'white',
+                  padding: 5,
+                  borderRadius: 5,
+                }}>
+                <Text style={styles.viewAll_text}>View All</Text>
+              </TouchableOpacity>
             </View>
 
             <ScrollView horizontal={true}>
@@ -85,7 +99,7 @@ function CategoriesList({
                       .map((filteredItem, index) => (
                         <View
                           key={index}
-                          style={{height: 160, width: 145, borderRadius: 10}}>
+                          style={{height: 90, width: 90, borderRadius: 10}}>
                           <View style={styles.videoContainer}>
                             {/* {indicator ? (
                               <ActivityIndicator
@@ -96,11 +110,14 @@ function CategoriesList({
                             ) : null} */}
                             <View
                               style={{
-                                height: 160,
-                                width: 145,
+                                height: 90,
+                                width: 90,
                                 borderRadius: 20,
                                 backgroundColor: 'black',
                                 justifyContent: 'center',
+                                alignItems: 'center',
+                                borderWidth: 1,
+                                borderColor: '#fff',
                               }}>
                               <TouchableOpacity
                                 onPress={() =>
@@ -108,15 +125,7 @@ function CategoriesList({
                                     uri: filteredItem.data.url,
                                   })
                                 }>
-                                <Image
-                                  source={require('../assets/img/play.png')}
-                                  resizeMode="contain"
-                                  style={{
-                                    width: 30,
-                                    height: 30,
-                                    alignSelf: 'center',
-                                  }}
-                                />
+                                <AntDesign name="play" size={20} />
                               </TouchableOpacity>
                             </View>
 
@@ -152,7 +161,10 @@ function CategoriesList({
               <Text style={styles.category_text}>{ctgitem.data?.ctgName}</Text>
               <TouchableOpacity
                 onPress={() =>
-                  navigation.navigate('ViewAllPost', {catId: ctgitem.id})
+                  navigation.navigate('ViewAllPost', {
+                    catId: ctgitem.id,
+                    title: ctgitem.data?.ctgName,
+                  })
                 }
                 style={{
                   backgroundColor: 'white',
@@ -200,7 +212,7 @@ const styles = StyleSheet.create({
   },
   category_text: {
     color: '#fff',
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: '700',
   },
   imageitems: {
@@ -210,8 +222,8 @@ const styles = StyleSheet.create({
   },
   viewAll_text: {
     color: '#000',
-    fontWeight: '600',
-    fontSize: 14,
+    fontWeight: '500',
+    fontSize: 12,
   },
 });
 export default CategoriesList;
