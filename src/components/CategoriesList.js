@@ -11,7 +11,6 @@ import {
 } from 'react-native';
 import {useSelector} from 'react-redux';
 
-
 function CategoriesList({
   ctgData,
   filteredData,
@@ -37,10 +36,8 @@ function CategoriesList({
     });
   };
 
-
-
   return (
-    <ScrollView style={{backgroundColor: '#0031'}}>
+    <ScrollView style={{backgroundColor: 'black'}}>
       {ctgData?.length === 0 && (
         <Text
           style={{
@@ -64,8 +61,7 @@ function CategoriesList({
         </Text>
       )}
 
-      {
-      isVideo &&
+      {isVideo &&
         videoData &&
         videocategories?.map((ctgitem, index) => (
           <View key={index}>
@@ -90,26 +86,39 @@ function CategoriesList({
                           key={index}
                           style={{height: 160, width: 145, borderRadius: 10}}>
                           <View style={styles.videoContainer}>
-                          {/* {indicator ? (
+                            {/* {indicator ? (
                               <ActivityIndicator
                                 size="small"
                                 color="black"
                                 style={styles.activityIndicator}
                               />
                             ) : null} */}
-                            <View 
-                            style={{
+                            <View
+                              style={{
                                 height: 160,
                                 width: 145,
                                 borderRadius: 20,
-                                backgroundColor:"black",
-                                justifyContent:"center",
-                              }}  >
-                                <TouchableOpacity onPress={()=>navigation.navigate('FullScreen',{uri:filteredItem.data.url})}>
-                                <Image   source={require("../assets/img/play.png")} resizeMode='contain' style={{width:30,height:30,alignSelf:"center"}}/>
-                                </TouchableOpacity>
-                              </View>
-                           
+                                backgroundColor: 'black',
+                                justifyContent: 'center',
+                              }}>
+                              <TouchableOpacity
+                                onPress={() =>
+                                  navigation.navigate('FullScreen', {
+                                    uri: filteredItem.data.url,
+                                  })
+                                }>
+                                <Image
+                                  source={require('../assets/img/play.png')}
+                                  resizeMode="contain"
+                                  style={{
+                                    width: 30,
+                                    height: 30,
+                                    alignSelf: 'center',
+                                  }}
+                                />
+                              </TouchableOpacity>
+                            </View>
+
                             {/* <VideoPlayer
                               style={{
                                 height: 160,
@@ -126,7 +135,6 @@ function CategoriesList({
                               onLoad={() => setIndicator(false)}
                             
                             /> */}
-               
                           </View>
                         </View>
                       ))
@@ -138,13 +146,22 @@ function CategoriesList({
 
       {ctgData?.map((ctgitem, index) => (
         <View key={index}>
-          {!isVideo && (          <View style={styles.category_name}>
+          {!isVideo && (
+            <View style={styles.category_name}>
               <Text style={styles.category_text}>{ctgitem.data?.ctgName}</Text>
-              <TouchableOpacity onPress={()=>navigation.navigate('ViewAllPost',{catId:ctgitem.id})}>
-              <Text style={styles.viewAll_text}>View All</Text>
+              <TouchableOpacity
+                onPress={() =>
+                  navigation.navigate('ViewAllPost', {catId: ctgitem.id})
+                }
+                style={{
+                  backgroundColor: 'white',
+                  padding: 5,
+                  borderRadius: 5,
+                }}>
+                <Text style={styles.viewAll_text}>View All</Text>
               </TouchableOpacity>
             </View>
-              )}
+          )}
           <ScrollView horizontal={true}>
             <View style={styles.imageitems}>
               {!isVideo &&
@@ -152,14 +169,14 @@ function CategoriesList({
                   .filter(
                     imageitem =>
                       !/^(mp4|mov|avi|mkv)$/i.test(imageitem.data?.url) &&
-                      imageitem.data.ctgIds.includes(ctgitem.id)
+                      imageitem.data.ctgIds.includes(ctgitem.id),
                   )
                   .map((filteredItem, index) => (
                     <TouchableOpacity
                       key={index}
                       onPress={() => handleImagePress(filteredItem)}>
                       <Image
-                        style={{height: 160, width: 145, borderRadius: 10}}
+                        style={{height: 90, width: 90, borderRadius: 10}}
                         source={{uri: filteredItem.data.url}}
                         resizeMode="cover"
                       />
@@ -175,11 +192,13 @@ function CategoriesList({
 const styles = StyleSheet.create({
   category_name: {
     padding: 6,
-    flexDirection:"row",
-    justifyContent:'space-between',
+    paddingTop: 20,
+    paddingBottom: 20,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
   },
   category_text: {
-    color: 'black',
+    color: '#fff',
     fontSize: 18,
     fontWeight: '700',
   },
@@ -188,11 +207,10 @@ const styles = StyleSheet.create({
     gap: 10,
     padding: 6,
   },
-  viewAll_text:{
-    paddingLeft:5,
-    color:"#000",
-    textDecorationLine:"underline",
-    fontSize:18
-  }
+  viewAll_text: {
+    color: '#000',
+    fontWeight: '600',
+    fontSize: 14,
+  },
 });
 export default CategoriesList;
