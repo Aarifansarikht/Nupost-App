@@ -80,7 +80,51 @@ const ViewallPost = ({navigation, route}) => {
     getUserData();
   }, []);
 
-  const filterDatabyDate = catId => {
+<<<<<<< HEAD
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      title: title || 'View All', // Set a default title if necessary
+    });
+  }, [title, navigation]);
+=======
+    const filterDatabyDate = (catId) =>{
+      const currentDate = new Date(); 
+      console.log(currentDate,"date")
+      // Define the conditions based on userType
+      let filteredImages = [];
+      if (userData?.userData?.userType === 'free') {
+        // Show all images until today's date
+        console.log('userType is free')
+        filteredImages = imgdata.filter(
+          imageitem =>
+            new Date(imageitem.data.date) <= currentDate &&
+            imageitem.data.ctgIds.includes(catId) 
+        );
+      } else if (userData?.userData?.userType === 'basic') {
+        const endDateBasic = new Date(currentDate);
+        endDateBasic.setDate(currentDate.getDate() + 3);
+        console.log(endDateBasic,"date of basic")
+        filteredImages = imgdata.filter(
+          imageitem =>
+            new Date(imageitem.data.date) <= endDateBasic 
+            &&
+            imageitem.data.ctgIds.includes(catId)
+        );
+      } else if (userData?.userData?.userType === 'premium') {
+        // Show all images
+        console.log(userData?.userData?.userType,"userType")
+        filteredImages = imgdata.filter(
+          imageitem =>
+            imageitem.data.ctgIds.includes(catId)
+        );
+      }
+      console.log(filteredImages,"filteredImages")
+      return filteredImages
+}
+      
+>>>>>>> 3b1fc6a338c6b93569bd12bfd2e1dd677c598beb
+
+  const filterDatabyDate = (catId, selectedDate) => {
     const currentDate = new Date();
     console.log(currentDate, 'date');
     // Define the conditions based on userType
@@ -109,29 +153,113 @@ const ViewallPost = ({navigation, route}) => {
         imageitem.data.ctgIds.includes(catId),
       );
     }
+    filteredImages = imgdata.filter(imageitem =>
+      imageitem.data.ctgIds.includes(catId),
+    );
+
+<<<<<<< HEAD
     console.log(filteredImages, 'filteredImages');
-    return filteredImages;
+    if (!selectedDate) {
+      return filteredImages; // Show all data if no date is selected
+    }
+    const formattedSelectedDate = formatSelectedDate(selectedDate);
+    return filteredImages.filter(
+      item => item.data.date === formattedSelectedDate,
+    );
   };
 
   return (
-    <View style={{backgroundColor: '#0031', flex: 1}}>
+    <View style={{backgroundColor: '#111', flex: 1}}>
+      <View style={{padding: 10, alignItems: 'center'}}>
+        <View
+          style={{
+            backgroundColor: '#fff',
+            width: '100%',
+            alignItems: 'center',
+            borderRadius: 50,
+            padding: 5,
+          }}>
+          <TouchableOpacity onPress={showDatePicker}>
+            <Text style={{color: '#000', padding: 10, fontSize: 16}}>
+              {selectedDate ? selectedDate.toDateString() : 'Choose date'}
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+=======
+    return (
+      <View style={{backgroundColor: '#0031',flex:1}}>
+        <FlatList
+          data={filterDatabyDate(catId)}
+          keyExtractor={(item, index) => index.toString()}
+          numColumns={2}
+          renderItem={({ item, index }) => (
+            <TouchableOpacity onPress={() => handleImagePress(item)}>
+              <Image
+                style={{ height: 160, width: '50%', aspectRatio: 0.93, borderRadius: 10, margin: 5 }}
+                source={{ uri: item.data.url }}
+                resizeMode="cover"
+              />
+            </TouchableOpacity>
+          )}
+        />
+{/* </View> */}
+>>>>>>> 3b1fc6a338c6b93569bd12bfd2e1dd677c598beb
+
+      {isDatePickerVisible && (
+        <Modal transparent={true} animationType="slide">
+          <View style={styles.modalContainer}>
+            <View style={styles.modalContent}>
+              <DateTimePicker
+                value={selectedDate || new Date()}
+                mode="date"
+                display="default"
+                onChange={handleDateChange}
+              />
+              <TouchableOpacity
+                onPress={hideDatePicker}
+                style={styles.closeButton}>
+                <Text style={{color: 'blue'}}>Done</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
+      )}
       <FlatList
-        data={filterDatabyDate(catId)}
+        data={filterDatabyDate(catId, selectedDate)}
         keyExtractor={(item, index) => index.toString()}
-        numColumns={2}
+        numColumns={3}
         renderItem={({item, index}) => (
           <TouchableOpacity onPress={() => handleImagePress(item)}>
-            <Image
-              style={{
-                height: 160,
-                width: '50%',
-                aspectRatio: 0.93,
-                borderRadius: 10,
-                margin: 5,
-              }}
-              source={{uri: item.data.url}}
-              resizeMode="cover"
-            />
+            <View>
+              <Image
+                style={{
+                  height: 100, // Set height to auto for maintaining aspect ratio
+                  width: '100%', // Use 100% of the container's width
+                  aspectRatio: 1 / 1,
+                  borderRadius: 5,
+                  marginLeft: '6%',
+                  marginBottom: 10,
+                  marginTop: 12,
+                }}
+                source={{uri: item.data.url}}
+                resizeMode="cover"
+              />
+              <Text
+                style={{
+                  position: 'absolute',
+                  textAlign: 'center',
+                  marginTop: 5,
+                  backgroundColor: '#000',
+                  fontSize: 11,
+                  padding: 5,
+                  borderRadius: 5,
+                  left: 10,
+                  bottom: 14,
+                }}>
+                {item.data.date}
+              </Text>
+            </View>
           </TouchableOpacity>
         )}
       />
