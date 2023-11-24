@@ -48,6 +48,7 @@ const POSTER_RATIO = 1 / 1;
 const POSTER_HEIGHT = POSTER_WIDTH / POSTER_RATIO;
 
 function PreviewScreen({navigation, route}) {
+  const {selectedImage, filteredData} = route.params;
   const [userData, setUserData] = useState(null);
   const [userId, setUserId] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
@@ -56,7 +57,6 @@ function PreviewScreen({navigation, route}) {
   const [isLoading, setIsLoading] = useState(false);
   const [isPolitical, setIsPolitical] = useState(true);
   const [isWaterMark, setisWaterMark] = useState(false);
-  const {selectedImage, filteredData} = route.params;
   const scrollViewRef = useRef(null);
   const REMOTE_IMAGE_PATH = selectedImage?.data.url;
   const LOCAL_IMAGE_PATH = `${RNFS.DocumentDirectoryPath}/photo.jpg`;
@@ -77,34 +77,6 @@ function PreviewScreen({navigation, route}) {
     getUserData();
   }, []);
 
-  const handelPolitical = () => {
-    setIsPolitical(true);
-    bottomSheetModalRef.current?.close();
-  };
-
-  const handelBusiness = () => {
-    setIsPolitical(false);
-    bottomSheetModalRef.current?.close();
-  };
-
-  // async function processImage() {
-  //   console.log("RemoteUrl",REMOTE_IMAGE_PATH)
-  //   try {
-  //     const url = await editAndSaveImage(REMOTE_IMAGE_PATH);
-  //     if (url) {
-  //       //    const preview_url =   await uploadImage(url)
-  //       console.log('Resulting image URL:', REMOTE_IMAGE_PATH);
-  //       // downloadImage(preview_url)
-  //       // PhotoEditor.Edit({
-  //       //   path: preview_url
-  //       // });
-  //     }
-  //   } catch (error) {
-  //     console.log('Error in processImage:', error);
-  //   }
-  // }
-
-  // processImage();
   const getUserIDByEmail = async email => {
     const querySnapshot = await getDocs(collection(firestore, 'users'));
     let userId = null;
@@ -149,6 +121,16 @@ function PreviewScreen({navigation, route}) {
       console.log('basic user called');
       setisWaterMark(true);
     }
+  };
+
+  const handelPolitical = () => {
+    setIsPolitical(true);
+    bottomSheetModalRef.current?.close();
+  };
+
+  const handelBusiness = () => {
+    setIsPolitical(false);
+    bottomSheetModalRef.current?.close();
   };
 
   const captureImage = async () => {
@@ -274,7 +256,6 @@ function PreviewScreen({navigation, route}) {
   };
 
   const handleSelectImage = uri => {
-    console.log('selected______frame_____uri', uri);
     setSelectedFrame(uri);
   };
 
@@ -493,25 +474,6 @@ function PreviewScreen({navigation, route}) {
   return (
     <BottomSheetModalProvider>
       <SafeAreaView style={{flex: 1}}>
-        {/* <Modal
-        animationType="fade"
-        transparent={true}
-        visible={modalVisible}
-        onRequestClose={() => {
-          Alert.alert('Modal has been closed.');
-          setModalVisible(!modalVisible);
-        }}>
-        <View style={styles.centeredView}>
-          <View style={styles.modalView}>
-            <Pressable
-              style={[styles.button, styles.buttonClose]}
-              onPress={() => setModalVisible(!modalVisible)}>
-              <Text style={styles.textStyle}>Ok</Text>
-            </Pressable>
-          </View>
-        </View>
-      </Modal> */}
-
         <View style={styles.top_container}>
           {isVideo ? (
             <View style={styles.videoContainer}>
@@ -541,6 +503,8 @@ function PreviewScreen({navigation, route}) {
                 flex: 1,
                 alignItems: 'center',
                 justifyContent: 'center',
+                backgroundColor: '#000',
+                marginBottom: 10,
               }}>
               <ViewShot
                 ref={viewShotRef}
@@ -577,33 +541,6 @@ function PreviewScreen({navigation, route}) {
                     style={styles.watermark}
                   />
                 )}
-                {/* <Image
-                source={{ uri: userData?.userData?.imageUrl }}
-                style={styles.profile_picture}
-              /> */}
-                {/* Overlay Image and Text */}
-                {/* <View style={styles.overlayContainer}>
-                  <View style={{ position: "absolute", top: 0, zIndex: -1 }}>         
-                    <Text style={styles.userName}>{userData?.userData?.name}</Text>
-                  </View>
-                </View> */}
-                {/* <View style={{
-                    position: 'absolute', bottom: 0, zIndex: 9, right: 0, left: 0,
-                    flexDirection: 'row', alignItems: 'flex-start',
-                    justifyContent: 'space-around'
-                  }}>          
-                  <View style={styles.textContainer}>
-                    <Text style={styles.phoneText}>
-                      {`+91-${userData?.userData.mobileNumber}`}
-                    </Text>
-                    <Text style={styles.phoneText1}>
-                      {`+91-${userData?.userData.WhatsappNumber}`}
-                    </Text>
-                    </View>
-                    <View style={{ paddingRight: 5,  }}>
-                      <Text style={styles.nameText}>{userData?.userData.email}</Text>
-                    </View>
-                </View> */}
               </ViewShot>
             </View>
           )}
@@ -670,7 +607,7 @@ const styles = StyleSheet.create({
   top_container: {
     flex: 1,
     flexDirection: 'column',
-    backgroundColor: '#222',
+    backgroundColor: '#333',
     // alignItems:'center'
   },
   // preview_image: {

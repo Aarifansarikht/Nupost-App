@@ -22,6 +22,9 @@ import {
   updateDoc,
 } from '@firebase/firestore';
 import {firestore} from '../firebase/firebase';
+
+import {SCREEN_WIDTH, SCREEN_HEIGHT} from '../utils/dimensions';
+
 const ViewallPost = ({navigation, route}) => {
   const {catId, title} = route.params;
   const imgdata = useSelector(state => state.reducer);
@@ -128,7 +131,7 @@ const ViewallPost = ({navigation, route}) => {
       item => item.data.date === formattedSelectedDate,
     );
   };
-
+  const imageWidth = (SCREEN_WIDTH - 30) / 3;
   return (
     <View style={{backgroundColor: '#111', flex: 1}}>
       <View style={{padding: 10, alignItems: 'center'}}>
@@ -167,22 +170,19 @@ const ViewallPost = ({navigation, route}) => {
           </View>
         </Modal>
       )}
+
       <FlatList
         data={filterDatabyDate(catId, selectedDate)}
         keyExtractor={(item, index) => index.toString()}
         numColumns={3}
+        showsVerticalScrollIndicator={false}
         renderItem={({item, index}) => (
           <TouchableOpacity onPress={() => handleImagePress(item)}>
-            <View>
+            <View style={{margin: 5, width: imageWidth}}>
               <Image
                 style={{
-                  height: 100, // Set height to auto for maintaining aspect ratio
-                  width: '100%', // Use 100% of the container's width
-                  aspectRatio: 1 / 1,
+                  height: imageWidth, // Maintain a square aspect ratio
                   borderRadius: 5,
-                  marginLeft: '6%',
-                  marginBottom: 10,
-                  marginTop: 12,
                 }}
                 source={{uri: item.data.url}}
                 resizeMode="cover"

@@ -183,7 +183,8 @@ function HomeScreen({navigation, route}) {
       <ScrollView
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-        }>
+        }
+        showsVerticalScrollIndicator={false}>
         <Banner banner={banner} />
         <CategoriesList
           ctgData={ctgData}

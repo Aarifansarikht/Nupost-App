@@ -23,6 +23,7 @@ import {firestore} from '../firebase/firebase';
 import {storage, ref, uploadBytes, getDownloadURL} from '../firebase/firebase';
 import {useDispatch, useSelector} from 'react-redux';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+
 import {
   ScrollView,
   TextInput,
@@ -43,6 +44,9 @@ import Logo_list from '../components/logo';
 import {get_user} from '../utils/user';
 import {ThemeContext} from '../utils/ThemeContext';
 import {setDarkTrue} from '../redux/reducer/isDarkMode';
+
+import FontAwesome from 'react-native-vector-icons/FontAwesome5';
+import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
 
 function ProfileScreen({navigation}) {
   const [userData, setUserData] = useState(null);
@@ -352,11 +356,9 @@ function ProfileScreen({navigation}) {
   return (
     <BottomSheetModalProvider>
       <SafeAreaView
-        style={[
-          styles.main_container,
-          {backgroundColor: isDarkMode ? '#000' : '#fff'},
-        ]}>
-        <ScrollView style={{flex: 1}}>
+        style={styles.main_container}
+        showsVerticalScrollIndicator={false}>
+        <ScrollView style={{flex: 1}} showsVerticalScrollIndicator={false}>
           <View style={styles.profile_container}>
             <View style={styles.images_wrapper}>
               <TouchableOpacity onPress={handleImagePick}>
@@ -380,7 +382,7 @@ function ProfileScreen({navigation}) {
                         position: 'absolute',
                         right: 10,
                         bottom: 0,
-                        color: 'gray',
+                        color: '#333',
                       }}
                       name="add-a-photo"
                       size={30}
@@ -388,7 +390,7 @@ function ProfileScreen({navigation}) {
                   </View>
                   <Text
                     style={{
-                      color: isDarkMode ? '#fff' : '#000',
+                      color: '#fff',
                       textAlign: 'center',
                       fontSize: 12,
                     }}>
@@ -418,7 +420,7 @@ function ProfileScreen({navigation}) {
                           position: 'absolute',
                           right: 10,
                           bottom: 0,
-                          color: 'gray',
+                          color: '#333',
                         }}
                         name="add-a-photo"
                         size={30}
@@ -426,7 +428,7 @@ function ProfileScreen({navigation}) {
                     </View>
                     <Text
                       style={{
-                        color: isDarkMode ? '#fff' : '#000',
+                        color: '#fff',
                         textAlign: 'center',
                         fontSize: 12,
                       }}>
@@ -467,10 +469,7 @@ function ProfileScreen({navigation}) {
                 <>
                   <View>
                     <TextInput
-                      style={[
-                        styles.textInput,
-                        {color: isDarkMode ? '#fff' : '#000'},
-                      ]}
+                      style={[styles.textInput]}
                       value={
                         UserName !== null ? UserName : userData.userData.name
                       }
@@ -478,18 +477,12 @@ function ProfileScreen({navigation}) {
                       onChangeText={text => setUserName(text)}
                     />
                     <TextInput
-                      style={[
-                        styles.textInput,
-                        {color: isDarkMode ? '#fff' : '#000'},
-                      ]}
+                      style={[styles.textInput]}
                       value={userData.userData.email}
                       placeholderTextColor="#888"
                     />
                     <TextInput
-                      style={[
-                        styles.textInput,
-                        {color: isDarkMode ? '#fff' : '#000'},
-                      ]}
+                      style={[styles.textInput]}
                       value={
                         mobileNumber !== null
                           ? mobileNumber
@@ -505,10 +498,7 @@ function ProfileScreen({navigation}) {
                       }
                     />
                     <TextInput
-                      style={[
-                        styles.textInput,
-                        {color: isDarkMode ? '#fff' : '#000'},
-                      ]}
+                      style={[styles.textInput]}
                       value={
                         WhatsappNumber !== null
                           ? WhatsappNumber
@@ -524,17 +514,14 @@ function ProfileScreen({navigation}) {
                       }
                     />
                     <TextInput
-                      style={[
-                        styles.textInput,
-                        {color: isDarkMode ? '#fff' : '#000'},
-                      ]}
+                      style={[styles.textInput]}
                       value={
                         designation !== null
                           ? designation
                           : userData.userData.designation
                       }
                       placeholder="Designation"
-                      placeholderTextColor="#888"
+                      placeholderTextColor="fff"
                       onChangeText={text =>
                         text == '' ? setDesignation(' ') : setDesignation(text)
                       }
@@ -554,10 +541,7 @@ function ProfileScreen({navigation}) {
                     {showInsta && (
                       <View>
                         <TextInput
-                          style={[
-                            styles.textInput,
-                            {color: isDarkMode ? '#fff' : '#000'},
-                          ]}
+                          style={[styles.textInput]}
                           value={
                             InstaUrl !== null
                               ? InstaUrl
@@ -574,10 +558,7 @@ function ProfileScreen({navigation}) {
                     {showFacebook && (
                       <View>
                         <TextInput
-                          style={[
-                            styles.textInput,
-                            {color: isDarkMode ? '#fff' : '#000'},
-                          ]}
+                          style={[styles.textInput]}
                           value={
                             FacebookUrl !== null
                               ? FacebookUrl
@@ -596,10 +577,7 @@ function ProfileScreen({navigation}) {
                     {showTwitter && (
                       <View>
                         <TextInput
-                          style={[
-                            styles.textInput,
-                            {color: isDarkMode ? '#fff' : '#000'},
-                          ]}
+                          style={[styles.textInput]}
                           value={
                             TwitterUrl !== null
                               ? TwitterUrl
@@ -625,32 +603,27 @@ function ProfileScreen({navigation}) {
                     </Text>
                     <View style={styles.icons_view}>
                       <TouchableOpacity onPress={() => SetshowInsta(true)}>
-                        <Image
-                          source={require('../assets/img/instagram-png.webp')}
-                          style={styles.icons}
-                        />
+                        <FontAwesome name="instagram" size={30} color="#fff" />
                       </TouchableOpacity>
                       <TouchableOpacity onPress={() => setshowFacebook(true)}>
-                        <Image
-                          source={require('../assets/img/Facebook-png.png')}
-                          style={styles.icons}
+                        <FontAwesome
+                          name="facebook-square"
+                          size={28}
+                          color="#fff"
                         />
                       </TouchableOpacity>
                       <TouchableOpacity onPress={() => SetshowTwitter(true)}>
-                        <Image
-                          source={require('../assets/img/twiter.png')}
-                          style={styles.icons}
+                        <FontAwesome6
+                          name="square-x-twitter"
+                          size={30}
+                          color="#fff"
                         />
                       </TouchableOpacity>
                     </View>
                     <TouchableOpacity
                       style={styles.profile_edit_btn}
                       onPress={updateProfile}>
-                      <Text
-                        style={[
-                          styles.logout_btn_text,
-                          {color: isDarkMode ? '#fff' : '#000'},
-                        ]}>
+                      <Text style={[styles.logout_btn_text]}>
                         Update Profile
                       </Text>
                     </TouchableOpacity>
@@ -716,6 +689,7 @@ const styles = StyleSheet.create({
   main_container: {
     flex: 1,
     padding: 5,
+    backgroundColor: '#000',
   },
   profile_container: {
     flex: 1,
@@ -732,7 +706,7 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   logos: {
-    backgroundColor: 'skyblue',
+    backgroundColor: '#fff',
     height: 120,
     width: 120,
     borderRadius: 100,
@@ -753,7 +727,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     paddingHorizontal: 10,
     marginBottom: 10,
-    color: 'black', // Color of the text entered by the user
+    color: '#fff', // Color of the text entered by the user
   },
   logout_btn: {
     borderWidth: 2,
@@ -773,14 +747,16 @@ const styles = StyleSheet.create({
   logout_btn_text: {
     color: '#fff',
     fontSize: 18,
-    fontWeight: '600',
+    fontWeight: '400',
     textAlign: 'center',
   },
   icons_view: {
     flex: 1,
     flexDirection: 'row',
-    justifyContent: 'center',
+    justifyContent: 'space-around',
     marginVertical: 10,
+    padding: 20,
+    alignItems: 'center',
   },
   icons: {
     height: 30,
@@ -796,7 +772,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   buttonText: {
-    color: 'white',
+    color: '#000',
     fontSize: 16,
     textAlign: 'center',
   },
