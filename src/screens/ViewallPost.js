@@ -80,49 +80,11 @@ const ViewallPost = ({navigation, route}) => {
     getUserData();
   }, []);
 
-<<<<<<< HEAD
   useLayoutEffect(() => {
     navigation.setOptions({
       title: title || 'View All', // Set a default title if necessary
     });
   }, [title, navigation]);
-=======
-    const filterDatabyDate = (catId) =>{
-      const currentDate = new Date(); 
-      console.log(currentDate,"date")
-      // Define the conditions based on userType
-      let filteredImages = [];
-      if (userData?.userData?.userType === 'free') {
-        // Show all images until today's date
-        console.log('userType is free')
-        filteredImages = imgdata.filter(
-          imageitem =>
-            new Date(imageitem.data.date) <= currentDate &&
-            imageitem.data.ctgIds.includes(catId) 
-        );
-      } else if (userData?.userData?.userType === 'basic') {
-        const endDateBasic = new Date(currentDate);
-        endDateBasic.setDate(currentDate.getDate() + 3);
-        console.log(endDateBasic,"date of basic")
-        filteredImages = imgdata.filter(
-          imageitem =>
-            new Date(imageitem.data.date) <= endDateBasic 
-            &&
-            imageitem.data.ctgIds.includes(catId)
-        );
-      } else if (userData?.userData?.userType === 'premium') {
-        // Show all images
-        console.log(userData?.userData?.userType,"userType")
-        filteredImages = imgdata.filter(
-          imageitem =>
-            imageitem.data.ctgIds.includes(catId)
-        );
-      }
-      console.log(filteredImages,"filteredImages")
-      return filteredImages
-}
-      
->>>>>>> 3b1fc6a338c6b93569bd12bfd2e1dd677c598beb
 
   const filterDatabyDate = (catId, selectedDate) => {
     const currentDate = new Date();
@@ -157,7 +119,6 @@ const ViewallPost = ({navigation, route}) => {
       imageitem.data.ctgIds.includes(catId),
     );
 
-<<<<<<< HEAD
     console.log(filteredImages, 'filteredImages');
     if (!selectedDate) {
       return filteredImages; // Show all data if no date is selected
@@ -186,25 +147,6 @@ const ViewallPost = ({navigation, route}) => {
           </TouchableOpacity>
         </View>
       </View>
-=======
-    return (
-      <View style={{backgroundColor: '#0031',flex:1}}>
-        <FlatList
-          data={filterDatabyDate(catId)}
-          keyExtractor={(item, index) => index.toString()}
-          numColumns={2}
-          renderItem={({ item, index }) => (
-            <TouchableOpacity onPress={() => handleImagePress(item)}>
-              <Image
-                style={{ height: 160, width: '50%', aspectRatio: 0.93, borderRadius: 10, margin: 5 }}
-                source={{ uri: item.data.url }}
-                resizeMode="cover"
-              />
-            </TouchableOpacity>
-          )}
-        />
-{/* </View> */}
->>>>>>> 3b1fc6a338c6b93569bd12bfd2e1dd677c598beb
 
       {isDatePickerVisible && (
         <Modal transparent={true} animationType="slide">

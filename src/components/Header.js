@@ -1,9 +1,10 @@
 import React, {useState, useEffect} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {Image, View, Text, TouchableOpacity} from 'react-native';
+import {Image, View, Text, TouchableOpacity, StyleSheet} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {SCREEN_WIDTH} from '@gorhom/bottom-sheet';
 import Feather from 'react-native-vector-icons/Feather';
+import ContactInfoPopup from './ContactInfoPopup';
 import {
   collection,
   getDocs,
@@ -18,7 +19,13 @@ import {storage, ref, uploadBytes, getDownloadURL} from '../firebase/firebase';
 function Header({userData}) {
   const navigation = useNavigation();
   console.log(userData, 'header');
+  const [popupVisible, setPopupVisible] = useState(false);
   // const [userData, setUserData] = useState(null);
+
+  const togglePopup = () => {
+    console.log('popup called');
+    setPopupVisible(!popupVisible);
+  };
 
   const handleProfile = () => {
     navigation.navigate('Profile');
@@ -48,75 +55,117 @@ function Header({userData}) {
   // }, []);
 
   return (
-    <View
-      style={{
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        backgroundColor: 'white',
-      }}>
-      <TouchableOpacity onPress={handleProfile}>
-        <View
+    <>
+      <View
+        style={{
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          backgroundColor: 'black',
+          paddingBottom: 5,
+          paddingTop: 5,
+        }}>
+        <TouchableOpacity
+          onPress={handleProfile}
           style={{
-            backgroundColor: '#000',
             justifyContent: 'center',
             alignItems: 'center',
-            height: 35,
-            width: 35,
-            borderRadius: 50,
-            marginLeft: 10,
+            gap: 5,
           }}>
-          {userData?.userData?.imageUrl ? (
-            <Image
-              style={{height: '100%', width: '100%', borderRadius: 20}}
-              source={{uri: userData?.userData?.imageUrl}}
-            />
-          ) : (
-            <Image
-              style={{height: '100%', width: '100%', borderRadius: 20}}
-              source={require('../assets/img/profileImg.png')}
-            />
-          )}
-        </View>
-      </TouchableOpacity>
-      <View>
-        <TouchableOpacity>
-          <Feather
-            name="help-circle"
-            style={{color: 'black', padding: 5}}
-            size={20}
-          />
+          <View
+            style={{
+              backgroundColor: '#000',
+              justifyContent: 'center',
+              alignItems: 'center',
+              height: 24,
+              width: 24,
+              borderRadius: 50,
+              marginLeft: 10,
+              borderWidth: 1,
+              borderColor: '#fff',
+            }}>
+            {userData?.userData?.imageUrl ? (
+              <Image
+                style={{height: '100%', width: '100%', borderRadius: 20}}
+                source={{uri: userData?.userData?.imageUrl}}
+              />
+            ) : (
+              <Image
+                style={{height: '100%', width: '100%', borderRadius: 20}}
+                source={require('../assets/img/profileImg.png')}
+              />
+            )}
+          </View>
+          <Text
+            style={{
+              color: 'white',
+              fontSize: 10,
+              fontWeight: 500,
+              paddingLeft: 10,
+            }}>
+            Profile
+          </Text>
         </TouchableOpacity>
-        <Text style={{color: 'black', fontSize: 14}}>Use how</Text>
-      </View>
 
-      <View>
-        <Image
-          source={require('../assets/img/logo.png')} // Use the correct source for the right image
-          style={{height: 50, width: 70, resizeMode: 'contain', marginTop: 5}}
-        />
-      </View>
-      <View>
-        <TouchableOpacity>
-          <Feather
-            name="phone-call"
-            style={{color: 'black', padding: 5}}
-            size={20}
+        <View style={{alignItems: 'center', textAlign: 'center', gap: 3}}>
+          <TouchableOpacity>
+            <Feather
+              name="help-circle"
+              style={{color: 'white', padding: 2}}
+              size={20}
+            />
+          </TouchableOpacity>
+          <Text style={style.headerIconText}>Use how</Text>
+        </View>
+
+        <View
+          style={{
+            alignItems: 'center',
+            textAlign: 'center',
+            gap: 3,
+          }}>
+          <Image
+            source={require('../assets/img/logo2.png')} // Use the correct source for the right image
+            style={{
+              height: 40,
+              width: 70,
+              resizeMode: 'contain',
+              marginTop: 5,
+            }}
           />
-        </TouchableOpacity>
-        <Text style={{color: 'black', fontSize: 14}}>Support</Text>
+        </View>
+
+        <View style={{alignItems: 'center', textAlign: 'center', gap: 3}}>
+          <TouchableOpacity onPress={togglePopup}>
+            <Feather
+              name="phone-call"
+              style={{color: 'white', padding: 2}}
+              size={20}
+            />
+          </TouchableOpacity>
+          <Text style={style.headerIconText}>Support</Text>
+        </View>
+
+        <View
+          style={{
+            justifyContent: 'center',
+            gap: 3,
+            alignItems: 'center',
+            textAlign: 'center',
+            paddingRight: 8,
+          }}>
+          <TouchableOpacity onPress={() => navigation.navigate('Search')}>
+            <Feather
+              name="search"
+              style={{color: 'white', padding: 2}}
+              size={20}
+            />
+          </TouchableOpacity>
+          <Text style={style.headerIconText}>Search</Text>
+        </View>
       </View>
-      <View style={{justifyContent: 'center'}}>
-        <TouchableOpacity onPress={() => navigation.navigate('Search')}>
-          <Feather
-            name="search"
-            style={{color: 'black', padding: 5}}
-            size={20}
-          />
-        </TouchableOpacity>
-        <Text style={{color: 'black', fontSize: 14}}>Search</Text>
-      </View>
-    </View>
+      <ContactInfoPopup visible={popupVisible} onClose={togglePopup} />
+    </>
   );
 }
 const style = StyleSheet.create({
