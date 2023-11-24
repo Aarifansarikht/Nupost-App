@@ -36,7 +36,9 @@ function CategoriesList({
       filteredData: filteredData,
     });
   };
-
+  console.log('====================================');
+  console.log(videocategories);
+  console.log('====================================');
   return (
     <ScrollView style={{backgroundColor: 'black'}}>
       {ctgData?.length === 0 && (
@@ -74,7 +76,9 @@ function CategoriesList({
                 onPress={() =>
                   navigation.navigate('ViewAllPost', {
                     catId: ctgitem.id,
-                    title: ctgitem.data?.ctgName,
+                    videotitle: ctgitem.data?.videoctgName,
+                    videoData: videoData,
+                    isVideo: isVideo,
                   })
                 }
                 style={{

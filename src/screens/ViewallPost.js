@@ -1,6 +1,8 @@
 import React, {useEffect, useLayoutEffect, useState} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import AntDesign from 'react-native-vector-icons/AntDesign';
+
 import {
   Text,
   View,
@@ -26,7 +28,10 @@ import {firestore} from '../firebase/firebase';
 import {SCREEN_WIDTH, SCREEN_HEIGHT} from '../utils/dimensions';
 
 const ViewallPost = ({navigation, route}) => {
-  const {catId, title} = route.params;
+  const {catId, title, videotitle, videoData, isVideo} = route.params;
+  console.log('====================================');
+  console.log(catId, isVideo);
+  console.log('====================================');
   const imgdata = useSelector(state => state.reducer);
   const [userData, setUserData] = useState(null);
   const [selectedDate, setSelectedDate] = useState(null);
@@ -85,7 +90,7 @@ const ViewallPost = ({navigation, route}) => {
 
   useLayoutEffect(() => {
     navigation.setOptions({
-      title: title || 'View All', // Set a default title if necessary
+      title: title || videotitle || 'View All', // Set a default title if necessary
     });
   }, [title, navigation]);
 
@@ -118,13 +123,19 @@ const ViewallPost = ({navigation, route}) => {
         imageitem.data.ctgIds.includes(catId),
       );
     }
-    filteredImages = imgdata.filter(imageitem =>
-      imageitem.data.ctgIds.includes(catId),
-    );
 
-    console.log(filteredImages, 'filteredImages');
+    if (isVideo) {
+      filteredVideo = videoData?.filter(videoitem =>
+        videoitem.data.ctgIds.includes(catId),
+      );
+    } else {
+      filteredImages = imgdata?.filter(imageitem =>
+        imageitem.data.ctgIds.includes(catId),
+      );
+    }
+
     if (!selectedDate) {
-      return filteredImages; // Show all data if no date is selected
+      return isVideo ? filteredVideo : filteredImages; // Show all data if no date is selected
     }
     const formattedSelectedDate = formatSelectedDate(selectedDate);
     return filteredImages.filter(
@@ -177,32 +188,55 @@ const ViewallPost = ({navigation, route}) => {
         numColumns={3}
         showsVerticalScrollIndicator={false}
         renderItem={({item, index}) => (
-          <TouchableOpacity onPress={() => handleImagePress(item)}>
-            <View style={{margin: 5, width: imageWidth}}>
-              <Image
+          <View style={{margin: 5, width: imageWidth}}>
+            {/\.(mp4|mov|avi|mkv)$/i.test(item.data?.url) ? (
+              <View
                 style={{
-                  height: imageWidth, // Maintain a square aspect ratio
-                  borderRadius: 5,
-                }}
-                source={{uri: item.data.url}}
-                resizeMode="cover"
-              />
-              <Text
-                style={{
-                  position: 'absolute',
-                  textAlign: 'center',
-                  marginTop: 5,
-                  backgroundColor: '#000',
-                  fontSize: 11,
-                  padding: 5,
-                  borderRadius: 5,
-                  left: 10,
-                  bottom: 14,
+                  height: 90,
+                  width: 90,
+                  borderRadius: 20,
+                  backgroundColor: 'black',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  borderWidth: 1,
+                  borderColor: '#fff',
                 }}>
-                {item.data.date}
-              </Text>
-            </View>
-          </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() =>
+                    navigation.navigate('FullScreen', {
+                      uri: item.data.url,
+                    })
+                  }>
+                  <AntDesign name="play" size={20} />
+                </TouchableOpacity>
+              </View>
+            ) : (
+              <TouchableOpacity onPress={() => handleImagePress(item)}>
+                <Image
+                  style={{
+                    height: imageWidth, // Maintain a square aspect ratio
+                    borderRadius: 5,
+                  }}
+                  source={{uri: item.data.url}}
+                  resizeMode="cover"
+                />
+              </TouchableOpacity>
+            )}
+            <Text
+              style={{
+                position: 'absolute',
+                textAlign: 'center',
+                marginTop: 5,
+                backgroundColor: '#000',
+                fontSize: 11,
+                padding: 5,
+                borderRadius: 5,
+                left: 10,
+                bottom: 14,
+              }}>
+              {item.data.date}
+            </Text>
+          </View>
         )}
       />
       {/* </View> */}
