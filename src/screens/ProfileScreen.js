@@ -1,5 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, {useEffect, useState, useRef, useContext} from 'react';
+
 import {
   Image,
   View,
@@ -47,6 +48,7 @@ import {setDarkTrue} from '../redux/reducer/isDarkMode';
 
 import FontAwesome from 'react-native-vector-icons/FontAwesome5';
 import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
+import SubscriptionModal from '../components/Modal/SubscriptionModal';
 
 function ProfileScreen({navigation}) {
   const [userData, setUserData] = useState(null);
@@ -352,13 +354,35 @@ function ProfileScreen({navigation}) {
     setPoliticalParty(selectedParty);
     console.log('Selected party___________:', selectedParty);
   };
-
+  const [modalVisible, setModalVisible] = useState(false);
   return (
     <BottomSheetModalProvider>
       <SafeAreaView
         style={styles.main_container}
         showsVerticalScrollIndicator={false}>
         <ScrollView style={{flex: 1}} showsVerticalScrollIndicator={false}>
+          <View style={styles.SubscriptionPlan}>
+            <Text style={{fontSize: 13, color: 'white'}}>
+              Upgrade Your Plan For More Features
+            </Text>
+            <TouchableOpacity
+              onPress={() => setModalVisible(true)}
+              style={{
+                backgroundColor: '#fff',
+                flexDirection: 'row',
+                gap: 2,
+                padding: 8,
+                borderRadius: 5,
+                fontSize: 15,
+              }}>
+              <FontAwesome5 name="crown" size={16} color="#EEBC1D" />
+              <Text style={{color: '#000'}}>Upgrade</Text>
+            </TouchableOpacity>
+          </View>
+          <SubscriptionModal
+            modalVisible={modalVisible}
+            setModalVisible={setModalVisible}
+          />
           <View style={styles.profile_container}>
             <View style={styles.images_wrapper}>
               <TouchableOpacity onPress={handleImagePick}>
@@ -775,6 +799,16 @@ const styles = StyleSheet.create({
     color: '#000',
     fontSize: 16,
     textAlign: 'center',
+  },
+  SubscriptionPlan: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    padding: 10,
+    alignItems: 'center',
+    borderWidth: 2,
+    borderColor: '#fff',
+    borderRadius: 10,
   },
 });
 

@@ -42,6 +42,7 @@
     "react-native-share": "^9.4.1",
     "react-native-splash-screen": "^3.3.0",
     "react-native-svg": "^13.14.0",
+    "react-native-swiper": "^1.6.0",
     "react-native-vector-icons": "^10.0.0",
     "react-native-video": "^5.2.1",
     "react-native-video-controls": "^2.8.1",
