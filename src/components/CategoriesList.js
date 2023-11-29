@@ -21,6 +21,7 @@ import {
   updateDoc,
 } from '@firebase/firestore';
 import {firestore} from '../firebase/firebase';
+import { WINDOW_WIDTH } from '@gorhom/bottom-sheet';
 
 function CategoriesList({
   ctgData,
@@ -33,7 +34,7 @@ function CategoriesList({
   const imgdata = useSelector(state => state.reducer);
   const [indicator, setIndicator] = useState(false);
   const [userData, setUserData] = useState(null);
-
+  const [isLoading, setIsLoading] = useState(false);
   const handleLoadStart = () => {
     setIndicator(true);
   };
@@ -47,6 +48,7 @@ function CategoriesList({
       selectedImage: image,
       filteredData: filteredData,
     });
+    // setIsLoading(false)
   };
 
   const getUserData = async () => {
@@ -116,6 +118,14 @@ function CategoriesList({
 
   return (
     <ScrollView style={{backgroundColor: 'black'}}>
+      <View style={{flexDirection:"row"}}>
+        <TouchableOpacity style={{backgroundColor:"#fff",width:WINDOW_WIDTH/2.5,marginRight:20,left:10,borderRadius:5}}>
+         <Text style={{fontSize:16,color:"#000",textAlign:"center"}}>Business</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={{backgroundColor:"#fff",width:WINDOW_WIDTH/2.5,left:10,borderRadius:5}}>
+          <Text style={{fontSize:16,color:"#000",textAlign:"center"}}>Political</Text>
+          </TouchableOpacity>
+      </View>
       {ctgData?.length === 0 && (
         <Text
           style={{
@@ -152,6 +162,9 @@ function CategoriesList({
                   navigation.navigate('ViewAllPost', {
                     catId: ctgitem.id,
                     title: ctgitem.data?.ctgName,
+                    videotitle: ctgitem.data?.videoctgName,
+                    videoData: videoData,
+                    isVideo: isVideo,
                   })
                 }
                 style={{
@@ -277,6 +290,7 @@ function CategoriesList({
           </ScrollView>
         </View>
       ))}
+    
     </ScrollView>
   );
 }

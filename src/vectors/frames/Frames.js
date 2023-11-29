@@ -2806,7 +2806,7 @@ export const Frame16 = (props) =>{
             <Text x="6%" y="94%" fill="#fff" fontSize={7} fontWeight={'600'}>
             {props?.data?.WhatsappNumber ? `+91-${props?.data?.WhatsappNumber}` : "" }
             </Text>
-            <Text x="6%" y="98%" fill="#fff" fontSize={7} fontWeight={'600'}>
+            <Text x="6%" y="98%" fill="#fff" fontSize={7} fontWeight={'600'} >
               {props?.data?.mobileNumber ? `+91-${props?.data?.mobileNumber}` : "" }
             </Text>
             <Image
@@ -2817,7 +2817,7 @@ export const Frame16 = (props) =>{
               preserveAspectRatio="xMidYMid meet" 
               href={{uri:props?.data?.imageUrl}}
               clipPath="url(#image-clip)"
-        />
+        /> 
         </G>
   <Defs>
     <LinearGradient

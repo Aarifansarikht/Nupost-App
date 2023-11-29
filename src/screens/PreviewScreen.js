@@ -37,11 +37,13 @@ import {SCREEN_WIDTH} from '@gorhom/bottom-sheet';
 import {Frames} from '../vectors/frames/Frames';
 import {err} from 'react-native-svg/lib/typescript/xml';
 
+
 import {
   BottomSheetScrollView,
   BottomSheetModal,
   BottomSheetModalProvider,
 } from '@gorhom/bottom-sheet';
+import { setVideoTrue } from '../redux/reducer/isVideo';
 // import { get_user } from '../utils/user';
 const POSTER_WIDTH = SCREEN_WIDTH - 60;
 const POSTER_RATIO = 1 / 1;
@@ -113,15 +115,45 @@ function PreviewScreen({navigation, route}) {
 
   const watermark = data => {
     const user = data?.userData;
-    console.log(user, 'user in watermark');
+    console.log(user, 'user');
     if (user?.userType === 'free') {
       console.log('free user called');
+      resetDownloadCount(user)
       setisWaterMark(true);
     } else if (user?.userType === 'basic' && user?.downloadCount >= 7) {
       console.log('basic user called');
-      setisWaterMark(true);
+      resetDownloadCount(user)
+      // setisWaterMark(true);
     }
   };
+
+const resetDownloadCount = (user) => {
+  try {
+  const currentDate = new Date().toDateString();
+  const lastDownloadDate = new Date(user?.lastDownloadDate).toDateString()  || '';
+  console.log(currentDate , lastDownloadDate ,"date")
+  if (lastDownloadDate !== currentDate) {
+    setisWaterMark(false)
+    const userDocRef = doc(firestore, 'users', userId);
+    const updatedData = {
+      downloadCount: 0,
+      lastDownloadDate: currentDate,
+    };
+
+    updateDoc(userDocRef, updatedData)
+      .then(() => {
+        console.log('Successfully updated');
+      })
+      .catch(error => {
+        console.error('Error updating last download date:', error);
+      });
+  }else{
+    setisWaterMark(true);
+  }
+} catch (error) {
+    console.log(error,'error while updating resetDownloadCount')
+}
+}
 
   const handelPolitical = () => {
     setIsPolitical(true);
@@ -190,7 +222,6 @@ function PreviewScreen({navigation, route}) {
             console.log('Storage Permission Granted.');
             setModalVisible(!modalVisible);
             captureImage();
-            setIsLoading(false);
           } else {
             // If permission denied then show alert
             alert('Storage Permission Not Granted');
@@ -293,11 +324,9 @@ function PreviewScreen({navigation, route}) {
           console.log('You have reached your daily download limit');
           return; // Stop the download process
         }
-
         // Continue with the download process for free users
         downloadImage(editedImage);
-
-        // After successful download, update the download count for free users
+        setIsLoading(false)
         const newDownloadCount = userDownloadCount + 1;
         const userDocRef = doc(firestore, 'users', userId);
         const updatedData = {
@@ -334,6 +363,7 @@ function PreviewScreen({navigation, route}) {
             });
         }
         downloadImage(editedImage);
+ 
         const newDownloadCount = userDownloadCount + 1;
         const userDocRef = doc(firestore, 'users', userId);
         const updatedData = {
@@ -391,6 +421,7 @@ function PreviewScreen({navigation, route}) {
               // Showing alert after successful downloading
               setModalVisible(false);
               openPhotoEditor(options.addAndroidDownloads.path);
+              setIsLoading(false)
             })
             .catch(err => {
               console.error('Error downloading image:', err);
@@ -421,6 +452,7 @@ function PreviewScreen({navigation, route}) {
           // Showing alert after successful downloading
           setModalVisible(false);
           openPhotoEditor(options.addAndroidDownloads.path);
+          setIsLoading(false)
         })
         .catch(err => {
           console.log('Error downloading image:', err);
@@ -468,7 +500,7 @@ function PreviewScreen({navigation, route}) {
   } else if (selectedFrame >= 10 && userType === 'basic') {
     Alert.alert('Nupost', 'Please upgraid your plan to access all frames.');
   }
-
+ 
   LogBox.ignoreAllLogs();
 
   return (
@@ -565,6 +597,7 @@ function PreviewScreen({navigation, route}) {
               </Text>
             </View>
           )}
+
           <View style={styles.btns_wrapper}>
             <TouchableOpacity onPress={checkPermission} style={styles.btns}>
               <Text style={styles.btns_text}>Download</Text>
@@ -572,7 +605,25 @@ function PreviewScreen({navigation, route}) {
             </TouchableOpacity>
           </View>
         </View>
-
+      {isLoading && (
+        <View
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            alignItems: 'center',
+            justifyContent: 'center',
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            zIndex: 1,
+          }}>
+          <ActivityIndicator
+            size="large"
+            color={'#fff'}
+          />
+        </View>
+      )}
         <BottomSheetModal
           ref={bottomSheetModalRef}
           index={0}
@@ -596,6 +647,7 @@ function PreviewScreen({navigation, route}) {
                 </View>
               </TouchableOpacity>
             </View>
+          
           </BottomSheetScrollView>
         </BottomSheetModal>
       </SafeAreaView>

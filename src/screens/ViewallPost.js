@@ -1,6 +1,7 @@
 import React, {useEffect, useLayoutEffect, useState} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import AntDesign from 'react-native-vector-icons/AntDesign';
 import {
   Text,
   View,
@@ -27,7 +28,10 @@ import {firestore} from '../firebase/firebase';
 import {SCREEN_WIDTH, SCREEN_HEIGHT} from '../utils/dimensions';
 
 const ViewallPost = ({navigation, route}) => {
-  const {catId, title} = route.params;
+  const {catId, title, videotitle, videoData, isVideo} = route.params;
+  // console.log('====================================');
+  // console.log(catId, isVideo);
+  // console.log('====================================');
   const imgdata = useSelector(state => state.reducer);
   const [userData, setUserData] = useState(null);
   const [selectedDate, setSelectedDate] = useState(null);
@@ -43,9 +47,6 @@ const ViewallPost = ({navigation, route}) => {
     setDatePickerVisible(false);
   };
 
-  const formatSelectedDate = date => {
-    return date.toISOString().split('T')[0]; // Format the date to "YYYY-MM-DD"
-  };
 
   const handleDateChange = (event, date) => {
     if (date !== undefined) {
@@ -89,14 +90,19 @@ const ViewallPost = ({navigation, route}) => {
   useLayoutEffect(() => {
     navigation.setOptions({
       title: title || 'View All', // Set a default title if necessary
+      title: title || videotitle || 'View All', // Set a default title if necessary
+
     });
   }, [title, navigation]);
 
 
+
+
   const filterByDate = (images, catId, filterDate) => {
+    console.log(new Date(filterDate),"filterDate")
     return images.filter(
       imageitem =>
-        new Date(imageitem.data.date) <= filterDate &&
+        new Date(imageitem.data.date).getDate() == new Date(filterDate).getDate() &&
         imageitem.data.ctgIds.includes(catId)
     );
   };
@@ -108,6 +114,7 @@ const ViewallPost = ({navigation, route}) => {
     console.log(selectedDate, 'date');
     // Define the conditions based on userType
     let filteredImages = [];
+    let filteredVideo = [];
     if (userData?.userData?.userType === 'free') {
       // Show all images until today's date
       console.log('userType is free');
@@ -117,6 +124,12 @@ const ViewallPost = ({navigation, route}) => {
           imageitem.data.ctgIds.includes(catId),
       );
          filteredImages =  selectedDate ? filterByDate(filteredImages,catId,selectedDate) : filteredImages
+         if (isVideo) {
+          filteredVideo = videoData?.filter(videoitem =>
+            videoitem.data.ctgIds.includes(catId),
+          );
+        } 
+
     } else if (userData?.userData?.userType === 'basic') {
       const endDateBasic = new Date(currentDate);
       endDateBasic.setDate(currentDate.getDate() + 3);
@@ -127,6 +140,11 @@ const ViewallPost = ({navigation, route}) => {
           imageitem.data.ctgIds.includes(catId),
       );
       filteredImages =  selectedDate ? filterByDate(filteredImages,catId,selectedDate) : filteredImages
+      if (isVideo) {
+        filteredVideo = videoData?.filter(videoitem =>
+          videoitem.data.ctgIds.includes(catId),
+        );
+      } 
     } else if (userData?.userData?.userType === 'premium') {
       // Show all images
       console.log(userData?.userData?.userType, 'userType');
@@ -134,9 +152,15 @@ const ViewallPost = ({navigation, route}) => {
         imageitem.data.ctgIds.includes(catId),
       );
       filteredImages =  selectedDate ? filterByDate(filteredImages,catId,selectedDate) : filteredImages
+      if (isVideo) {
+        filteredVideo = videoData?.filter(videoitem =>
+          videoitem.data.ctgIds.includes(catId),
+        );
+      } 
     }
-   
-  return filteredImages;
+   console.log(isVideo, filteredVideo,"video Data")
+   console.log(filteredImages,"image data")
+  return  isVideo ? filteredVideo : filteredImages;
   };
 
   const imageWidth = (SCREEN_WIDTH - 30) / 3;
@@ -151,8 +175,7 @@ const ViewallPost = ({navigation, route}) => {
             borderRadius: 50,
             padding: 5,
           }}>
-          <TouchableOpacity onPress={showDatePicker}>
-            <Text style={{color: '#000', padding: 10, fontSize: 16}}>
+          <TouchableOpacity onPress={showDatePicker}><Text style={{color: '#000', padding: 10, fontSize: 16}}>
               {selectedDate ? selectedDate.toDateString() : 'Choose date'}
             </Text>
           </TouchableOpacity>
@@ -171,8 +194,7 @@ const ViewallPost = ({navigation, route}) => {
               />
               <TouchableOpacity
                 onPress={hideDatePicker}
-                style={styles.closeButton}>
-                <Text style={{color: 'blue'}}>Done</Text>
+                style={styles.closeButton}><Text style={{color: 'blue'}}>Done</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -185,61 +207,44 @@ const ViewallPost = ({navigation, route}) => {
         numColumns={3}
         showsVerticalScrollIndicator={false}
         renderItem={({item, index}) => (
-          <TouchableOpacity onPress={() => handleImagePress(item)}>
-            <View style={{margin: 5, width: imageWidth}}>
-              <Image
-                style={{
-                  height: imageWidth, // Maintain a square aspect ratio
-                  borderRadius: 5,
-                }}
-                source={{uri: item.data.url}}
-                resizeMode="cover"
-              />
-              <Text
-                style={{
-                  position: 'absolute',
-                  textAlign: 'center',
-                  marginTop: 5,
-                  backgroundColor: '#000',
-                  fontSize: 11,
-                  padding: 5,
-                  borderRadius: 5,
-                  left: 10,
-                  bottom: 14,
-                }}>
-                {item.data.date}
-              </Text>
-            </View>
+          <View style={{margin: 5, width: imageWidth}}>
+          {isVideo ? (
+            <View           style={{ height: 90,
+              width: 90,
+              borderRadius: 20,
+              backgroundColor: 'black',
+              justifyContent: 'center',
+              alignItems: 'center',
+              borderWidth: 1,
+              borderColor: '#fff',
+            }}>
+              <TouchableOpacity
+            onPress={() =>
+              navigation.navigate('FullScreen', {
+                uri: item.data.url,
+              })
+            }>
+            <AntDesign name="play" size={20} />
           </TouchableOpacity>
+          </View>
+          ) : (
+          <TouchableOpacity onPress={() => handleImagePress(item)}>
+          <Image
+            style={{
+              height: imageWidth, 
+              borderRadius: 5,
+            }}
+            source={{uri: item.data.url}}
+            resizeMode="cover"
+          />
+          </TouchableOpacity>
+          )}
+          <Text style={{ position: 'absolute', textAlign: 'center', marginTop: 5, backgroundColor: '#000', fontSize: 11, padding: 5, borderRadius: 5, left: 10, bottom: 14 }}>
+             {item.data.date}
+            </Text>
+          </View>
         )}
       />
-      {/* </View> */}
-
-      {/* <ScrollView >
-            <View style={styles.imageitems}>
-              {
-              
-                imgdata
-                  .filter(
-                    imageitem =>
-                      imageitem.data.ctgIds.includes(catId),
-                  )
-
-                  .map((filteredItem, index) => 
-                  (
-                    <TouchableOpacity
-                      key={index}s
-                      onPress={() => handleImagePress(filteredItem)}>
-                      <Image
-                        style={{height: 160, width: 145, borderRadius: 10}}
-                        source={{uri: filteredItem.data.url}}
-                        resizeMode="cover"
-                      />
-                    </TouchableOpacity>
-                  )
-                  )}
-            </View>
-          </ScrollView> */}
     </View>
   );
 };
@@ -282,3 +287,34 @@ const styles = StyleSheet.create({
 });
 
 export default ViewallPost;
+
+
+
+
+ // <TouchableOpacity onPress={() => handleImagePress(item)}>
+          //   <View style={{margin: 5, width: imageWidth}}>
+          //     <Image
+          //       style={{
+          //         height: imageWidth, // Maintain a square aspect ratio
+          //         borderRadius: 5,
+          //       }}
+          //       source={{uri: item.data.url}}
+          //       resizeMode="cover"
+          //     />
+          //     <Text
+          //       style={{
+          //         position: 'absolute',
+          //         textAlign: 'center',
+          //         marginTop: 5,
+          //         backgroundColor: '#000',
+          //         fontSize: 11,
+          //         padding: 5,
+          //         borderRadius: 5,
+          //         left: 10,
+          //         bottom: 14,
+          //       }}>
+          //       {item.data.date}
+          //     </Text>
+      
+          //   </View>
+          // </TouchableOpacity>
