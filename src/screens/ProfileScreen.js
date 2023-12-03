@@ -1,6 +1,18 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, {useEffect, useState, useRef, useContext} from 'react';
-
+import {
+  Checkbox,
+  InputField,
+  PageContainer,
+  Row,
+  Typography,
+} from '../neopop-react-native-main/src/components';
+import {
+  colorGuide,
+  colorPalette,
+  fontVariant,
+  mainColors,
+} from '../neopop-react-native-main/src/primitives';
 import {
   Image,
   View,
@@ -25,11 +37,7 @@ import {storage, ref, uploadBytes, getDownloadURL} from '../firebase/firebase';
 import {useDispatch, useSelector} from 'react-redux';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
-import {
-  ScrollView,
-  TextInput,
-  TouchableOpacity,
-} from 'react-native-gesture-handler';
+import {ScrollView, TouchableOpacity} from 'react-native-gesture-handler';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import ImagePicker from 'react-native-image-crop-picker';
@@ -49,6 +57,9 @@ import {setDarkTrue} from '../redux/reducer/isDarkMode';
 import FontAwesome from 'react-native-vector-icons/FontAwesome5';
 import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
 import SubscriptionModal from '../components/Modal/SubscriptionModal';
+import LottieView from 'lottie-react-native';
+import Loading from '../components/Modal/Loading';
+import {fonts} from '../utils/typography';
 
 function ProfileScreen({navigation}) {
   const [userData, setUserData] = useState(null);
@@ -146,12 +157,12 @@ function ProfileScreen({navigation}) {
         imageUrl: profileimg || userData?.userData?.imageUrl,
         mobileNumber: mobileNumber || userData?.userData?.mobileNumber,
         politicalParty: politicalParty || userData?.userData?.politicalParty,
-        politicalImgUrl: politicalImgUrl,
+        politicalImgUrl: politicalImgUrl || userData?.userData?.politicalImgUrl,
         InstaUrl: InstaUrl || userData?.userData?.InstaUrl,
         FacebookUrl: FacebookUrl || userData?.userData?.FacebookUrl,
         TwitterUrl: TwitterUrl || userData?.userData?.TwitterUrl,
         WhatsappNumber: WhatsappNumber || userData?.userData?.WhatsappNumber,
-        businesslogoUrl: businesslogoUrl,
+        businesslogoUrl: businesslogoUrl || userData?.userData?.businesslogoUrl,
       };
 
       const response = await updateDoc(docRef, updatedData);
@@ -164,6 +175,7 @@ function ProfileScreen({navigation}) {
       setRefresh(true);
       setTitle('Profile Updated Successfully!');
       setMessage('Your profile has been updated successfully.');
+
       // Alert.alert(
       //   'Profile Updated Successfully!',
       //   'Your profile has been updated successfully.',
@@ -492,37 +504,59 @@ function ProfileScreen({navigation}) {
               {userData?.userData && userData?.userData.email ? (
                 <>
                   <View>
-                    <TextInput
-                      style={[styles.textInput]}
+                    <InputField
+                      style={[styles.InputField]}
+                      label="Name"
+                      colorMode="dark"
+                      colorConfig={{
+                        labelColor: colorPalette.white[100],
+                        textColor: colorPalette.white[100],
+                      }}
                       value={
                         UserName !== null ? UserName : userData.userData.name
                       }
                       placeholderTextColor={isDarkMode ? '#fff' : '#888'}
                       onChangeText={text => setUserName(text)}
                     />
-                    <TextInput
-                      style={[styles.textInput]}
+                    <InputField
+                      style={[styles.InputField]}
                       value={userData.userData.email}
                       placeholderTextColor="#888"
+                      label="Email"
+                      colorMode="dark"
+                      colorConfig={{
+                        labelColor: colorPalette.white[100],
+                        textColor: colorPalette.white[100],
+                      }}
                     />
-                    <TextInput
-                      style={[styles.textInput]}
+                    <InputField
+                      label="mobile number"
+                      style={[styles.InputField]}
                       value={
                         mobileNumber !== null
                           ? mobileNumber
                           : userData.userData.mobileNumber
                       }
                       keyboardType="numeric"
-                      placeholder="Mobile Number"
-                      placeholderTextColor="#888"
+                      colorMode="dark"
+                      colorConfig={{
+                        labelColor: colorPalette.white[60],
+                        textColor: colorPalette.white[60],
+                      }}
                       onChangeText={text =>
                         text == ''
                           ? setMobileNumber(' ')
                           : setMobileNumber(text)
                       }
                     />
-                    <TextInput
-                      style={[styles.textInput]}
+                    <InputField
+                      style={[styles.InputField]}
+                      label="Whatsapp Number"
+                      colorMode="dark"
+                      colorConfig={{
+                        labelColor: colorPalette.white[100],
+                        textColor: colorPalette.white[100],
+                      }}
                       value={
                         WhatsappNumber !== null
                           ? WhatsappNumber
@@ -537,8 +571,14 @@ function ProfileScreen({navigation}) {
                           : setWhatsappNumber(text)
                       }
                     />
-                    <TextInput
-                      style={[styles.textInput]}
+                    <InputField
+                      style={[styles.InputField]}
+                      label="dasignation"
+                      colorMode="dark"
+                      colorConfig={{
+                        labelColor: colorPalette.white[100],
+                        textColor: colorPalette.white[100],
+                      }}
                       value={
                         designation !== null
                           ? designation
@@ -553,7 +593,7 @@ function ProfileScreen({navigation}) {
                     <>
                       <DropdownComponent
                         onPartySelect={handlePartySelect}
-                        politicalParty={userData.userData.politicalParty}
+                        politicalParty={userData?.userData?.politicalParty}
                       />
                       <Logo_list
                         onSelectImage={handleSelectlogo}
@@ -561,11 +601,11 @@ function ProfileScreen({navigation}) {
                         title="Choose Political logo"
                       />
                     </>
-                    {/* <TextInput style={[styles.textInput,{color: isDarkMode ? '#fff' : "#000"}]} value={userData.userData.politicalParty} placeholder='Political Party' placeholderTextColor="#888" onChangeText={(text) => setPoliticalParty(text)} /> */}
+                    {/* <InputField style={[styles.InputField,{color: isDarkMode ? '#fff' : "#000"}]} value={userData.userData.politicalParty} placeholder='Political Party' placeholderTextColor="#888" onChangeText={(text) => setPoliticalParty(text)} /> */}
                     {showInsta && (
                       <View>
-                        <TextInput
-                          style={[styles.textInput]}
+                        <InputField
+                          style={[styles.InputField]}
                           value={
                             InstaUrl !== null
                               ? InstaUrl
@@ -581,8 +621,8 @@ function ProfileScreen({navigation}) {
                     )}
                     {showFacebook && (
                       <View>
-                        <TextInput
-                          style={[styles.textInput]}
+                        <InputField
+                          style={[styles.InputField]}
                           value={
                             FacebookUrl !== null
                               ? FacebookUrl
@@ -600,8 +640,8 @@ function ProfileScreen({navigation}) {
                     )}
                     {showTwitter && (
                       <View>
-                        <TextInput
-                          style={[styles.textInput]}
+                        <InputField
+                          style={[styles.InputField]}
                           value={
                             TwitterUrl !== null
                               ? TwitterUrl
@@ -679,15 +719,10 @@ function ProfileScreen({navigation}) {
             backgroundColor: 'rgba(0, 0, 0, 0.5)',
             zIndex: 1,
           }}>
-          <ActivityIndicator
-            size="large"
-            color={isDarkMode ? '#000' : '#fff'}
-          />
+          <Loading />
         </View>
       )}
-      {/* <View style={{justifyContent:"center",alignSelf:"center"}}>
-      {isLoading &&  <ActivityIndicator size="large" color={'black'} marginTop={20} style={styles.activityIndicator}/>}
-      </View> */}
+
       {showAlert && (
         <AwesomeAlert
           show={showAlert}
@@ -700,7 +735,7 @@ function ProfileScreen({navigation}) {
           showConfirmButton={true}
           cancelText="No, cancel"
           confirmText="Ok"
-          confirmButtonColor="#DD6B55"
+          confirmButtonColor="#000"
           onCancelPressed={hideAlert}
           onConfirmPressed={confirmAlert}
         />
@@ -744,7 +779,7 @@ const styles = StyleSheet.create({
     width: 120,
     borderRadius: 100,
   },
-  textInput: {
+  InputField: {
     height: 50,
     borderColor: 'gray',
     borderWidth: 1,

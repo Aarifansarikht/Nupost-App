@@ -18,12 +18,11 @@ import {storage, ref, uploadBytes, getDownloadURL} from '../firebase/firebase';
 
 function Header({userData}) {
   const navigation = useNavigation();
-  console.log(userData, 'header');
+
   const [popupVisible, setPopupVisible] = useState(false);
   // const [userData, setUserData] = useState(null);
 
   const togglePopup = () => {
-    console.log('popup called');
     setPopupVisible(!popupVisible);
   };
 
@@ -103,7 +102,7 @@ function Header({userData}) {
               fontWeight: 500,
               paddingLeft: 10,
             }}>
-            Profile
+            Account
           </Text>
         </TouchableOpacity>
 

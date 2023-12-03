@@ -37,15 +37,16 @@ import {SCREEN_WIDTH} from '@gorhom/bottom-sheet';
 import {Frames} from '../vectors/frames/Frames';
 import {err} from 'react-native-svg/lib/typescript/xml';
 
-
 import {
   BottomSheetScrollView,
   BottomSheetModal,
   BottomSheetModalProvider,
 } from '@gorhom/bottom-sheet';
-import { setVideoTrue } from '../redux/reducer/isVideo';
+import {setVideoTrue} from '../redux/reducer/isVideo';
+import LottieView from 'lottie-react-native';
+import Loading from '../components/Modal/Loading';
 // import { get_user } from '../utils/user';
-const POSTER_WIDTH = SCREEN_WIDTH - 60;
+const POSTER_WIDTH = SCREEN_WIDTH - 20;
 const POSTER_RATIO = 1 / 1;
 const POSTER_HEIGHT = POSTER_WIDTH / POSTER_RATIO;
 
@@ -58,12 +59,18 @@ function PreviewScreen({navigation, route}) {
   const [selectedFrame, setSelectedFrame] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isPolitical, setIsPolitical] = useState(true);
+
+  const [isBusiness, setIsBusiness] = useState(true);
+
   const [isWaterMark, setisWaterMark] = useState(false);
   const scrollViewRef = useRef(null);
   const REMOTE_IMAGE_PATH = selectedImage?.data.url;
   const LOCAL_IMAGE_PATH = `${RNFS.DocumentDirectoryPath}/photo.jpg`;
   const viewShotRef = useRef(null);
-
+  const [limitModal, setIsLimitModal] = useState(false);
+  const toggleModal = () => {
+    setIsLimitModal(!limitModal);
+  };
   const bottomSheetModalRef = useRef(null);
 
   const openModel = () => {
@@ -115,53 +122,59 @@ function PreviewScreen({navigation, route}) {
 
   const watermark = data => {
     const user = data?.userData;
-    console.log(user, 'user');
+
     if (user?.userType === 'free') {
       console.log('free user called');
-      resetDownloadCount(user)
+      resetDownloadCount(user);
       setisWaterMark(true);
     } else if (user?.userType === 'basic' && user?.downloadCount >= 7) {
       console.log('basic user called');
-      resetDownloadCount(user)
+      resetDownloadCount(user);
       // setisWaterMark(true);
     }
   };
 
-const resetDownloadCount = (user) => {
-  try {
-  const currentDate = new Date().toDateString();
-  const lastDownloadDate = new Date(user?.lastDownloadDate).toDateString()  || '';
-  console.log(currentDate , lastDownloadDate ,"date")
-  if (lastDownloadDate !== currentDate) {
-    setisWaterMark(false)
-    const userDocRef = doc(firestore, 'users', userId);
-    const updatedData = {
-      downloadCount: 0,
-      lastDownloadDate: currentDate,
-    };
+  const resetDownloadCount = user => {
+    try {
+      const currentDate = new Date().toDateString();
+      const lastDownloadDate =
+        new Date(user?.lastDownloadDate).toDateString() || '';
+      console.log(currentDate, lastDownloadDate, 'date');
+      if (lastDownloadDate !== currentDate) {
+        setisWaterMark(false);
+        const userDocRef = doc(firestore, 'users', userId);
+        const updatedData = {
+          downloadCount: 0,
+          lastDownloadDate: currentDate,
+        };
 
-    updateDoc(userDocRef, updatedData)
-      .then(() => {
-        console.log('Successfully updated');
-      })
-      .catch(error => {
-        console.error('Error updating last download date:', error);
-      });
-  }else{
-    setisWaterMark(true);
-  }
-} catch (error) {
-    console.log(error,'error while updating resetDownloadCount')
-}
-}
+        updateDoc(userDocRef, updatedData)
+          .then(() => {
+            console.log('Successfully updated');
+          })
+          .catch(error => {
+            console.error('Error updating last download date:', error);
+          });
+      } else {
+        setisWaterMark(true);
+      }
+    } catch (error) {
+      console.log(error, 'error while updating resetDownloadCount');
+    }
+  };
 
   const handelPolitical = () => {
     setIsPolitical(true);
+    setIsBusiness(false);
+    console.log('====================================');
+    console.log(isBusiness + '====' + isPolitical);
+    console.log('====================================');
     bottomSheetModalRef.current?.close();
   };
 
   const handelBusiness = () => {
     setIsPolitical(false);
+    setIsBusiness(true);
     bottomSheetModalRef.current?.close();
   };
 
@@ -200,13 +213,13 @@ const resetDownloadCount = (user) => {
 
   const checkPermission = async () => {
     setIsLoading(true);
+
     if (Platform.OS === 'ios') {
       checkDownloadLimit(
         REMOTE_IMAGE_PATH,
         userId,
         userData?.userData?.userType,
       );
-      setIsLoading(false);
     } else {
       try {
         if (Platform.Version <= 31) {
@@ -225,7 +238,6 @@ const resetDownloadCount = (user) => {
           } else {
             // If permission denied then show alert
             alert('Storage Permission Not Granted');
-            setIsLoading(false);
           }
         } else {
           const mediaImagesPermission = await PermissionsAndroid.request(
@@ -259,7 +271,6 @@ const resetDownloadCount = (user) => {
             console.log('All Permissions Granted.');
             setModalVisible(!modalVisible);
             captureImage();
-            setIsLoading(false);
           } else {
             // If any permission is denied, show an alert
             alert('Permissions Not Granted');
@@ -276,6 +287,7 @@ const resetDownloadCount = (user) => {
 
   const openPhotoEditor = img => {
     try {
+      setIsLoading(false);
       PhotoEditor.Edit({
         path: img,
         onDone: () => console.log('done'),
@@ -320,13 +332,15 @@ const resetDownloadCount = (user) => {
         }
 
         if (userDownloadCount >= 7) {
-          alert('You have reached your daily download limit');
+          setIsLoading(false);
+          toggleModal();
+
           console.log('You have reached your daily download limit');
           return; // Stop the download process
         }
         // Continue with the download process for free users
         downloadImage(editedImage);
-        setIsLoading(false)
+        setIsLoading(false);
         const newDownloadCount = userDownloadCount + 1;
         const userDocRef = doc(firestore, 'users', userId);
         const updatedData = {
@@ -363,7 +377,7 @@ const resetDownloadCount = (user) => {
             });
         }
         downloadImage(editedImage);
- 
+
         const newDownloadCount = userDownloadCount + 1;
         const userDocRef = doc(firestore, 'users', userId);
         const updatedData = {
@@ -388,6 +402,7 @@ const resetDownloadCount = (user) => {
 
   const downloadImage = async editedImage => {
     console.log(editedImage, 'check______');
+    setModalVisible(true);
     let date = new Date();
     let ext = getExtention(editedImage);
     ext = '.' + ext;
@@ -421,7 +436,7 @@ const resetDownloadCount = (user) => {
               // Showing alert after successful downloading
               setModalVisible(false);
               openPhotoEditor(options.addAndroidDownloads.path);
-              setIsLoading(false)
+              setIsLoading(false);
             })
             .catch(err => {
               console.error('Error downloading image:', err);
@@ -452,7 +467,7 @@ const resetDownloadCount = (user) => {
           // Showing alert after successful downloading
           setModalVisible(false);
           openPhotoEditor(options.addAndroidDownloads.path);
-          setIsLoading(false)
+          setIsLoading(false);
         })
         .catch(err => {
           console.log('Error downloading image:', err);
@@ -492,7 +507,6 @@ const resetDownloadCount = (user) => {
   };
   const userType = userData?.userData?.userType || 'free';
   const allowedFrames = Frames.slice(0, maxFramesAllowed[userType]);
-  console.log(allowedFrames, 'allowed frames');
 
   if (selectedFrame >= 6 && userType === 'free') {
     // Show an alert or perform any action to notify the user
@@ -500,8 +514,11 @@ const resetDownloadCount = (user) => {
   } else if (selectedFrame >= 10 && userType === 'basic') {
     Alert.alert('Nupost', 'Please upgraid your plan to access all frames.');
   }
- 
+
   LogBox.ignoreAllLogs();
+  // console.log('====================================');
+  // console.log(userData.userData.businesslogoUrl);
+  // console.log('====================================');
 
   return (
     <BottomSheetModalProvider>
@@ -529,6 +546,23 @@ const resetDownloadCount = (user) => {
                 />
               ) : null}
             </View>
+          ) : userData == null ? (
+            <View
+              style={{
+                margin: 0,
+                flex: 1,
+                alignItems: 'center',
+                justifyContent: 'center',
+                backgroundColor: modalVisible ? '#6600000' : '#fff',
+              }}>
+              <LottieView
+                source={require('../assets/lottie/loading.json')}
+                resizeMode="cover"
+                style={{height: 50, width: 100}}
+                autoPlay
+                loop={true}
+              />
+            </View>
           ) : (
             <View
               style={{
@@ -536,7 +570,7 @@ const resetDownloadCount = (user) => {
                 alignItems: 'center',
                 justifyContent: 'center',
                 backgroundColor: '#000',
-                marginBottom: 10,
+                marginBottom: 4,
               }}>
               <ViewShot
                 ref={viewShotRef}
@@ -552,7 +586,9 @@ const resetDownloadCount = (user) => {
                       designation: userData?.userData.designation,
                       mobileNumber: userData?.userData.mobileNumber,
                       WhatsappNumber: userData?.userData.WhatsappNumber,
-                      politicalImgUrl: userData?.userData?.politicalImgUrl,
+                      politicalImgUrl: isBusiness
+                        ? userData?.userData?.businesslogoUrl
+                        : userData?.userData?.politicalImgUrl,
                       imageUrl: userData?.userData?.imageUrl,
                       FacebookUrl: userData?.userData.FacebookUrl,
                       InstaUrl: userData?.userData.InstaUrl,
@@ -564,7 +600,11 @@ const resetDownloadCount = (user) => {
                   style={styles.overlayImage}
                 />
                 <Image
-                  source={{uri: userData?.userData?.politicalImgUrl}}
+                  source={{
+                    uri: isBusiness
+                      ? userData?.userData?.businesslogoUrl
+                      : userData?.userData?.politicalImgUrl,
+                  }}
                   style={styles.logo}
                 />
                 {isWaterMark && (
@@ -576,27 +616,32 @@ const resetDownloadCount = (user) => {
               </ViewShot>
             </View>
           )}
-          {isPolitical && (
-            <Frame_list
-              selectedImage={selectedImage}
-              onSelectImage={handleSelectImage}
-              image={REMOTE_IMAGE_PATH}
-              allowedFrames={allowedFrames}
-            />
-          )}
-          {!isPolitical && (
-            <View style={{flex: 1, justifyContent: 'center'}}>
-              <Text
+          {(isPolitical || isBusiness) &&
+            (userData == null ? (
+              <View
                 style={{
-                  color: '#000',
-                  fontSize: 18,
-                  fontWeight: 'bold',
-                  textAlign: 'center',
+                  margin: 0,
+                  flex: 1,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  backgroundColor: '#66000000',
                 }}>
-                No Frames in Business
-              </Text>
-            </View>
-          )}
+                <LottieView
+                  source={require('../assets/lottie/loading.json')}
+                  resizeMode="cover"
+                  style={{height: 50, width: 100}}
+                  autoPlay
+                  loop={true}
+                />
+              </View>
+            ) : (
+              <Frame_list
+                selectedImage={selectedImage}
+                onSelectImage={handleSelectImage}
+                image={REMOTE_IMAGE_PATH}
+                allowedFrames={allowedFrames}
+              />
+            ))}
 
           <View style={styles.btns_wrapper}>
             <TouchableOpacity onPress={checkPermission} style={styles.btns}>
@@ -605,25 +650,22 @@ const resetDownloadCount = (user) => {
             </TouchableOpacity>
           </View>
         </View>
-      {isLoading && (
-        <View
-          style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            alignItems: 'center',
-            justifyContent: 'center',
-            backgroundColor: 'rgba(0, 0, 0, 0.5)',
-            zIndex: 1,
-          }}>
-          <ActivityIndicator
-            size="large"
-            color={'#fff'}
-          />
-        </View>
-      )}
+        {isLoading && (
+          <View
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              alignItems: 'center',
+              justifyContent: 'center',
+              backgroundColor: 'rgba(0, 0, 0, 0.5)',
+              zIndex: 1,
+            }}>
+            <Loading />
+          </View>
+        )}
         <BottomSheetModal
           ref={bottomSheetModalRef}
           index={0}
@@ -647,9 +689,43 @@ const resetDownloadCount = (user) => {
                 </View>
               </TouchableOpacity>
             </View>
-          
           </BottomSheetScrollView>
         </BottomSheetModal>
+
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={limitModal}
+          onRequestClose={() => {
+            toggleModal();
+          }}>
+          <View
+            style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+            <View
+              style={{
+                backgroundColor: '#000',
+                padding: 20,
+                borderRadius: 10,
+                alignItems: 'center',
+                flexDirection: 'column',
+                gap: 5,
+              }}>
+              <Text style={{color: 'red'}}>
+                You have reached your daily download limit
+              </Text>
+              <TouchableOpacity
+                onPress={toggleModal}
+                style={{
+                  backgroundColor: '#fff',
+
+                  padding: 10,
+                  borderRadius: 5,
+                }}>
+                <Text style={{color: '#000'}}>OK</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
       </SafeAreaView>
     </BottomSheetModalProvider>
   );

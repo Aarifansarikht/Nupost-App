@@ -4,10 +4,12 @@ import SplashScreen from 'react-native-splash-screen';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { decode, encode } from 'base-64';
-import DrawerNavigation from './src/navigation/DrawerNavigation';
+
 import StackNavigations from './src/navigation/StackNavigations';
 import AuthStack from './src/navigation/AuthStack';
 import { ThemeProvider } from './src/utils/ThemeContext';
+import LottieView from 'lottie-react-native';
+import Splash from './src/components/SplashScreen/Splash';
 
 function App() {
 
@@ -19,7 +21,7 @@ function App() {
       if (data !== null) {
         // Parse the retrieved data as a boolean
         const parsedData = JSON.parse(data);
-        console.log(parsedData,"data")
+  
         setIsLogged(parsedData);
       }
     } catch (error) {
@@ -45,6 +47,7 @@ function App() {
   return (
     <NavigationContainer>
       <ThemeProvider>
+    
       {
         isLogged ? <StackNavigations /> : <AuthStack />
       }

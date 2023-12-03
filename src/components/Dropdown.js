@@ -17,7 +17,7 @@ const DropdownComponent = ({onPartySelect, politicalParty}) => {
         id: doc.id,
         label: doc.data().party_name,
       }));
-      console.log('partyname__________data', data);
+
       SetDropDownData(data);
     } catch (error) {
       console.error('Error fetching categories:', error);
@@ -26,9 +26,16 @@ const DropdownComponent = ({onPartySelect, politicalParty}) => {
 
   useEffect(() => {
     fetch_party_name();
-  }, []);
-
-  console.log(politicalParty, value, 'dropdown_______data');
+    if (politicalParty) {
+      setValue(politicalParty);
+    }
+  }, [politicalParty]);
+  console.log('====================================');
+  console.log(politicalParty);
+  console.log('====================================');
+  console.log('====================================');
+  console.log(value);
+  console.log('====================================');
   return (
     <View style={styles.container}>
       <Dropdown
@@ -43,13 +50,18 @@ const DropdownComponent = ({onPartySelect, politicalParty}) => {
         textStyle={{color: '#fff'}}
         labelField="label"
         valueField="value"
-        placeholder={'Select Political Party & Logo'}
+        placeholder={
+          politicalParty === null ||
+          politicalParty == undefined ||
+          politicalParty == 'None'
+            ? 'Select Political Party & Logo'
+            : politicalParty
+        }
         searchPlaceholder="Search..."
         value={politicalParty ? politicalParty : value}
         onFocus={() => setIsFocus(true)}
         onBlur={() => setIsFocus(false)}
         onChange={item => {
-          console.log('Dropdown_Item', item);
           setValue(item.value);
           setIsFocus(false);
           onPartySelect(item.label, item.id);

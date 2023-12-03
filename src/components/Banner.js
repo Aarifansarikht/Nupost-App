@@ -5,9 +5,6 @@ import {firestore} from '../firebase/firebase';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 
 function Banner({banner}) {
-  console.log('====================================');
-  console.log(banner);
-  console.log('====================================');
   return (
     <View style={styles.BannerContainer}>
       <View style={styles.BannerContent}>

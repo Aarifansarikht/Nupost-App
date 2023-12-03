@@ -10,8 +10,14 @@ import {
   Alert,
 } from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
-import {getImageData} from '../redux/action/imageData';
+import {
+  getImageCategory,
+  getImageData,
+  getVideoCategory,
+  getVideoData,
+} from '../redux/action/imageData';
 import CategoriesList from '../components/CategoriesList';
+import LottieView from 'lottie-react-native';
 import Bottom from '../components/Bottom';
 import Header from '../components/Header';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -27,6 +33,8 @@ import {
 } from '@firebase/firestore';
 import {firestore} from '../firebase/firebase';
 import Banner from '../components/Banner';
+import {Image} from 'react-native-reanimated/lib/typescript/Animated';
+import Loading from '../components/Modal/Loading';
 // import { ScrollView } from 'react-native-reanimated/lib/typescript/Animated';
 
 function HomeScreen({navigation, route}) {
@@ -68,8 +76,9 @@ function HomeScreen({navigation, route}) {
         id: doc.id,
         data: doc.data(),
       }));
-      // console.log("categories__________data",categories);
+      console.log('categories__________data', categories);
       setCtgData(categories);
+      dispatch(getImageCategory(categories));
       setIsLoading(false);
     } catch (error) {
       console.log('Error fetching categories:', error);
@@ -88,7 +97,7 @@ function HomeScreen({navigation, route}) {
       }));
       dispatch(getImageData(imagesDataf));
       setImagesData(imagesDataf);
-      console.log(imagesDataf, 'data');
+
       setFilteredData(imagesDataf);
       setIsLoading(false);
     } catch (error) {
@@ -109,7 +118,7 @@ function HomeScreen({navigation, route}) {
       }));
 
       setBanner(BannerimagesData);
-      console.log(BannerimagesData, 'banner');
+
       setIsLoading(false);
     } catch (error) {
       console.log('Error fetching images:', error);
@@ -127,8 +136,9 @@ function HomeScreen({navigation, route}) {
         id: doc.id,
         data: doc.data(),
       }));
-      console.log(videosData, 'video Data');
+
       setvideoData(videosData);
+      dispatch(getVideoData(videosData));
       setIsLoading(false);
       // dispatch(getImageData(imagesDataf))
       // setImagesData(imagesDataf)
@@ -148,8 +158,8 @@ function HomeScreen({navigation, route}) {
         id: doc.id,
         data: doc.data(),
       }));
-      console.log('videos categories__________data', categories);
       setVideoCategories(categories);
+      dispatch(getVideoCategory(categories));
       setIsLoading(false);
     } catch (error) {
       console.log('Error fetching categories:', error);
@@ -171,21 +181,21 @@ function HomeScreen({navigation, route}) {
         setUserData({userData: updatedData});
       }
     } catch (error) {
-      console.log(error, 'error');
+      error, 'error';
     }
   };
-
-  //console.log(ctgData,videocategories,"header Data")
 
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: '#000'}}>
       <Header userData={userData} />
+
       <ScrollView
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
         showsVerticalScrollIndicator={false}>
         <Banner banner={banner} />
+
         <CategoriesList
           ctgData={ctgData}
           filteredData={filteredData}
@@ -223,7 +233,7 @@ function HomeScreen({navigation, route}) {
             backgroundColor: 'rgba(0, 0, 0, 0.5)',
             zIndex: 1,
           }}>
-          <ActivityIndicator size="large" color={'black'} />
+          <Loading />
         </View>
       )}
       <Bottom />

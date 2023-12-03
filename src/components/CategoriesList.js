@@ -21,7 +21,8 @@ import {
   updateDoc,
 } from '@firebase/firestore';
 import {firestore} from '../firebase/firebase';
-import { WINDOW_WIDTH } from '@gorhom/bottom-sheet';
+import {WINDOW_WIDTH} from '@gorhom/bottom-sheet';
+import LottieView from 'lottie-react-native';
 
 function CategoriesList({
   ctgData,
@@ -62,7 +63,7 @@ function CategoriesList({
         const querySnapshot = await getDocs(q);
         const userDoc = querySnapshot.docs[0];
         const updatedData = userDoc?.data();
-        // console.log({userData:updatedData},"userData from firebase")
+
         setUserData({userData: updatedData});
       }
     } catch (error) {
@@ -70,18 +71,14 @@ function CategoriesList({
     }
   };
 
-  // console.log(userData,"userData")
-  // Get the current date
-
   const filterDatabyUserType = ctgitem => {
     const currentDate = new Date();
 
-    console.log(currentDate, 'date');
     // Define the conditions based on userType
     let filteredImages = [];
     if (userData?.userData?.userType === 'free') {
       // Show all images until today's date
-      console.log('userType is free');
+
       filteredImages = imgdata.filter(
         imageitem =>
           new Date(imageitem.data.date) <= currentDate &&
@@ -90,7 +87,6 @@ function CategoriesList({
     } else if (userData?.userData?.userType === 'basic') {
       const endDateBasic = new Date(currentDate);
       endDateBasic.setDate(currentDate.getDate() + 3);
-      console.log(endDateBasic, 'date of basic');
 
       filteredImages = imgdata.filter(
         imageitem =>
@@ -99,18 +95,14 @@ function CategoriesList({
       );
     } else if (userData?.userData?.userType === 'premium') {
       // Show all images
-      console.log(userData?.userData?.userType, 'userType');
+
       filteredImages = imgdata.filter(imageitem =>
         imageitem.data.ctgIds.includes(ctgitem.id),
       );
     }
-    console.log(filteredImages, 'filteredImages');
-  
+
     return filteredImages;
   };
-
-
-
 
   useEffect(() => {
     getUserData();
@@ -118,14 +110,15 @@ function CategoriesList({
 
   return (
     <ScrollView style={{backgroundColor: 'black'}}>
-      <View style={{flexDirection:"row"}}>
+      {/* <View style={{flexDirection:"row"}}>
         <TouchableOpacity style={{backgroundColor:"#fff",width:WINDOW_WIDTH/2.5,marginRight:20,left:10,borderRadius:5}}>
          <Text style={{fontSize:16,color:"#000",textAlign:"center"}}>Business</Text>
         </TouchableOpacity>
         <TouchableOpacity style={{backgroundColor:"#fff",width:WINDOW_WIDTH/2.5,left:10,borderRadius:5}}>
           <Text style={{fontSize:16,color:"#000",textAlign:"center"}}>Political</Text>
           </TouchableOpacity>
-      </View>
+      </View> */}
+
       {ctgData?.length === 0 && (
         <Text
           style={{
@@ -190,13 +183,6 @@ function CategoriesList({
                           key={index}
                           style={{height: 90, width: 90, borderRadius: 10}}>
                           <View style={styles.videoContainer}>
-                            {/* {indicator ? (
-                              <ActivityIndicator
-                                size="small"
-                                color="black"
-                                style={styles.activityIndicator}
-                              />
-                            ) : null} */}
                             <View
                               style={{
                                 height: 90,
@@ -208,7 +194,7 @@ function CategoriesList({
                                 borderWidth: 1,
                                 borderColor: '#fff',
                               }}>
-                                {/* {filteredItem.data.url && } */}
+                              {/* {filteredItem.data.url && } */}
                               <TouchableOpacity
                                 onPress={() =>
                                   navigation.navigate('FullScreen', {
@@ -218,23 +204,6 @@ function CategoriesList({
                                 <AntDesign name="play" size={20} />
                               </TouchableOpacity>
                             </View>
-
-                            {/* <VideoPlayer
-                              style={{
-                                height: 160,
-                                width: 145,
-                                borderRadius: 10,
-                              }}
-                              video={{uri: filteredItem.data.url}}
-                              autoPlay={true}
-                              controlsTimeout={1000}
-                              repeat={true}
-                              onLoadStart={handleLoadStart}
-                              seekBarFullWidth={true}
-                              defaultMuted={true}
-                              onLoad={() => setIndicator(false)}
-                            
-                            /> */}
                           </View>
                         </View>
                       ))
@@ -269,28 +238,26 @@ function CategoriesList({
             <View style={styles.imageitems}>
               {!isVideo &&
                 // imgdata
-                  // .filter(
-                  //   imageitem =>
-                  //     !/^(mp4|mov|avi|mkv)$/i.test(imageitem.data?.url) &&
-                  //     imageitem.data.ctgIds.includes(ctgitem.id),
-                  // )
-                filterDatabyUserType(ctgitem)
-                  .map((filteredItem, index) => (
-                    <TouchableOpacity
-                      key={index}
-                      onPress={() => handleImagePress(filteredItem)}>
-                      <Image
-                        style={{height: 90, width: 90, borderRadius: 10}}
-                        source={{uri: filteredItem.data.url}}
-                        resizeMode="cover"
-                      />
-                    </TouchableOpacity>
-                  ))}
+                // .filter(
+                //   imageitem =>
+                //     !/^(mp4|mov|avi|mkv)$/i.test(imageitem.data?.url) &&
+                //     imageitem.data.ctgIds.includes(ctgitem.id),
+                // )
+                filterDatabyUserType(ctgitem).map((filteredItem, index) => (
+                  <TouchableOpacity
+                    key={index}
+                    onPress={() => handleImagePress(filteredItem)}>
+                    <Image
+                      style={{height: 90, width: 90, borderRadius: 10}}
+                      source={{uri: filteredItem?.data.url}}
+                      resizeMode="cover"
+                    />
+                  </TouchableOpacity>
+                ))}
             </View>
           </ScrollView>
         </View>
       ))}
-    
     </ScrollView>
   );
 }

@@ -13,7 +13,6 @@ const {width, height} = Dimensions.get('window');
 const VideoPlayerComponent = ({route}) => {
   const {uri} = route.params;
   const [isVideoLoading, setIsVideoLoading] = useState(true);
-  console.log(uri, 'uri');
 
   const onBuffer = buffer => {
     if (buffer.isBuffering) {
