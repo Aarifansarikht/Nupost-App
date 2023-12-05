@@ -87,7 +87,9 @@ function ProfileScreen({navigation}) {
 
   const {isDarkMode} = useContext(ThemeContext);
 
-  console.log(isDarkMode, 'isDarkMode');
+  console.log('====================================');
+  console.log(userData?.userData?.userType);
+  console.log('====================================');
 
   const handleLogout = async () => {
     await AsyncStorage.removeItem('keepLoggedIn');
@@ -373,24 +375,33 @@ function ProfileScreen({navigation}) {
         style={styles.main_container}
         showsVerticalScrollIndicator={false}>
         <ScrollView style={{flex: 1}} showsVerticalScrollIndicator={false}>
-          <View style={styles.SubscriptionPlan}>
-            <Text style={{fontSize: 13, color: 'white'}}>
-              Upgrade Your Plan For More Features
-            </Text>
-            <TouchableOpacity
-              onPress={() => setModalVisible(true)}
-              style={{
-                backgroundColor: '#fff',
-                flexDirection: 'row',
-                gap: 2,
-                padding: 8,
-                borderRadius: 5,
-                fontSize: 15,
-              }}>
+          {userData?.userData?.userType === 'premium' ? (
+            <View style={styles.SubscriptionPlan}>
+              <Text style={{fontSize: 13, color: 'white'}}>
+                You Are Prime Member
+              </Text>
               <FontAwesome5 name="crown" size={16} color="#EEBC1D" />
-              <Text style={{color: '#000'}}>Upgrade</Text>
-            </TouchableOpacity>
-          </View>
+            </View>
+          ) : (
+            <View style={styles.SubscriptionPlan}>
+              <Text style={{fontSize: 13, color: 'white'}}>
+                Upgrade Your Plan For More Features
+              </Text>
+              <TouchableOpacity
+                onPress={() => setModalVisible(true)}
+                style={{
+                  backgroundColor: '#fff',
+                  flexDirection: 'row',
+                  gap: 2,
+                  padding: 8,
+                  borderRadius: 5,
+                  fontSize: 15,
+                }}>
+                <FontAwesome5 name="crown" size={16} color="#EEBC1D" />
+                <Text style={{color: '#000'}}>Upgrade</Text>
+              </TouchableOpacity>
+            </View>
+          )}
           <SubscriptionModal
             modalVisible={modalVisible}
             setModalVisible={setModalVisible}

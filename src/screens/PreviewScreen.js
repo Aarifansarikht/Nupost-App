@@ -169,13 +169,15 @@ function PreviewScreen({navigation, route}) {
     console.log('====================================');
     console.log(isBusiness + '====' + isPolitical);
     console.log('====================================');
-    bottomSheetModalRef.current?.close();
+    // bottomSheetModalRef.current?.close();
+    closeModal();
   };
 
   const handelBusiness = () => {
     setIsPolitical(false);
     setIsBusiness(true);
-    bottomSheetModalRef.current?.close();
+    // bottomSheetModalRef.current?.close();
+    closeModal();
   };
 
   const captureImage = async () => {
@@ -519,7 +521,19 @@ function PreviewScreen({navigation, route}) {
   // console.log('====================================');
   // console.log(userData.userData.businesslogoUrl);
   // console.log('====================================');
+  const [selectmodalVisible, setSelectModalVisible] = useState(false);
 
+  const openModal = () => {
+    setSelectModalVisible(true);
+  };
+
+  const closeModal = () => {
+    setSelectModalVisible(false);
+  };
+
+  useEffect(() => {
+    openModal();
+  }, []);
   return (
     <BottomSheetModalProvider>
       <SafeAreaView style={{flex: 1}}>
@@ -666,31 +680,45 @@ function PreviewScreen({navigation, route}) {
             <Loading />
           </View>
         )}
-        <BottomSheetModal
-          ref={bottomSheetModalRef}
-          index={0}
-          snapPoints={['30%', '50%']}
-          backdropComponent={null}>
-          <BottomSheetScrollView>
-            <View styles={styles.button_wrapper}>
-              <TouchableOpacity onPress={handelBusiness}>
-                <View style={styles.bottomButton}>
-                  <Text style={styles.buttonText}>Business</Text>
-                </View>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={handelPolitical}>
-                <View style={styles.bottomButton}>
-                  <Text style={styles.buttonText}>Political</Text>
-                </View>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={closeModel}>
-                <View style={styles.bottomButton}>
-                  <Text style={styles.buttonText}>Cancel</Text>
-                </View>
-              </TouchableOpacity>
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={selectmodalVisible}
+          onRequestClose={closeModal}>
+          <View
+            style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+            <View
+              style={{
+                backgroundColor: '#000',
+                padding: 20,
+                borderRadius: 10,
+                width: '80%',
+                borderWidth: 2,
+                borderColor: '#000',
+              }}>
+              <View style={{alignItems: 'center'}}>
+                <Text style={{color: '#fff'}}>Making Post For?</Text>
+              </View>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}>
+                <TouchableOpacity onPress={handelBusiness}>
+                  <View style={styles.bottomButton}>
+                    <Text style={styles.buttonText}>Business</Text>
+                  </View>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={handelPolitical}>
+                  <View style={styles.bottomButton}>
+                    <Text style={styles.buttonText}>Political</Text>
+                  </View>
+                </TouchableOpacity>
+              </View>
             </View>
-          </BottomSheetScrollView>
-        </BottomSheetModal>
+          </View>
+        </Modal>
 
         <Modal
           animationType="slide"
@@ -746,14 +774,14 @@ const styles = StyleSheet.create({
   // },
   bottomButton: {
     borderWidth: 2,
-    borderColor: 'black',
+    borderColor: '#fff',
     margin: 10,
     padding: 10,
     borderRadius: 10,
     textAlign: 'center',
   },
   buttonText: {
-    color: 'black',
+    color: '#fff',
     fontSize: 16,
     textAlign: 'center',
   },

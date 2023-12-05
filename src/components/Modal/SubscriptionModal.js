@@ -51,7 +51,6 @@ function SubscriptionModal({modalVisible, setModalVisible}) {
         '7 downloads per day',
         'No post in advance',
       ],
-      price: '0/- 1 Year',
     },
   ];
   return (
@@ -94,25 +93,29 @@ function SubscriptionModal({modalVisible, setModalVisible}) {
                     bottom: 10,
                     width: '100%',
                   }}>
-                  <TouchableOpacity
-                    style={{
-                      borderColor: '#000',
-                      borderWidth: 2,
-                      borderRadius: 10,
-                      width: '80%',
-                      padding: 10,
-                      backgroundColor: '#000',
-                    }}>
-                    <Text
+                  {plan.name === 'Free' ? (
+                    <View></View>
+                  ) : (
+                    <TouchableOpacity
                       style={{
-                        fontSize: 16,
-                        fontWeight: 600,
-                        color: '#fff',
-                        textAlign: 'center',
+                        borderColor: '#000',
+                        borderWidth: 2,
+                        borderRadius: 10,
+                        width: '80%',
+                        padding: 10,
+                        backgroundColor: '#000',
                       }}>
-                      &#8377; {plan.price}
-                    </Text>
-                  </TouchableOpacity>
+                      <Text
+                        style={{
+                          fontSize: 16,
+                          fontWeight: 600,
+                          color: '#fff',
+                          textAlign: 'center',
+                        }}>
+                        &#8377; {plan.price}
+                      </Text>
+                    </TouchableOpacity>
+                  )}
                 </View>
               </View>
             </View>
