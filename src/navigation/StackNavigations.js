@@ -17,6 +17,8 @@ import {ThemeContext} from '../utils/ThemeContext';
 import {useDispatch, useSelector} from 'react-redux';
 import {setDarkTrue} from '../redux/reducer/isDarkMode';
 import ResetPassword from '../screens/Auth/ResetPassword';
+import TodayPostView from '../components/ViewAll/TodayPostView';
+import UpcomingPostView from '../components/ViewAll/UpcomingPostView';
 
 const Stack = createStackNavigator();
 
@@ -75,6 +77,30 @@ function StackNavigations() {
         options={{
           headerShown: true,
           title: 'View All',
+          headerTitleAlign: 'center',
+          headerTitleStyle: {
+            fontSize: 16, // Set the desired font size
+          },
+        }}
+      />
+      <Stack.Screen
+        name="TodayPostView"
+        component={TodayPostView}
+        options={{
+          headerShown: true,
+          title: 'Today Post',
+          headerTitleAlign: 'center',
+          headerTitleStyle: {
+            fontSize: 16, // Set the desired font size
+          },
+        }}
+      />
+      <Stack.Screen
+        name="UpcomingPostView"
+        component={UpcomingPostView}
+        options={{
+          headerShown: true,
+          title: 'UpcomingPostView',
           headerTitleAlign: 'center',
           headerTitleStyle: {
             fontSize: 16, // Set the desired font size

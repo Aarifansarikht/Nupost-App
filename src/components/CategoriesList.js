@@ -108,6 +108,43 @@ function CategoriesList({
     getUserData();
   }, []);
 
+  const [currentDatePost, setCurrentDatePost] = useState([]);
+  const [upcomingDatePosts, setUpcomingDatePosts] = useState([]);
+
+  useEffect(() => {
+    if (imgdata) {
+      const currentDate = new Date();
+      const year = currentDate.getFullYear();
+      const month = (currentDate.getMonth() + 1).toString().padStart(2, '0');
+      const day = currentDate.getDate().toString().padStart(2, '0');
+
+      const formattedDate = `${year}-${month}-${day}`;
+      const filteredPosts = imgdata.filter(post => {
+        const postDate = post.data.date;
+
+        if (formattedDate === postDate) {
+          return true;
+        }
+
+        return false;
+      });
+
+      const upcomingPosts = imgdata.filter(post => {
+        const postDate = post.data.date;
+        return postDate > formattedDate;
+      });
+      setUpcomingDatePosts(upcomingPosts);
+
+      setCurrentDatePost(filteredPosts);
+    }
+  }, [imgdata]);
+
+  upcomingDatePosts.map(v => {
+    console.log('====================================');
+    console.log(v.data);
+    console.log('====================================');
+  });
+
   return (
     <ScrollView style={{backgroundColor: 'black'}}>
       {/* <View style={{flexDirection:"row"}}>
@@ -141,6 +178,96 @@ function CategoriesList({
           Data Not Found
         </Text>
       )}
+
+      <View>
+        {!isVideo && (
+          <View style={styles.category_name}>
+            <Text style={styles.category_text}>Today Post</Text>
+            <TouchableOpacity
+              onPress={() =>
+                navigation.navigate('TodayPostView', {
+                  title: 'Today Post',
+                  isVideo: isVideo,
+                  currentDatePost: currentDatePost,
+                })
+              }
+              style={{
+                backgroundColor: 'white',
+                padding: 5,
+                borderRadius: 5,
+              }}>
+              <Text style={styles.viewAll_text}>View All</Text>
+            </TouchableOpacity>
+          </View>
+        )}
+        <ScrollView horizontal={true}>
+          <View style={styles.imageitems}>
+            {!isVideo &&
+              // imgdata
+              // .filter(
+              //   imageitem =>
+              //     !/^(mp4|mov|avi|mkv)$/i.test(imageitem.data?.url) &&
+              //     imageitem.data.ctgIds.includes(ctgitem.id),
+              // )
+              currentDatePost.map((filteredItem, index) => (
+                <TouchableOpacity
+                  key={index}
+                  onPress={() => handleImagePress(filteredItem)}>
+                  <Image
+                    style={{height: 90, width: 90, borderRadius: 10}}
+                    source={{uri: filteredItem?.data.url}}
+                    resizeMode="cover"
+                  />
+                </TouchableOpacity>
+              ))}
+          </View>
+        </ScrollView>
+      </View>
+
+      <View>
+        {!isVideo && (
+          <View style={styles.category_name}>
+            <Text style={styles.category_text}>Upcoming Post</Text>
+            <TouchableOpacity
+              onPress={() =>
+                navigation.navigate('UpcomingPostView', {
+                  title: 'Upcoming Posts',
+                  isVideo: isVideo,
+                  upcomingDatePosts: upcomingDatePosts,
+                })
+              }
+              style={{
+                backgroundColor: 'white',
+                padding: 5,
+                borderRadius: 5,
+              }}>
+              <Text style={styles.viewAll_text}>View All</Text>
+            </TouchableOpacity>
+          </View>
+        )}
+        <ScrollView horizontal={true}>
+          <View style={styles.imageitems}>
+            {!isVideo &&
+              // imgdata
+              // .filter(
+              //   imageitem =>
+              //     !/^(mp4|mov|avi|mkv)$/i.test(imageitem.data?.url) &&
+              //     imageitem.data.ctgIds.includes(ctgitem.id),
+              // )
+              upcomingDatePosts.map((filteredItem, index) => (
+                <TouchableOpacity
+                  key={index}
+                  onPress={() => handleImagePress(filteredItem)}>
+                  <Image
+                    style={{height: 90, width: 90, borderRadius: 10}}
+                    source={{uri: filteredItem?.data.url}}
+                    resizeMode="cover"
+                  />
+                </TouchableOpacity>
+              ))}
+          </View>
+        </ScrollView>
+      </View>
 
       {isVideo &&
         videoData &&
@@ -264,8 +391,8 @@ function CategoriesList({
 const styles = StyleSheet.create({
   category_name: {
     padding: 6,
-    paddingTop: 20,
-    paddingBottom: 20,
+    paddingTop: 16,
+    paddingBottom: 16,
     flexDirection: 'row',
     justifyContent: 'space-between',
   },

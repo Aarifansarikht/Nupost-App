@@ -12,7 +12,7 @@ function Banner({banner}) {
           <TouchableOpacity>
             <Image
               style={{
-                height: 185,
+                height: 145,
                 width: '100%',
                 borderRadius: 10,
                 position: 'absolute',
@@ -29,7 +29,7 @@ function Banner({banner}) {
 
 const styles = StyleSheet.create({
   BannerContainer: {
-    height: 220,
+    height: 175,
     backgroundColor: '#111111',
     paddingTop: 14,
     paddingBottom: 14,

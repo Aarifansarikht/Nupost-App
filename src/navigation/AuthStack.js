@@ -12,6 +12,8 @@ import ResetPassword from '../screens/Auth/ResetPassword';
 import MyDownloadScreen from '../screens/MyDownloadScreen';
 import VideoPlayerComponent from '../components/FullScreen';
 import ViewAllPost from '../screens/ViewallPost';
+import TodayPostView from '../components/ViewAll/TodayPostView';
+import UpcomingPostView from '../components/ViewAll/UpcomingPostView';
 
 const Stack = createStackNavigator();
 
@@ -66,6 +68,30 @@ function AuthStack() {
         options={{
           headerShown: true,
           title: 'View All',
+        }}
+      />
+      <Stack.Screen
+        name="TodayPostView"
+        component={TodayPostView}
+        options={{
+          headerShown: true,
+          title: 'Today Post',
+          headerTitleAlign: 'center',
+          headerTitleStyle: {
+            fontSize: 16, // Set the desired font size
+          },
+        }}
+      />
+      <Stack.Screen
+        name="UpcomingPostView"
+        component={UpcomingPostView}
+        options={{
+          headerShown: true,
+          title: 'Upcoming Posts',
+          headerTitleAlign: 'center',
+          headerTitleStyle: {
+            fontSize: 16, // Set the desired font size
+          },
         }}
       />
     </Stack.Navigator>
