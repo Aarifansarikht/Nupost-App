@@ -37,6 +37,12 @@ function UpcomingPostView({navigation, route}) {
 
   const imageWidth = (SCREEN_WIDTH - 30) / 3;
   console.log(upcomingDatePosts + 'hello');
+  const handleImagePress = image => {
+    navigation.navigate('Preview', {
+      selectedImage: image,
+      // filteredData: filteredData,
+    });
+  };
 
   return (
     <View style={{backgroundColor: '#111', flex: 1}}>

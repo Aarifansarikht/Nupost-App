@@ -35,6 +35,12 @@ function TodayPostView({navigation, route}) {
     });
   }, [title, navigation]);
   const imageWidth = (SCREEN_WIDTH - 30) / 3;
+  const handleImagePress = image => {
+    navigation.navigate('Preview', {
+      selectedImage: image,
+      // filteredData: filteredData,
+    });
+  };
 
   return (
     <View style={{backgroundColor: '#111', flex: 1}}>
