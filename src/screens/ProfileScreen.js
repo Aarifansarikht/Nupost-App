@@ -554,6 +554,7 @@ function ProfileScreen({navigation}) {
                         labelColor: colorPalette.white[60],
                         textColor: colorPalette.white[60],
                       }}
+                      maxLength={10}
                       onChangeText={text =>
                         text == ''
                           ? setMobileNumber(' ')
@@ -564,6 +565,7 @@ function ProfileScreen({navigation}) {
                       style={[styles.InputField]}
                       label="Whatsapp Number"
                       colorMode="dark"
+                      maxLength={10}
                       colorConfig={{
                         labelColor: colorPalette.white[100],
                         textColor: colorPalette.white[100],

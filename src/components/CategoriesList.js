@@ -42,7 +42,14 @@ function CategoriesList({
 
   const [selectedImage, setSelectedImage] = useState(null);
   const isVideo = useSelector(state => state.isVideo.isVideo);
-  // console.warn("img_______data",imgdata);
+
+  const currentDate = new Date();
+  const year = currentDate.getFullYear();
+  const month = (currentDate.getMonth() + 1).toString().padStart(2, '0');
+  const day = currentDate.getDate().toString().padStart(2, '0');
+
+  const formattedDate = `${year}-${month}-${day}`;
+
   const handleImagePress = image => {
     setSelectedImage(image);
     navigation.navigate('Preview', {
@@ -72,8 +79,6 @@ function CategoriesList({
   };
 
   const filterDatabyUserType = ctgitem => {
-    const currentDate = new Date();
-
     // Define the conditions based on userType
     let filteredImages = [];
     if (userData?.userData?.userType === 'free') {
@@ -101,7 +106,13 @@ function CategoriesList({
       );
     }
 
-    return filteredImages;
+    const formattedDate = `${year}-${month}-${day}`;
+    const filterbypreviousdate = filteredImages.filter(post => {
+      const postDate = post?.data?.date;
+
+      return formattedDate > postDate;
+    });
+    return filterbypreviousdate;
   };
 
   useEffect(() => {
@@ -113,14 +124,8 @@ function CategoriesList({
 
   useEffect(() => {
     if (imgdata) {
-      const currentDate = new Date();
-      const year = currentDate.getFullYear();
-      const month = (currentDate.getMonth() + 1).toString().padStart(2, '0');
-      const day = currentDate.getDate().toString().padStart(2, '0');
-
-      const formattedDate = `${year}-${month}-${day}`;
       const filteredPosts = imgdata.filter(post => {
-        const postDate = post.data.date;
+        const postDate = post?.data?.date;
 
         if (formattedDate === postDate) {
           return true;
@@ -134,16 +139,9 @@ function CategoriesList({
         return postDate > formattedDate;
       });
       setUpcomingDatePosts(upcomingPosts);
-
       setCurrentDatePost(filteredPosts);
     }
   }, [imgdata]);
-
-  upcomingDatePosts.map(v => {
-    console.log('====================================');
-    console.log(v.data);
-    console.log('====================================');
-  });
 
   return (
     <ScrollView style={{backgroundColor: 'black'}}>

@@ -37,9 +37,7 @@ function UpcomingPostView({navigation, route}) {
 
   const imageWidth = (SCREEN_WIDTH - 30) / 3;
   console.log(upcomingDatePosts + 'hello');
-  console.log('====================================');
-  console.log('fbhsdbvhbdsv');
-  console.log('====================================');
+
   return (
     <View style={{backgroundColor: '#111', flex: 1}}>
       {false ? (

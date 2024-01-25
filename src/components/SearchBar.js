@@ -81,7 +81,7 @@ function SearchBar({navigation}) {
     v => VideoCategoryId === v.data.ctgIds,
   );
 
-  const imageWidth = (SCREEN_WIDTH - 30) / 3;
+  const imageWidth = (SCREEN_WIDTH - 50) / 3;
 
   return (
     <View style={{flex: 1, backgroundColor: '#000'}}>

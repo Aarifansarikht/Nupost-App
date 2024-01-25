@@ -1,6 +1,8 @@
 import {useEffect, useRef, useState} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Feather from 'react-native-vector-icons/Feather';
+import Foundation from 'react-native-vector-icons/Foundation';
+import FontAwesome6 from 'react-native-vector-icons//FontAwesome6';
 import {
   View,
   StyleSheet,
@@ -45,6 +47,7 @@ import {
 import {setVideoTrue} from '../redux/reducer/isVideo';
 import LottieView from 'lottie-react-native';
 import Loading from '../components/Modal/Loading';
+import WaitModal from '../components/Modal/WaitModal';
 // import { get_user } from '../utils/user';
 const POSTER_WIDTH = SCREEN_WIDTH - 20;
 const POSTER_RATIO = 1 / 1;
@@ -212,10 +215,20 @@ function PreviewScreen({navigation, route}) {
       scrollViewRef.current.scrollTo({y: 0, animated: true});
     }
   };
+  const currentDate = new Date();
+  const year = currentDate.getFullYear();
+  const month = (currentDate.getMonth() + 1).toString().padStart(2, '0');
+  const day = currentDate.getDate().toString().padStart(2, '0');
+
+  const formattedDate = `${year}-${month}-${day}`;
 
   const checkPermission = async () => {
     setIsLoading(true);
-
+    if (selectedImage?.data?.date > formattedDate) {
+      setIsLoading(false);
+      openWaitModal();
+      return;
+    }
     if (Platform.OS === 'ios') {
       checkDownloadLimit(
         REMOTE_IMAGE_PATH,
@@ -522,7 +535,13 @@ function PreviewScreen({navigation, route}) {
   // console.log(userData.userData.businesslogoUrl);
   // console.log('====================================');
   const [selectmodalVisible, setSelectModalVisible] = useState(false);
-
+  const [waitmodalVisible, setWaitModalVisible] = useState(false);
+  const closeWaitModal = () => {
+    setWaitModalVisible(false);
+  };
+  const openWaitModal = () => {
+    setWaitModalVisible(true);
+  };
   const openModal = () => {
     setSelectModalVisible(true);
   };
@@ -707,11 +726,13 @@ function PreviewScreen({navigation, route}) {
                 }}>
                 <TouchableOpacity onPress={handelBusiness}>
                   <View style={styles.bottomButton}>
+                    <Foundation name="shopping-bag" size={18} />
                     <Text style={styles.buttonText}>Business</Text>
                   </View>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={handelPolitical}>
                   <View style={styles.bottomButton}>
+                    <FontAwesome6 name="user-large" size={18} />
                     <Text style={styles.buttonText}>Political</Text>
                   </View>
                 </TouchableOpacity>
@@ -719,7 +740,10 @@ function PreviewScreen({navigation, route}) {
             </View>
           </View>
         </Modal>
-
+        <WaitModal
+          closeWaitModal={closeWaitModal}
+          openWaitModal={waitmodalVisible}
+        />
         <Modal
           animationType="slide"
           transparent={true}
@@ -779,6 +803,7 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 10,
     textAlign: 'center',
+    alignItems: 'center',
   },
   buttonText: {
     color: '#fff',
@@ -901,18 +926,21 @@ const styles = StyleSheet.create({
   },
   logo: {
     position: 'absolute',
-    top: 15,
-    right: 15,
+    top: 10,
+    left: 15,
     width: 40, // Adjust the size as needed
     height: 40,
     borderRadius: 50,
   },
   watermark: {
     position: 'absolute',
-    top: 15,
+    top: 10,
     // right: 15,
-    left: 10,
-    width: 35,
+    backgroundColor: 'white',
+    padding: 2,
+    right: 10,
+    width: 40,
+    borderRadius: 2,
     height: 15,
     resizeMode: 'cover',
   },
