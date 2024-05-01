@@ -40,7 +40,8 @@ function CategoriesList({
   const handleLoadStart = () => {
     setIndicator(true);
   };
-
+  const [currentDatePost, setCurrentDatePost] = useState([]);
+  const [upcomingDatePosts, setUpcomingDatePosts] = useState([]);
   const [selectedImage, setSelectedImage] = useState(null);
   const isVideo = useSelector(state => state.isVideo.isVideo);
 
@@ -51,15 +52,26 @@ function CategoriesList({
 
   const formattedDate = `${year}-${month}-${day}`;
 
-  const handleImagePress = image => {
+  // const handleImagePress = image => {
+  //   setSelectedImage(image);
+  //   navigation.navigate('Preview', {
+  //     selectedImage: image,
+  //     filteredData: filteredData,
+  //   });
+  //   // setIsLoading(false)
+  // };
+  const handleImagePress = (image, catId, catName, postdata) => {
+    console.log(image);
     setSelectedImage(image);
-    navigation.navigate('Preview', {
+    navigation.navigate('CategoryAllPost', {
       selectedImage: image,
       filteredData: filteredData,
+      catId: catId,
+      catName: catName,
+      postdata: postdata,
     });
     // setIsLoading(false)
   };
-
   const getUserData = async () => {
     try {
       const data = await AsyncStorage.getItem('userData');
@@ -119,9 +131,6 @@ function CategoriesList({
   useEffect(() => {
     getUserData();
   }, []);
-
-  const [currentDatePost, setCurrentDatePost] = useState([]);
-  const [upcomingDatePosts, setUpcomingDatePosts] = useState([]);
 
   useEffect(() => {
     if (imgdata) {
@@ -212,7 +221,14 @@ function CategoriesList({
               currentDatePost.map((filteredItem, index) => (
                 <TouchableOpacity
                   key={index}
-                  onPress={() => handleImagePress(filteredItem)}>
+                  onPress={() =>
+                    handleImagePress(
+                      filteredItem,
+                      '1',
+                      'Today Post',
+                      currentDatePost,
+                    )
+                  }>
                   <Image
                     style={{height: 90, width: 90, borderRadius: 10}}
                     source={{uri: filteredItem?.data.url}}
@@ -258,7 +274,14 @@ function CategoriesList({
               upcomingDatePosts.slice(0, 5).map((filteredItem, index) => (
                 <TouchableOpacity
                   key={index}
-                  onPress={() => handleImagePress(filteredItem)}>
+                  onPress={() =>
+                    handleImagePress(
+                      filteredItem,
+                      '2',
+                      'Upcoming Post',
+                      upcomingDatePosts,
+                    )
+                  }>
                   <Image
                     style={{height: 90, width: 90, borderRadius: 10}}
                     source={{uri: filteredItem?.data.url}}
@@ -381,7 +404,14 @@ function CategoriesList({
                   .map((filteredItem, index) => (
                     <TouchableOpacity
                       key={index}
-                      onPress={() => handleImagePress(filteredItem)}>
+                      onPress={() =>
+                        handleImagePress(
+                          filteredItem,
+                          ctgitem.id,
+                          ctgitem.data?.ctgName,
+                          filterDatabyUserType(ctgitem),
+                        )
+                      }>
                       <Image
                         style={{height: 90, width: 90, borderRadius: 10}}
                         source={{uri: filteredItem?.data.url}}
