@@ -712,7 +712,14 @@ function ProfileScreen({navigation}) {
                   </View>
                 </>
               ) : (
-                <Text>User data not available</Text>
+                <View
+                  style={{
+                    flex: 1,
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}>
+                  <Text>User data not available</Text>
+                </View>
               )}
             </View>
           </View>

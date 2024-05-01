@@ -186,7 +186,12 @@ function HomeScreen({navigation, route}) {
   };
 
   return (
-    <SafeAreaView style={{flex: 1, backgroundColor: '#000'}}>
+    <SafeAreaView
+      style={{
+        flex: 1,
+        justifyContent: 'space-between',
+        backgroundColor: '#000',
+      }}>
       <Header userData={userData} />
 
       <ScrollView

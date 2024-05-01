@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {
   ActivityIndicator,
   FlatList,
@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import {useSelector} from 'react-redux';
 import AntDesign from 'react-native-vector-icons/AntDesign';
+import {Thumbnail} from 'react-native-thumbnail-video';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
   collection,
@@ -23,7 +24,7 @@ import {
 import {firestore} from '../firebase/firebase';
 import {WINDOW_WIDTH} from '@gorhom/bottom-sheet';
 import LottieView from 'lottie-react-native';
-
+import Video from 'react-native-video';
 function CategoriesList({
   ctgData,
   filteredData,
@@ -178,7 +179,7 @@ function CategoriesList({
       )}
 
       <View>
-        {!isVideo && (
+        {!isVideo && currentDatePost.length > 0 && (
           <View style={styles.category_name}>
             <Text style={styles.category_text}>Today Post</Text>
             <TouchableOpacity
@@ -201,6 +202,7 @@ function CategoriesList({
         <ScrollView horizontal={true}>
           <View style={styles.imageitems}>
             {!isVideo &&
+              currentDatePost.length > 0 &&
               // imgdata
               // .filter(
               //   imageitem =>
@@ -223,7 +225,7 @@ function CategoriesList({
       </View>
 
       <View>
-        {!isVideo && (
+        {!isVideo && upcomingDatePosts.length > 0 && (
           <View style={styles.category_name}>
             <Text style={styles.category_text}>Upcoming Post</Text>
             <TouchableOpacity
@@ -246,13 +248,14 @@ function CategoriesList({
         <ScrollView horizontal={true}>
           <View style={styles.imageitems}>
             {!isVideo &&
+              upcomingDatePosts.length > 0 &&
               // imgdata
               // .filter(
               //   imageitem =>
               //     !/^(mp4|mov|avi|mkv)$/i.test(imageitem.data?.url) &&
               //     imageitem.data.ctgIds.includes(ctgitem.id),
               // )
-              upcomingDatePosts.map((filteredItem, index) => (
+              upcomingDatePosts.slice(0, 5).map((filteredItem, index) => (
                 <TouchableOpacity
                   key={index}
                   onPress={() => handleImagePress(filteredItem)}>
@@ -266,7 +269,13 @@ function CategoriesList({
           </View>
         </ScrollView>
       </View>
-
+      {/* {isVideo && (
+        <ScrollView>
+          <View style={{flex: 1, backgroundColor: 'red'}}>
+            <Text>comin soon</Text>
+          </View>
+        </ScrollView>
+      )} */}
       {isVideo &&
         videoData &&
         videocategories?.map((ctgitem, index) => (
@@ -308,27 +317,26 @@ function CategoriesList({
                           key={index}
                           style={{height: 90, width: 90, borderRadius: 10}}>
                           <View style={styles.videoContainer}>
-                            <View
-                              style={{
-                                height: 90,
-                                width: 90,
-                                borderRadius: 20,
-                                backgroundColor: 'black',
-                                justifyContent: 'center',
-                                alignItems: 'center',
-                                borderWidth: 1,
-                                borderColor: '#fff',
-                              }}>
-                              {/* {filteredItem.data.url && } */}
-                              <TouchableOpacity
-                                onPress={() =>
-                                  navigation.navigate('FullScreen', {
-                                    uri: filteredItem.data.url,
-                                  })
-                                }>
+                            <TouchableOpacity
+                              onPress={() =>
+                                navigation.navigate('FullScreen', {
+                                  uri: filteredItem.data.url,
+                                })
+                              }>
+                              <View
+                                style={{
+                                  height: 90,
+                                  width: 90,
+                                  borderRadius: 20,
+                                  backgroundColor: 'black',
+                                  justifyContent: 'center',
+                                  alignItems: 'center',
+                                  borderWidth: 1,
+                                  borderColor: '#fff',
+                                }}>
                                 <AntDesign name="play" size={20} />
-                              </TouchableOpacity>
-                            </View>
+                              </View>
+                            </TouchableOpacity>
                           </View>
                         </View>
                       ))
@@ -368,17 +376,19 @@ function CategoriesList({
                 //     !/^(mp4|mov|avi|mkv)$/i.test(imageitem.data?.url) &&
                 //     imageitem.data.ctgIds.includes(ctgitem.id),
                 // )
-                filterDatabyUserType(ctgitem).map((filteredItem, index) => (
-                  <TouchableOpacity
-                    key={index}
-                    onPress={() => handleImagePress(filteredItem)}>
-                    <Image
-                      style={{height: 90, width: 90, borderRadius: 10}}
-                      source={{uri: filteredItem?.data.url}}
-                      resizeMode="cover"
-                    />
-                  </TouchableOpacity>
-                ))}
+                filterDatabyUserType(ctgitem)
+                  .slice(0, 5)
+                  .map((filteredItem, index) => (
+                    <TouchableOpacity
+                      key={index}
+                      onPress={() => handleImagePress(filteredItem)}>
+                      <Image
+                        style={{height: 90, width: 90, borderRadius: 10}}
+                        source={{uri: filteredItem?.data.url}}
+                        resizeMode="cover"
+                      />
+                    </TouchableOpacity>
+                  ))}
             </View>
           </ScrollView>
         </View>
@@ -408,6 +418,12 @@ const styles = StyleSheet.create({
     color: '#000',
     fontWeight: '500',
     fontSize: 12,
+  },
+  video: {
+    flex: 1,
+    width: 88,
+    height: 90,
+    borderRadius: 20,
   },
 });
 export default CategoriesList;

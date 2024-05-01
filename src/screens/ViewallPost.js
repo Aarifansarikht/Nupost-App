@@ -157,7 +157,7 @@ const ViewallPost = ({navigation, route}) => {
   };
 
   const imageWidth = (SCREEN_WIDTH - 30) / 3;
-  console.log(imgdata);
+
   return (
     <View style={{backgroundColor: '#111', flex: 1}}>
       <View style={{padding: 10, alignItems: 'center'}}>
@@ -297,6 +297,12 @@ const styles = StyleSheet.create({
   closeButton: {
     marginTop: 10,
     alignItems: 'center',
+  },
+  video: {
+    flex: 1,
+    width: 88,
+    height: 90,
+    borderRadius: 20,
   },
 });
 

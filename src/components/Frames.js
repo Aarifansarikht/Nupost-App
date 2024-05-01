@@ -14,7 +14,8 @@ import {firestore} from '../firebase/firebase';
 import {collection, getDocs} from 'firebase/firestore';
 import {Frames} from '../vectors/frames/Frames';
 import {SCREEN_WIDTH} from '@gorhom/bottom-sheet';
-import Feather from 'react-native-vector-icons/Feather';
+import Entypo from 'react-native-vector-icons/Entypo';
+
 const FRAME_SIZE = SCREEN_WIDTH * 0.42;
 
 function Frame_list({selectedFrame, onSelectImage, image, allowedFrames}) {
@@ -76,7 +77,21 @@ function Frame_list({selectedFrame, onSelectImage, image, allowedFrames}) {
                   item?.image(FRAME_SIZE, FRAME_SIZE)
                 ) : (
                   <>
-                    <Image
+                    <Entypo
+                      name="lock"
+                      sixe={30}
+                      style={{
+                        position: 'absolute',
+                        top: 10,
+                        left: 10,
+                        right: 0,
+                        bottom: 0,
+                        zIndex: 1,
+                        fontSize: 16,
+                        color: 'gold',
+                      }}
+                    />
+                    {/* <Image
                       source={require('../assets/img/lock.png')}
                       style={{
                         position: 'absolute',
@@ -88,7 +103,7 @@ function Frame_list({selectedFrame, onSelectImage, image, allowedFrames}) {
                         height: 20,
                         width: 20,
                       }}
-                    />
+                    /> */}
                     {item?.image(FRAME_SIZE, FRAME_SIZE)}
                   </>
                 )}

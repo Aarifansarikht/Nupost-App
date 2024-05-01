@@ -11,8 +11,8 @@ import {
 import Feather from 'react-native-vector-icons/Feather';
 const ContactInfoPopup = ({visible, onClose}) => {
   const contactInformation = {
-    mobile: '+1234567890',
-    email: 'example@example.com',
+    mobile: '99974-63769',
+    email: 'devconsoleaccess@gmail.com',
     whatsapp: '+1234567890',
     twitter: '@example_twitter',
   };
@@ -52,7 +52,7 @@ const ContactInfoPopup = ({visible, onClose}) => {
                   <Feather
                     name="mail"
                     style={{color: 'black', padding: 5}}
-                    size={20}
+                    size={16}
                   />{' '}
                   Email: {contactInformation.email}
                 </Text>
@@ -63,12 +63,12 @@ const ContactInfoPopup = ({visible, onClose}) => {
                   <Feather
                     name="phone"
                     style={{color: 'black', padding: 5}}
-                    size={20}
+                    size={16}
                   />{' '}
                   Mobile: {contactInformation.mobile}
                 </Text>
               </TouchableOpacity>
-              <TouchableOpacity onPress={handleWhatsAppPress}>
+              {/* <TouchableOpacity onPress={handleWhatsAppPress}>
                 <Text style={{color: '#000', alignSelf: 'flex-start'}}>
                   <Feather
                     name="smartphone"
@@ -77,7 +77,7 @@ const ContactInfoPopup = ({visible, onClose}) => {
                   />{' '}
                   WhatsApp: {contactInformation.whatsapp}
                 </Text>
-              </TouchableOpacity>
+              </TouchableOpacity> */}
             </View>
           </View>
         </View>

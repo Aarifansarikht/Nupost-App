@@ -127,7 +127,7 @@ function Header({userData}) {
             source={require('../assets/img/logo2.png')} // Use the correct source for the right image
             style={{
               height: 40,
-              width: 70,
+              width: 120,
               resizeMode: 'contain',
               marginTop: 5,
             }}
