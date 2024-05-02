@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import LinearGradient from 'react-native-linear-gradient';
 import {useSelector} from 'react-redux';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {Thumbnail} from 'react-native-thumbnail-video';
@@ -158,11 +159,7 @@ function CategoriesList({
   }, [imgdata]);
 
   return (
-    <ImageBackground
-      source={{
-        uri: 'https://img.freepik.com/free-vector/dark-color-pattern-abstract-style_1035-2691.jpg?w=740&t=st=1714042515~exp=1714043115~hmac=57bca228b3d3662c21bca0ea74c5f357575e8e176da89146cfb9613326b19aec',
-      }}
-      style={styles.backgroundImage}>
+    <ImageBackground style={styles.backgroundImage}>
       <ScrollView style={styles.scrollView}>
         {/* <View style={{flexDirection:"row"}}>
         <TouchableOpacity style={{backgroundColor:"#fff",width:WINDOW_WIDTH/2.5,marginRight:20,left:10,borderRadius:5}}>
@@ -187,12 +184,13 @@ function CategoriesList({
         {isVideo && videoData?.length === 0 && (
           <Text
             style={{
-              color: '#000',
+              color: '#fff',
               textAlign: 'center',
-              fontSize: 16,
+              fontSize: 26,
               margin: 30,
+              fontWeight: 700,
             }}>
-            Data Not Found
+            Coming Soon
           </Text>
         )}
 
@@ -441,7 +439,6 @@ function CategoriesList({
 const styles = StyleSheet.create({
   backgroundImage: {
     flex: 1,
-    resizeMode: 'cover',
   },
   scrollView: {
     flex: 1,
