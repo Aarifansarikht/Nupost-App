@@ -191,6 +191,8 @@ function HomeScreen({navigation, route}) {
         flex: 1,
         justifyContent: 'space-between',
         backgroundColor: '#000',
+        backgroundImage:
+          'url(https://img.freepik.com/free-vector/dark-color-pattern-abstract-style_1035-2691.jpg?w=740&t=st=1714042515~exp=1714043115~hmac=57bca228b3d3662c21bca0ea74c5f357575e8e176da89146cfb9613326b19aec)',
       }}>
       <Header userData={userData} />
 

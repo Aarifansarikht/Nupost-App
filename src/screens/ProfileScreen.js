@@ -363,10 +363,9 @@ function ProfileScreen({navigation}) {
 
   const handlePartySelect = (selectedParty, id) => {
     // Handle the selected party here
-    console.log(id, 'selected_paty_name_Id');
+
     setSelectedPartyId(id);
     setPoliticalParty(selectedParty);
-    console.log('Selected party___________:', selectedParty);
   };
   const [modalVisible, setModalVisible] = useState(false);
   return (
@@ -375,7 +374,7 @@ function ProfileScreen({navigation}) {
         style={styles.main_container}
         showsVerticalScrollIndicator={false}>
         <ScrollView style={{flex: 1}} showsVerticalScrollIndicator={false}>
-          {userData?.userData?.userType === 'premium' ? (
+          {/* {userData?.userData?.userType === 'premium' ? (
             <View style={styles.SubscriptionPlan}>
               <Text style={{fontSize: 13, color: 'white'}}>
                 You Are Prime Member
@@ -405,7 +404,7 @@ function ProfileScreen({navigation}) {
           <SubscriptionModal
             modalVisible={modalVisible}
             setModalVisible={setModalVisible}
-          />
+          /> */}
           <View style={styles.profile_container}>
             <View style={styles.images_wrapper}>
               <TouchableOpacity onPress={handleImagePick}>
