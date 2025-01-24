@@ -192,7 +192,6 @@ function SignupScreen({navigation}) {
       setbusinesslogoUrl('');
       setIsLoading(false);
       setModalVisible(true);
-
       navigation.navigate('LogIn', {modalVisible});
       setClicked(false);
     } catch (error) {
