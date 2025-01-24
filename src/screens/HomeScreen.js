@@ -10,6 +10,7 @@ import {
   Alert,
 } from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
+
 import {
   getImageCategory,
   getImageData,
@@ -184,9 +185,15 @@ function HomeScreen({navigation, route}) {
       error, 'error';
     }
   };
+  const isVideo = useSelector(state => state.isVideo.isVideo);
 
   return (
-    <SafeAreaView style={{flex: 1, backgroundColor: '#000'}}>
+    <SafeAreaView
+      style={{
+        flex: 1,
+        justifyContent: 'space-between',
+        backgroundColor: '#000',
+      }}>
       <Header userData={userData} />
 
       <ScrollView
@@ -194,7 +201,7 @@ function HomeScreen({navigation, route}) {
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
         showsVerticalScrollIndicator={false}>
-        <Banner banner={banner} />
+        {!isVideo && <Banner banner={banner} />}
 
         <CategoriesList
           ctgData={ctgData}

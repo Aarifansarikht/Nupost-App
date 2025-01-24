@@ -48,6 +48,8 @@ import {setVideoTrue} from '../redux/reducer/isVideo';
 import LottieView from 'lottie-react-native';
 import Loading from '../components/Modal/Loading';
 import WaitModal from '../components/Modal/WaitModal';
+import MsgModal from '../components/Modal/MsgModal';
+
 // import { get_user } from '../utils/user';
 const POSTER_WIDTH = SCREEN_WIDTH - 20;
 const POSTER_RATIO = 1 / 1;
@@ -71,6 +73,7 @@ function PreviewScreen({navigation, route}) {
   const LOCAL_IMAGE_PATH = `${RNFS.DocumentDirectoryPath}/photo.jpg`;
   const viewShotRef = useRef(null);
   const [limitModal, setIsLimitModal] = useState(false);
+
   const toggleModal = () => {
     setIsLimitModal(!limitModal);
   };
@@ -336,6 +339,7 @@ function PreviewScreen({navigation, route}) {
             lastDownloadDate: currentDate,
           };
 
+          console.log('down');
           updateDoc(userDocRef, updatedData)
             .then(() => {
               console.log('Successfully updated');
@@ -536,6 +540,7 @@ function PreviewScreen({navigation, route}) {
   // console.log('====================================');
   const [selectmodalVisible, setSelectModalVisible] = useState(false);
   const [waitmodalVisible, setWaitModalVisible] = useState(false);
+
   const closeWaitModal = () => {
     setWaitModalVisible(false);
   };
@@ -632,6 +637,7 @@ function PreviewScreen({navigation, route}) {
                   source={{uri: REMOTE_IMAGE_PATH}}
                   style={styles.overlayImage}
                 />
+
                 <Image
                   source={{
                     uri: isBusiness
@@ -778,6 +784,11 @@ function PreviewScreen({navigation, route}) {
             </View>
           </View>
         </Modal>
+        {/* <MsgModal
+          closeModal={toggleMsgModal}
+          openModal={msgmodal}
+          msg={'Please subscribe to access this frame'}
+        /> */}
       </SafeAreaView>
     </BottomSheetModalProvider>
   );

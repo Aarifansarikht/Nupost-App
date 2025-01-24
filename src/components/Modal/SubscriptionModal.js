@@ -13,20 +13,6 @@ function SubscriptionModal({modalVisible, setModalVisible}) {
   //   const [modalVisible, setModalVisible] = useState(modalVisible);
   const subscriptionPlans = [
     {
-      name: 'Basic',
-      points: [
-        'All festival posts',
-        'Daily posts ',
-        'New incident posts ',
-        'Select 10 defaults frame (can change any time)',
-        'Can download 7 post without watermark  per day',
-        'No downloads limit with watermark ',
-        '3 days post in advance',
-        'Profile setup',
-      ],
-      price: '599/- 1 Year',
-    },
-    {
       name: 'Premium',
       points: [
         'All festival posts ',
@@ -42,6 +28,21 @@ function SubscriptionModal({modalVisible, setModalVisible}) {
       price: '699/- 1 Year',
     },
     {
+      name: 'Basic',
+      points: [
+        'All festival posts',
+        'Daily posts ',
+        'New incident posts ',
+        'Select 10 defaults frame (can change any time)',
+        'Can download 7 post without watermark  per day',
+        'No downloads limit with watermark ',
+        '3 days post in advance',
+        'Profile setup',
+      ],
+      price: '599/- 1 Year',
+    },
+
+    {
       name: 'Free',
       points: [
         'All festival posts ',
@@ -53,6 +54,10 @@ function SubscriptionModal({modalVisible, setModalVisible}) {
       ],
     },
   ];
+  // const userdata = AsyncStorage.getItem('userData');
+  // console.log('====================================');
+  // console.log(userdata);
+  // console.log('====================================');
   return (
     <Modal
       animationType="slide"

@@ -233,10 +233,10 @@ function SignupScreen({navigation}) {
       setImage(imageUrl);
 
       // Display a success message or perform any other necessary actions
-      Alert.alert(
-        'Image uploaded!',
-        'Your image has been uploaded to Firebase Cloud Storage successfully!',
-      );
+      // Alert.alert(
+      //   'Image uploaded!',
+      //   'Your image has been uploaded to Firebase Cloud Storage successfully!',
+      // );
 
       return imageUrl;
     } catch (e) {

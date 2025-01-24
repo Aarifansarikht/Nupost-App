@@ -14,6 +14,7 @@ import VideoPlayerComponent from '../components/FullScreen';
 import ViewAllPost from '../screens/ViewallPost';
 import TodayPostView from '../components/ViewAll/TodayPostView';
 import UpcomingPostView from '../components/ViewAll/UpcomingPostView';
+import CategoryAllPostScreen from '../screens/CategoryAllPostScreen';
 
 const Stack = createStackNavigator();
 
@@ -53,6 +54,13 @@ function AuthStack() {
       <Stack.Screen
         name="Preview"
         component={PreviewScreen}
+        options={{
+          headerShown: true,
+        }}
+      />
+      <Stack.Screen
+        name="CategoryAllPost"
+        component={CategoryAllPostScreen}
         options={{
           headerShown: true,
         }}

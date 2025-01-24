@@ -24,10 +24,12 @@ import {
 } from '@firebase/firestore';
 import {firestore} from '../firebase/firebase';
 import {SCREEN_WIDTH, SCREEN_HEIGHT} from '../../utils/dimensions';
+import DatePicker from '../DatePicker';
 
 function UpcomingPostView({navigation, route}) {
-  const {title, isVideo, upcomingDatePosts} = route.params;
-
+  const {title, isVideo, upcomingDatePosts, catId} = route.params;
+  const [selectedDate, setSelectedDate] = useState(null);
+  const [isDatePickerVisible, setDatePickerVisible] = useState(false);
   useLayoutEffect(() => {
     navigation.setOptions({
       title: title || 'View All', // Set a default title if necessary
@@ -36,21 +38,82 @@ function UpcomingPostView({navigation, route}) {
   }, [title, navigation]);
 
   const imageWidth = (SCREEN_WIDTH - 30) / 3;
-  console.log(upcomingDatePosts + 'hello');
+
   const handleImagePress = image => {
     navigation.navigate('Preview', {
       selectedImage: image,
       // filteredData: filteredData,
     });
   };
+  const showDatePicker = () => {
+    setDatePickerVisible(true);
+  };
 
+  const hideDatePicker = () => {
+    setDatePickerVisible(false);
+  };
+
+  const handleDateChange = (event, date) => {
+    if (date !== undefined) {
+      setSelectedDate(date);
+      hideDatePicker();
+    } else {
+      hideDatePicker();
+    }
+  };
+  const filterByDate = (images, catId, filterDate) => {
+    return images.filter(
+      imageitem =>
+        new Date(imageitem.data.date).getDate() ==
+        new Date(filterDate).getDate(),
+    );
+  };
+  const filterDatabyDate = (catId, selectedDate) => {
+    console.log(selectedDate, 'date');
+
+    let filteredImages = [];
+    let filteredVideo = [];
+
+    filteredImages = upcomingDatePosts;
+    filteredImages = selectedDate
+      ? filterByDate(filteredImages, catId, selectedDate)
+      : filteredImages;
+    if (isVideo) {
+      filteredVideo = videoData?.filter(videoitem =>
+        videoitem.data.ctgIds.includes(catId),
+      );
+    }
+
+    return isVideo ? filteredVideo : filteredImages;
+  };
   return (
     <View style={{backgroundColor: '#111', flex: 1}}>
+      <DatePicker selectedDate={selectedDate} showDatePicker={showDatePicker} />
+
+      {isDatePickerVisible && (
+        <Modal transparent={true} animationType="slide">
+          <View style={styles.modalContainer}>
+            <View style={styles.modalContent}>
+              <DateTimePicker
+                value={selectedDate || new Date()}
+                mode="date"
+                display="default"
+                onChange={handleDateChange}
+              />
+              <TouchableOpacity
+                onPress={hideDatePicker}
+                style={styles.closeButton}>
+                <Text style={{color: 'blue'}}>Done</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
+      )}
       {false ? (
         <Loading />
       ) : (
         <FlatList
-          data={upcomingDatePosts}
+          data={filterDatabyDate(catId, selectedDate)}
           keyExtractor={(item, index) => index.toString()}
           numColumns={3}
           showsVerticalScrollIndicator={false}

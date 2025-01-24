@@ -13,33 +13,33 @@ const DropdownComponent = ({onPartySelect, politicalParty}) => {
     try {
       const party_name_Collection = collection(firestore, 'politicalpartys');
       const politicalPartydocument = await getDocs(party_name_Collection);
-      const data = politicalPartydocument.docs?.map(doc => ({
+
+      const data = politicalPartydocument?.docs?.map(doc => ({
         id: doc.id,
         label: doc.data().party_name,
       }));
 
       SetDropDownData(data);
     } catch (error) {
-      console.error('Error fetching categories:', error);
+      console.error('Error fetching partys:', error);
     }
   };
 
   useEffect(() => {
     fetch_party_name();
+
     if (politicalParty) {
       setValue(politicalParty);
     }
   }, [politicalParty]);
-  console.log('====================================');
-  console.log(politicalParty);
-  console.log('====================================');
-  console.log('====================================');
-  console.log(value);
-  console.log('====================================');
+
   return (
     <View style={styles.container}>
       <Dropdown
-        style={[styles.dropdown, isFocus && {borderColor: 'gray'}]}
+        style={[
+          styles.dropdown,
+          isFocus && {borderColor: 'gray', color: '#000'},
+        ]}
         placeholderStyle={styles.placeholderStyle}
         selectedTextStyle={styles.selectedTextStyle}
         inputSearchStyle={styles.inputSearchStyle}
@@ -47,7 +47,7 @@ const DropdownComponent = ({onPartySelect, politicalParty}) => {
         data={dropDownData}
         search
         maxHeight={200}
-        textStyle={{color: '#fff'}}
+        textStyle={{color: '#fff', backgroundColor: '#000'}}
         labelField="label"
         valueField="value"
         placeholder={
@@ -120,7 +120,7 @@ const styles = StyleSheet.create({
   inputSearchStyle: {
     height: 40,
     fontSize: 16,
-    color: '#fff',
+    color: '#000',
   },
   icon: {
     marginRight: 5,

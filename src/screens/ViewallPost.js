@@ -1,6 +1,5 @@
 import React, {useEffect, useLayoutEffect, useState} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import DateTimePicker from '@react-native-community/datetimepicker';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {
   Text,
@@ -23,9 +22,12 @@ import {
   updateDoc,
 } from '@firebase/firestore';
 import {firestore} from '../firebase/firebase';
+import DateTimePicker from '@react-native-community/datetimepicker';
 
 import {SCREEN_WIDTH, SCREEN_HEIGHT} from '../utils/dimensions';
 import Loading from '../components/Modal/Loading';
+import DatePicker from '../components/DatePicker';
+import DatePickerModal from '../components/Modal/DatePickerModal';
 
 const ViewallPost = ({navigation, route}) => {
   const {catId, title, videotitle, videoData, isVideo} = route.params;
@@ -157,26 +159,10 @@ const ViewallPost = ({navigation, route}) => {
   };
 
   const imageWidth = (SCREEN_WIDTH - 30) / 3;
-  console.log(imgdata);
+
   return (
     <View style={{backgroundColor: '#111', flex: 1}}>
-      <View style={{padding: 10, alignItems: 'center'}}>
-        <TouchableOpacity
-          onPress={showDatePicker}
-          style={{
-            backgroundColor: '#fff',
-            width: '100%',
-            alignItems: 'center',
-            borderRadius: 50,
-            padding: 5,
-          }}>
-          <View>
-            <Text style={{color: '#000', padding: 10, fontSize: 16}}>
-              {selectedDate ? selectedDate.toDateString() : 'Choose date'}
-            </Text>
-          </View>
-        </TouchableOpacity>
-      </View>
+      <DatePicker selectedDate={selectedDate} showDatePicker={showDatePicker} />
 
       {isDatePickerVisible && (
         <Modal transparent={true} animationType="slide">
@@ -297,6 +283,12 @@ const styles = StyleSheet.create({
   closeButton: {
     marginTop: 10,
     alignItems: 'center',
+  },
+  video: {
+    flex: 1,
+    width: 88,
+    height: 90,
+    borderRadius: 20,
   },
 });
 
